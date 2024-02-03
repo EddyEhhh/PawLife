@@ -1,10 +1,11 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "PawLife",
+    "slug": "PawLife",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "entrypoint" : "./index.jsx",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
