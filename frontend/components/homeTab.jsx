@@ -1,10 +1,13 @@
 import React from "react";
 import {Text, View} from 'react-native';
+import globalStyles from "../style/global";
 
-const HomeTab = () =>{
-    <View>
-        <Text>Homescreen</Text>
+const HomeTab = ({ navigation }) =>{
+    return(
+    <View style ={globalStyles.container}>
+        <Text></Text>
     </View>
+    );
 }
 
 export default HomeTab;

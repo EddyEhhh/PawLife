@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from '../homeTab';
 import SettingTab from '../settingTab';
@@ -9,11 +10,55 @@ const Tab = createBottomTabNavigator();
 
 const BottomTab = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeTab} />
-      <Tab.Screen name="Sos" component={SosTab} />
-      <Tab.Screen name="Paw" component= {PawTab} />
-      <Tab.Screen name="Settings" component={SettingTab} />
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Home" 
+                  component={HomeTab} 
+                  options={{
+                    tabBarIcon: ({size,focused,color}) => {
+                      return (
+                        <Image
+                          style={{ width: size, height: size }}
+                          source={require('../../assets/tabsIcon/home.png')}
+                        />
+                      );}
+                  }}
+      />
+      <Tab.Screen name="Sos" 
+                  component={SosTab} 
+                  options={{
+                    tabBarIcon: ({size,focused,color}) => {
+                      return (
+                        <Image
+                          style={{ width: size, height: size }}
+                          source={require('../../assets/tabsIcon/sos.png')}
+                        />
+                      );}
+                  }}
+      />
+      <Tab.Screen name="Paw" 
+                  component= {PawTab} 
+                  options={{
+                    tabBarIcon: ({size,focused,color}) => {
+                      return (
+                        <Image
+                          style={{ width: size, height: size }}
+                          source={require('../../assets/tabsIcon/paw.png')}
+                        />
+                      );}
+                  }}
+      />
+      <Tab.Screen name="Settings" 
+                  component={SettingTab} 
+                  options={{
+                    tabBarIcon: ({size,focused,color}) => {
+                      return (
+                        <Image
+                          style={{ width: size, height: size }}
+                          source={require('../../assets/tabsIcon/settings.png')}
+                        />
+                      );}
+                  }}
+      />
     </Tab.Navigator>
   );
 };
