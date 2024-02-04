@@ -1,3 +1,5 @@
+*.env
+
 # Intellij File
 ## User-specific stuff
 .idea/*
