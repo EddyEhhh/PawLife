@@ -15,6 +15,10 @@ const petSchema = mongoose.Schema({
     },
     microchip_number: {
         type: String,
+        required: false
+    },
+    contact: {
+        type: String,
         required: true
     }
 

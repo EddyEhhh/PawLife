@@ -3,7 +3,7 @@ import { getDemo } from "../controllers/App.controller.js";
 
 const router = express.Router();
 
-router.get('/', getDemo);
+router.get('/demo', getDemo);
 
 export default router;
 

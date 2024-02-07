@@ -17,15 +17,21 @@ const appointmentSchema = mongoose.Schema({
                     type: Number, // Duration in minutes, required
                     required: true,
                 },
+                end_at: {
+                    type: Number,
+                    required: true,
+                },
                 pet_id: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Pet', // Reference to the associated pet model
                     required: true,
+                    index: true,
                 },
                 vet_id: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Vet', // Reference to the primary vet for the appointment
                     required: true,
+                    index: true,
                 },
                 is_active: {
                     type: Boolean,

@@ -3,7 +3,10 @@ import {Vet} from "../models/Vet.model.js";
 
 export async function getVets(req, res){
     try {
-        // const { is_open, is_emergency } = req.params;
+        // const { is_open, is_emergency, gps } = req.params;
+        // if(req.params.is_emergency){
+        //     console.log("EMERGENCY")
+        // }
         const vets = await Vet
             .find({})
             .populate('location')
