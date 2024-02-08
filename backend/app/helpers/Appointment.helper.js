@@ -2,7 +2,7 @@ import express from 'express';
 import {Vet} from "../models/Vet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
 
-export async function getAppointmentsByVet(list_of_vets){
+export async function getAppointmentsByVet(req, res){
     try {
         const { vet_id , is_emergency, } = req.params;
         return Appointment.find(

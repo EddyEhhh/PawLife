@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import {getEpochInSecondsNow} from "../utils/Time.util.js";
 
 const appointmentSchema = mongoose.Schema({
                 created_at: {
                     type: Number,
-                    default: Math.floor(new Date().getTime() / 1000), // Automatic timestamp upon creation
+                    default: Math.floor(getEpochInSecondsNow()), // Automatic timestamp upon creation
                 },
                 modified_at: {
                     type: Number,

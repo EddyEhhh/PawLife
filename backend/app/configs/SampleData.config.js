@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import {Vet, Location} from "../models/Vet.model.js";
 import {Pet} from "../models/Pet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
+import {getEpochInSecondsNow} from "../utils/Time.util.js";
 
 dotenv.config({ path: './config/db.config.env' });
 
@@ -344,9 +345,9 @@ async function createEachAppointments(vet_id, interval_in_minutes) {
             .map((appointmentData, index) => new Appointment(
                 {
                     ...appointmentData,
-                    start_at: Math.floor(new Date().getTime() / 1000 ) + interval_in_minutes * SECONDS_IN_MIN,
+                    start_at: getEpochInSecondsNow() + interval_in_minutes * SECONDS_IN_MIN,
                     duration: 30,
-                    end_at: Math.floor(new Date().getTime() / 1000 ) + (interval_in_minutes + 30) * SECONDS_IN_MIN ,
+                    end_at: getEpochInSecondsNow() + (interval_in_minutes + 30) * SECONDS_IN_MIN ,
                     vet_id: vet_id,
                     pet_id: "5e234f234f234f234f234f24"
                 }));

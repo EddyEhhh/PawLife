@@ -48,7 +48,7 @@ const vetSchema = mongoose.Schema({
             required: true,
         },
         opening_hours: {
-            type: Object,
+            type: Map,
             required: true,
             default: {
                 is_24_7: false,

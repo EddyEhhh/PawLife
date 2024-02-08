@@ -1,5 +1,5 @@
-// import express from "express";
-// import {Vet} from "../models/Vet.model.js";
+import express from "express";
+import {Vet} from "../models/Vet.model.js";
 //
 // export async function findVet(req, res){
 //     try {
@@ -13,3 +13,10 @@
 //         res.status(500).json({ error_message: "Unable to get vets"})
 //     }
 // }
+
+
+export async function isOpen(vet){
+    const now =
+    if
+}
+
