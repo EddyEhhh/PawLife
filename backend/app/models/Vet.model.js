@@ -31,7 +31,7 @@ const vetSchema = mongoose.Schema({
         name: { type: String,
             required: true
         },
-        imageUrl: { type: String,
+        image_url: { type: String,
             required: true
         },
         specialties: [String],
@@ -47,8 +47,8 @@ const vetSchema = mongoose.Schema({
             ref: 'Location',
             required: true,
         },
-        openingHours: {
-            type: Object,
+        opening_hours: {
+            type: Map,
             required: true,
             default: {
                 is_24_7: false,

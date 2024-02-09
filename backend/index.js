@@ -5,6 +5,10 @@ import { PORT } from './app/configs/app.config.js'
 import mongoose from "mongoose";
 import demoRouter from "./app/routes/App.route.js"
 import vetRouter from "./app/routes/Vet.route.js"
+import {Appointment} from "./app/models/Appointment.model.js";
+import {getDemo} from "./app/controllers/App.controller.js";
+import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
+import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
 
 dotenv.config({ path: './app/configs/db.config.env' });
 
@@ -16,6 +20,8 @@ app.use(express.json());
 
 app.use('/api/v1', demoRouter);
 app.use('/api/v1/vets', vetRouter);
+
+
 
 mongoose
     .connect(process.env.MONGODBURL)
@@ -31,3 +37,43 @@ mongoose
     }).catch((error) => {
         console.log(error);
     })
+
+
+
+// TESTING CODE
+
+const testRouter = express.Router();
+async function testFunction(){
+    try {
+        // return Appointment.find(
+        //     {
+        //         vet_id: '65c3e28a0a12842cbe8e88c1',
+        //         end_at: {$gt: getEpochInSecondsNow()}
+        //     })
+        //     .sort({start_at: 1})
+        //     .limit(50);
+        console.log("Test")
+        await getEmergencyAppointment("Hello")
+    } catch (err) {
+        console.error(err);
+    }
+    // console.log("Test Result: ", result.explain()
+    //     .then(explanation => {
+    //         console.log("Verbose query explanation:", explanation);
+    //     })
+    //     .catch(error => {
+    //         console.error("Error retrieving query explanation:", error);
+    //     }));
+}
+
+testRouter.get('/', async (req, res) =>{
+    try {
+        const result = await testFunction();
+        return res.status(200).json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({message: "Error"});
+    }
+});
+
+app.use('/api/v1/test', testRouter)
