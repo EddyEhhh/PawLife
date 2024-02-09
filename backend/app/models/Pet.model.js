@@ -13,6 +13,10 @@ const petSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    age: {
+        type: Number,
+        required: true
+    },
     microchip_number: {
         type: String,
         required: false
@@ -21,8 +25,6 @@ const petSchema = mongoose.Schema({
         type: String,
         required: true
     }
-
-
 });
 
 export const Pet = mongoose.model('Pet',  petSchema)

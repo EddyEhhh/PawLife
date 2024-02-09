@@ -80,40 +80,34 @@ const vetsData = [
         specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
         opening_hours: {
             monday: {
-                open: "10:00",
-                close: "21:00",
-                breaks: [
-                    { start: "15:01",  end: "15:59"}
+                open: [
+                    ["10:00", "15:00"], ["16:00", "21:00"]
                 ]
             },
             tuesday: {
-                open: "10:00",
-                close: "21:00",
-                breaks: [
-                    { start: "15:01",  end: "15:59"}
+                open: [
+                    ["10:00", "15:00"], ["16:00", "21:00"]
                 ]
             },
             thursday: {
-                open: "10:00",
-                close: "21:00",
-                breaks: [
-                    { start: "15:01",  end: "15:59"}
+                open: [
+                    ["10:00", "15:00"], ["16:00", "21:00"]
                 ]
             },
             friday: {
-                open: "10:00",
-                close: "21:00",
-                breaks: [
-                    { start: "15:01",  end: "15:59"}
+                open: [
+                    ["10:00", "15:00"], ["16:00", "21:00"]
                 ]
             },
             saturday: {
-                open: "10:00",
-                close: "15:00",
+                open: [
+                    ["10:00", "15:00"]
+                ]
             },
             sunday: {
-                open: "10:00",
-                close: "15:00",
+                open: [
+                    ["10:00", "15:00"]
+                ]
             },
         }
     },
@@ -123,36 +117,29 @@ const vetsData = [
         specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
         opening_hours: {
             monday: {
-                open: "10:00",
-                close: "20:00",
-                breaks: [
-                    { start: "13:01",  end: "15:59"}
+                open: [
+                    ["10:00", "13:00"], ["16:00", "20:00"]
                 ]
             },
             tuesday: {
-                open: "10:00",
-                close: "20:00",
-                breaks: [
-                    { start: "13:01",  end: "15:59"}
+                open: [
+                    ["10:00", "13:00"], ["16:00", "20:00"]
                 ]
             },
             thursday: {
-                open: "10:00",
-                close: "20:00",
-                breaks: [
-                    { start: "13:01",  end: "15:59"}
+                open: [
+                    ["10:00", "13:00"], ["16:00", "20:00"]
                 ]
             },
             friday: {
-                open: "10:00",
-                close: "20:00",
-                breaks: [
-                    { start: "13:01",  end: "15:59"}
+                open: [
+                    ["10:00", "13:00"], ["16:00", "20:00"]
                 ]
             },
             saturday: {
-                open: "10:00",
-                close: "16:00",
+                open: [
+                    ["10:00", "16:00"]
+                ]
             },
         }
     },
@@ -162,52 +149,38 @@ const vetsData = [
         specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
         opening_hours: {
             monday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "19:00"]
                 ]
             },
             tuesday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "19:00"]
                 ]
             },
             wednesday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "19:00"]
                 ]
             },
             thursday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "19:00"]
                 ]
             },
             friday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "19:00"]
                 ]
             },
             saturday: {
-                open: "09:30",
-                close: "17:30",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "17:30"]
                 ]
             },
             sunday: {
-                open: "09:30",
-                close: "17:30",
-                breaks: [
-                    { start: "13:01",  end: "13:59"}
+                open: [
+                    ["09:30", "13:00"], ["14:00", "17:30"]
                 ]
             }
         }
@@ -218,43 +191,34 @@ const vetsData = [
         specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
         opening_hours: {
             monday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "12:01",  end: "14:29"}
+                open: [
+                    ["09:30", "12:00"], ["14:30", "19:00"]
                 ]
             },
             tuesday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "12:01",  end: "14:29"}
+                open: [
+                    ["09:30", "12:00"], ["14:30", "19:00"]
                 ]
             },
             wednesday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "12:01",  end: "14:29"}
+                open: [
+                    ["09:30", "12:00"], ["14:30", "19:00"]
                 ]
             },
             thursday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "12:01",  end: "14:29"}
+                open: [
+                    ["09:30", "12:00"], ["14:30", "19:00"]
                 ]
             },
             friday: {
-                open: "09:30",
-                close: "19:00",
-                breaks: [
-                    { start: "12:01",  end: "14:29"}
+                open: [
+                    ["09:30", "12:00"], ["14:30", "19:00"]
                 ]
             },
             sunday: {
-                open: "09:00",
-                close: "17:00"
+                open: [
+                    ["09:00", "17:00"]
+                ]
             }
         }
     },
@@ -284,6 +248,7 @@ const petsData = [
         name: "Buddy",
         species: "Dog",
         breed: "Golden Retriever",
+        age: 4,
         microchip_number: "9876543210",
         contact: "+65-8123-0001"
     },
@@ -291,6 +256,7 @@ const petsData = [
         name: "Whiskers",
         species: "Cat",
         breed: "Persian",
+        age: 2,
         microchip_number: "1234567890",
         contact: "+65-8123-0002"
     },
@@ -298,6 +264,7 @@ const petsData = [
         name: "Charlie",
         species: "Rabbit",
         breed: "Holland Lop",
+        age: 7,
         microchip_number: "1928374650",
         contact: "+65-8123-0003"
     },
@@ -305,6 +272,7 @@ const petsData = [
         name: "Luna",
         species: "Bird",
         breed: "Cockatiel",
+        age: 5,
         microchip_number: "0987654321",
         contact: "+65-8123-0004"
     },
@@ -312,6 +280,7 @@ const petsData = [
         name: "Ellie",
         species: "Hamster",
         breed: "Syrian",
+        age: 1,
         microchip_number: "",
         contact: "+65-8123-0005"
     }

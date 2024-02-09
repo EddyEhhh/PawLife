@@ -53,55 +53,38 @@ const vetSchema = mongoose.Schema({
             default: {
                 is_24_7: false,
                 monday: {
-                    open: "", // String representing opening time (e.g., "09:00")
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
-                        { start: "", end: "" }
+                    open: [
+
                     ]
                 },
                 tuesday: {
-                    open: "",
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
-                        { start: "", end: "" }
+                    open: [
+
                     ]
                 },
                 wednesday: {
-                    open: "",
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
-                        { start: "", end: "" }
+                    open: [
+
                     ]
                 },
                 thursday: {
-                    open: "",
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
+                    open: [
+
                     ]
                 },
                 friday: {
-                    open: "",
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
+                    open: [
+
                     ]
                 },
                 saturday: {
-                    open: "",
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
+                    open: [
+
                     ]
                 },
                 sunday: {
-                    open: "",
-                    close: "",
-                    breaks: [
-                        { start: "", end: "" },
+                    open: [
+
                     ]
                 }
             }

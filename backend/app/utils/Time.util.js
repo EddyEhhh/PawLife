@@ -2,6 +2,13 @@ export function getEpochInSecondsNow() {
     return Math.floor(new Date().getTime() / 1000 )
 }
 
+export function getEpochInSeconds(year, month, day, hour, minute) {
+    const date = new Date(year, month, day, hour, minute);
+    // console.log("DATE: ", date);
+
+    return Math.floor(date.getTime() / 1000 )
+}
+
 export function convertTimetoEpochSecond(timeStr) {
     // Check if time string is in valid format (HH:MM)
     const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
