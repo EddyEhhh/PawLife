@@ -10,7 +10,7 @@ import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
 import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
 
-dotenv.config({ path: './config/db.config.env' });
+dotenv.config({ path: './app/configs/db.config.env' });
 
 const app = express();
 const port = PORT || 5000;

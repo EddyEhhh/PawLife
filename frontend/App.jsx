@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {View} from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -8,9 +8,24 @@ import BottomTab from './components/navigation/bottomTab.jsx';
 import globalStyles from './style/global.jsx';
 import {useFonts} from 'expo-font'
 
+import * as Location from 'expo-location'
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+
+  useEffect(()=>{
+    const getPermissions = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if( status !== 'granted') {
+        console.log("Please grant location permissions")
+        return
+      }
+      let currentlocation = await Location.getCurrentPositionAsync({});
+      console.log(currentlocation)
+    }
+    getPermissions()
+  }, [])
 
   const [fontsLoaded, fontError] = useFonts({
     'frank-regular' : require('./assets/fonts/FrankRuhlLibre-Regular.ttf'),
