@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import {
   Text,
   View,
@@ -8,18 +8,33 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import globalStyles from "../style/global";
+import globalStyles from "../style/global"
+import axiosInstance from "./util/axiosInstance";
 
 const SosTab = ({ navigation }) => {
-  const [vets, SetVets] = useState([
-    { Vet: "A", id: 1 },
-    { Vet: "B", id: 2 },
-    { Vet: "C", id: 3 },
-    { Vet: "D", id: 4 },
-  ]);
+
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await axiosInstance.get('/api/v1/vets')
+      .catch(err => console.log(err))
+      .then( (response) =>{
+        setData(response.data)
+        setLoading(false);
+      }
+      )
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <View style={globalStyles.container}>
+    {loading && <View><Text>loading</Text></View>}
+    {!loading && 
+    <View>
       <ScrollView>
         <SafeAreaView style={styles.topContainer}>
           <TouchableOpacity>
@@ -50,13 +65,15 @@ const SosTab = ({ navigation }) => {
         </SafeAreaView>
 
         <SafeAreaView style={{ backgroundColor: "white" }}>
-          {vets.map((item) => (
-            <View style={styles.item} key={item.id}>
-              <Text>{item.Vet}</Text>
+          {data.vets.map((item) => (
+            <View style={styles.item} key={item._id}>
+              <Text>{item._id}</Text>
             </View>
           ))}
         </SafeAreaView>
       </ScrollView>
+    </View>
+    }
     </View>
   );
 };
