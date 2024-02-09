@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import demoRouter from "./app/routes/App.route.js"
 import vetRouter from "./app/routes/Vet.route.js"
 
-dotenv.config({ path: './config/db.config.env' });
+dotenv.config({ path: './app/configs/db.config.env' });
 
 const app = express();
 const port = PORT || 5000;
