@@ -87,7 +87,7 @@ const HomeTab = ({ navigation }) => {
 const styles = StyleSheet.create({
   topContainer: {
     marginHorizontal: 25,
-    marginTop: 70,
+    marginTop: 60,
     height: 320,
   },
   bottomContainer: {
