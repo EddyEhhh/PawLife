@@ -9,6 +9,7 @@ import {Appointment} from "./app/models/Appointment.model.js";
 import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
 import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
+import emergencyRouter from "./app/routes/Emergency.route.js"
 
 dotenv.config({ path: './config/db.config.env' });
 
@@ -20,6 +21,7 @@ app.use(express.json());
 
 app.use('/api/v1', demoRouter);
 app.use('/api/v1/vets', vetRouter);
+app.use('/api/v1/emergency', emergencyRouter);
 
 // console.log("DB:", process.env.MONGODBURL)
 
@@ -53,7 +55,10 @@ async function testFunction(){
         //     .sort({start_at: 1})
         //     .limit(50);
         console.log("Test")
-        await getEmergencyAppointment("Hello")
+        const result = await getEmergencyAppointment("Hello").then((result) => {
+            console.log("Result:", result);
+        })
+
     } catch (err) {
         console.error(err);
     }

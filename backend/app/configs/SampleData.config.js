@@ -253,6 +253,14 @@ const petsData = [
         contact: "+65-8123-0001"
     },
     {
+        name: "Kiyo",
+        species: "Dog",
+        breed: "Shihpoo",
+        age: 4,
+        microchip_number: "9876543210",
+        contact: "+65-8123-0001"
+    },
+    {
         name: "Whiskers",
         species: "Cat",
         breed: "Persian",
