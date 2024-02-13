@@ -25,7 +25,10 @@ const HomeTab = ({ navigation }) => {
             Find Nearby Veterinary Care in Emergency Situations: Your Pet's
             Lifeline!
           </Text>
-          <TouchableOpacity style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("SOS")}
+          >
             <Text style={styles.buttonTitle}>Locate Nearest Vets Now!</Text>
           </TouchableOpacity>
         </SafeAreaView>
@@ -40,6 +43,7 @@ const HomeTab = ({ navigation }) => {
           <View style={styles.featureContainer}>
             <TouchableOpacity
               style={[styles.featureBox, { backgroundColor: "#FBE9F2" }]}
+              onPress={() => navigation.navigate("VetPalScreen")}
             >
               <Image
                 style={{ resizeMode: "contain" }}
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
   topContainer: {
     marginHorizontal: 25,
     marginTop: 60,
-    height: 320,
+    height: 310,
   },
   bottomContainer: {
     backgroundColor: "#fff",

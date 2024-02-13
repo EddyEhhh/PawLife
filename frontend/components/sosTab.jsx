@@ -47,11 +47,10 @@ const SosTab = ({ navigation }) => {
         <View>
           <ScrollView>
             <SafeAreaView style={styles.topContainer}>
-              <TouchableOpacity>
-                <Image
-                  source={require("../assets/sosPage-assets/back-icon.png")}
-                />
-              </TouchableOpacity>
+              <Image
+                style={{ resizeMode: "contain" }}
+                source={require("../assets/logo.png")}
+              />
               <Text style={styles.title}>Emergency Pet Aid</Text>
               <Text style={styles.subtitle}>
                 Instant Access to Nearest Vet Clinic Now!
@@ -61,7 +60,10 @@ const SosTab = ({ navigation }) => {
                 explore VetPal Assist?
               </Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => navigation.navigate("VetPalScreen")}
+                >
                   <Image
                     source={require("../assets/sosPage-assets/lightbulb-logo.png")}
                     resizeMode="contain"
@@ -77,7 +79,7 @@ const SosTab = ({ navigation }) => {
 
             <SafeAreaView style={{ backgroundColor: "white" }}>
               {data.vets.map((item) => (
-                <>
+                <View key={item._id}>
                   <Modal
                     transparent={true}
                     visible={isModalVisible}
@@ -163,7 +165,7 @@ const SosTab = ({ navigation }) => {
                     </View>
                   </Modal>
 
-                  <View style={styles.item} key={item._id}>
+                  <View style={styles.item}>
                     <View style={styles.topWrapper}>
                       <View style={styles.leftWrapper}>
                         <Image
@@ -208,7 +210,7 @@ const SosTab = ({ navigation }) => {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                </>
+                </View>
               ))}
             </SafeAreaView>
           </ScrollView>
@@ -220,8 +222,8 @@ const SosTab = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   topContainer: {
-    marginTop: 70,
-    height: 320,
+    marginTop: 60,
+    height: 330,
     marginHorizontal: 25,
   },
   title: {
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "900",
     lineHeight: 50,
-    marginTop: 25,
+    marginTop: 15,
   },
   subtitle: {
     color: "#164348",

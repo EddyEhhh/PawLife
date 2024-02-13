@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import globalStyles from "../style/global";
 
-const VetPalAssist = () => {
+const VetPalAssist = ({ navigation }) => {
   const [petDetails, setPetDetails] = useState(null);
   const [selectedSymptoms, setSelectedSymptoms] = React.useState([]);
   const [selectedSymptomDetails, setSelectedSymptomDetails] = useState([]);
@@ -66,7 +66,7 @@ const VetPalAssist = () => {
     <View style={globalStyles.container}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={require("../assets/sosPage-assets/back-icon.png")} />
           </TouchableOpacity>
           <Image
