@@ -1,20 +1,69 @@
 import React from "react";
 import { Image } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeTab from "../homeTab";
-import SettingTab from "../settingTab";
-import PawTab from "../pawTab";
-import SosTab from "../sosTab";
-import VetPalTab from "../vetPalTab";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "../homeTab";
+import SettingScreen from "../settingTab";
+import PawScreen from "../pawTab";
+import SosScreen from "../sosTab";
+import VetPalScreen from "../vetPalTab";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="VetPalScreen" component={VetPalScreen} />
+    </Stack.Navigator>
+  );
+};
+const SosStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="SosScreen" component={SosScreen} />
+      <Stack.Screen name="VetPalScreen" component={VetPalScreen} />
+    </Stack.Navigator>
+  );
+};
+const PawStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="PawScreen" component={PawScreen} />
+    </Stack.Navigator>
+  );
+};
+const SettingStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="SettingsScreen" component={SettingScreen} />
+    </Stack.Navigator>
+  );
+};
 
 const BottomTab = () => {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name="Home"
-        component={HomeTab}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
@@ -27,8 +76,8 @@ const BottomTab = () => {
         }}
       />
       <Tab.Screen
-        name="Sos"
-        component={SosTab}
+        name="SOS "
+        component={SosStack}
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
@@ -42,7 +91,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Paw"
-        component={PawTab}
+        component={PawStack}
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
@@ -56,7 +105,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Settings"
-        component={VetPalTab}
+        component={SettingStack}
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
