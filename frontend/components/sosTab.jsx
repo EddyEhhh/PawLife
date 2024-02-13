@@ -7,13 +7,16 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
+  Button
 } from "react-native";
+import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +31,10 @@ const SosTab = ({ navigation }) => {
 
     fetchData();
   }, []);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   return (
     <View style={globalStyles.container}>
@@ -70,6 +77,78 @@ const SosTab = ({ navigation }) => {
 
             <SafeAreaView style={{ backgroundColor: "white" }}>
               {data.vets.map((item) => (
+                <>
+                
+                <Modal
+                  transparent={true}
+                  visible={isModalVisible}
+                  onBackdropPress={() => setModalVisible(false)}
+                >
+                  <View style ={styles.modalContainer} backgroundColor="rgba(0,0,0,0.1)">
+                    <View style = {styles.modalBody}>
+
+                      <View style={styles.TopPressContainer}>
+                          <View style={styles.topWrapper}>
+                          <View style={styles.leftWrapper}>
+                            <Image
+                              source={{
+                                uri: item.image_url,
+                              }}
+                              style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                            />
+                          </View>
+                          <View style={styles.rightWrapper}>
+                            <View style={styles.innerLeftWrapper}>
+                              <Text style={styles.clinicsName}>{item.name}</Text>
+                              <Text style={styles.clinicsAddress}>
+                                {item.location.street} {"\n"}
+                                {item.location.country}
+                                {item.location.postal_code}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={styles.time}>1:45 AM</Text>
+                              <View style={styles.distanceWrapper}>
+                                <View>
+                                  <Text style={styles.distance}>25 min</Text>
+                                  <Text style={styles.distance}>5 km</Text>
+                                </View>
+                                <View style={styles.distanceRightWrapper}>
+                                  <Image
+                                    source={require("../assets/sosPage-assets/car-logo.png")}
+                                    style={styles.carLogo}
+                                  />
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+
+
+                      <View style={styles.BottomPressContainer}>
+                        <Text style={styles.Modalsubtitle}
+                        >Are you sure you want to schedule an urgent visit for your pet? 
+                        </Text>
+                        <TouchableOpacity
+                        style={[styles.ModalCancelButton, { backgroundColor: "#A5A5A5" }]} onPress={toggleModal}
+                        >
+                          <View>
+                            <Text style={styles.scheduleButtonTitle} >Cancel</Text>
+                          </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        style={[styles.ModalScheduleButton, { backgroundColor: "#F05D5E" }]}>
+                          <View>
+                            <Text style={styles.scheduleButtonTitle} >Schedule</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+
+                    </View>
+                  </View>
+                </Modal>
+
                 <View style={styles.item} key={item._id}>
                   <View style={styles.topWrapper}>
                     <View style={styles.leftWrapper}>
@@ -106,12 +185,13 @@ const SosTab = ({ navigation }) => {
                       </View>
                     </View>
                   </View>
-                  <TouchableOpacity style={styles.scheduleButtonContainer}>
+                  <TouchableOpacity style={styles.scheduleButtonContainer} onPress={toggleModal}>
                     <Text style={styles.scheduleButtonTitle}>
                       Schedule Urgent Visit
                     </Text>
                   </TouchableOpacity>
                 </View>
+                </>
               ))}
             </SafeAreaView>
           </ScrollView>
@@ -125,7 +205,7 @@ const styles = StyleSheet.create({
   topContainer: {
     marginTop: 70,
     height: 320,
-    marginHorizontal: 25,
+    marginHorizontal: 25
   },
   title: {
     color: "#164348",
@@ -261,6 +341,67 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
   },
+  modalContainer:{
+    flex:1,
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  modalBody: {
+    display: "flex",
+    backgroundColor:"#D9FBF7",
+    marginTop: 10,
+    marginHorizontal: 5,
+    borderRadius: 20,
+    height:"30%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  TopPressContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  BottomPressContainer: {
+    backgroundColor:"#F2F2F2",
+    flex: 1.2,
+    flexDirection: "row",
+    flexWrap:"wrap",
+    alignContent: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20
+  },
+  ModalCancelButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 7,
+    marginVertical: 5,
+    borderRadius: 18,
+    alignItems: "center",
+    width: 100,
+    height: 50,
+    justifyContent: "center",
+
+  },
+  ModalScheduleButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 7,
+    marginVertical: 5,
+    borderRadius: 18,
+    alignItems: "center",
+    width: 150,
+    height: 50,
+    justifyContent: "center",
+
+  },
+  Modalsubtitle:{
+    paddingHorizontal: 40,
+    fontFamily: "frank-regular",
+    color: "#000",
+    fontSize: 15,
+    textAlign: "center"
+  }
 });
 
 export default SosTab;
