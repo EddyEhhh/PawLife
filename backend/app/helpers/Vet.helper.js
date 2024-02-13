@@ -1,5 +1,6 @@
 import express from "express";
 import {Vet} from "../models/Vet.model.js";
+import {epochToDate} from "../utils/Time.util.js";
 //
 // export async function findVet(req, res){
 //     try {
@@ -15,8 +16,8 @@ import {Vet} from "../models/Vet.model.js";
 // }
 
 
-export async function isOpen(vet){
-    const now =
-    if
-}
+// export async function isOpen(vet, ){
+//     const now = epochToDate()
+//     if
+// }
 

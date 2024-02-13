@@ -10,10 +10,10 @@ import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
 import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
 
-dotenv.config({ path: './app/configs/db.config.env' });
+dotenv.config({ path: './config/db.config.env' });
 
 const app = express();
-const port = PORT || 5000;
+// const port = PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -21,7 +21,7 @@ app.use(express.json());
 app.use('/api/v1', demoRouter);
 app.use('/api/v1/vets', vetRouter);
 
-
+// console.log("DB:", process.env.MONGODBURL)
 
 mongoose
     .connect(process.env.MONGODBURL)

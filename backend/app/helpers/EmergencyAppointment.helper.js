@@ -1,159 +1,222 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
-import {convertTimetoEpochSecond, getEpochInSeconds, getEpochInSecondsNow} from "../utils/Time.util.js";
+import {
+    convertEpochToReadable,
+    convertTimetoEpochSecond, epochToDate,
+    getEpochInSeconds,
+    getEpochInSecondsNow
+} from "../utils/Time.util.js";
 import res from "express/lib/response.js";
 import {getTravelInfo} from "../utils/GoogleMap.utils.js";
 import mongoose from "mongoose";
+import convert from "lodash/fp/convert.js";
 
 export async function getEmergencyAppointment(gps){
 
     try {
-
+        console.log("===Emergency Appointment===")
+        const forceTime = 1707820259;
+        console.log("Current set time:", convertEpochToReadable(forceTime))
          await Vet.find({})
             .then(vets => {
                 vets.map((vet) => {
-                    findNextAvailableAppointment(vet._id, getEpochInSecondsNow()).then(result => {
-                        console.log(vet.name, vet._id);
-                        console.log(result)
+                    getNextAvailableAppointmentByVet(vet, forceTime).then(result => {
+
+                        console.log("Go at: ", convertEpochToReadable(result))
+                        console.log("=====",vet.name, vet._id);
+                        // console.log(result)
                     })
                 })
             })
             .catch(error => {
                 console.error("Error fetching vets:", error);
             });
-        // const open_vet_id = Vet.find({})
-        // return Appointment.find(
-        //     {
-        //         vet_id: {},
-        //         end_at: {$gt: getEpochInSecondsNow()}
-        //     })
-        //     .sort({start_at: 1})
-        //     .limit(50);
-
     } catch (err) {
         console.error(err);
         res.status(500).json({ error_message: "Unable to get vets"})
     }
 }
 
-async function findNextAvailableAppointment(vetId, timeInEpochSeconds) {
-    try {
-        // Validate `vetId` and `timeInEpochSeconds`
+async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
+
+    try{
+
+        const vetId = vet._id;
+
         if (!mongoose.Types.ObjectId.isValid(vetId)) {
             throw new Error('Invalid vet ID');
         }
-        if (!Number.isInteger(timeInEpochSeconds)) {
+        if (!Number.isInteger(minTimeInEpochSecond)) {
             throw new Error('Invalid time');
         }
 
-        const vet = await Vet.findById(vetId, { opening_hours: 1 }).lean(); // Use lean for efficiency
-        if (!vet) {
-            throw new Error('Vet not found');
-        }
+        const appointments = await Appointment.find({vet_id: vetId, end_at: {$gt: minTimeInEpochSecond}}).limit(5);
 
-        // Extract relevant day information from `timeInEpochSeconds`
-        const date = new Date(timeInEpochSeconds * 1000); // Convert back to milliseconds
-        const dayOfWeek = date.getDay(); // 0 (Sunday) to 6 (Saturday)
+        displayAppointment(appointments);
 
-        // Check if vet is closed on this day
-        console.log("TEST: ", vet)
-        const DAY = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-        console.log(vet.opening_hours.get(DAY[dayOfWeek]))
-        if (!vet.opening_hours.get(DAY[dayOfWeek])) {
-            console.error(
-                'Error: Inconsistent data detected. Vet cannot be closed all week with working days specified.'
-            );
-            return null; // Indicate error due to data inconsistency
-        }
+        let is_found = false;
 
-        // Check if `timeInEpochSeconds` is already during open hours
-        const currentOpeningHours = vet.opening_hours[dayOfWeek];
-        if (timeInEpochSeconds >= convertOpeningHoursToEpochSeconds(currentOpeningHours)) {
-            // Find the next available slot starting from `timeInEpochSeconds`
-            const filteredAppointments = await Appointment.find({
-                vet_id: vetId,
-                start_at: { $gt: timeInEpochSeconds },
-                end_at: { $lt: getNextClosingTime(currentOpeningHours, timeInEpochSeconds) },
-            }).lean(); // Use lean for efficiency
+        let appointmentTime = minTimeInEpochSecond;
 
-            if (filteredAppointments.length === 0) {
-                return timeInEpochSeconds; // Time is available
+        // while(!is_found) {
+
+        for(let i = 0 ; i < appointments.length ; i++){
+            // console.log(appointments[0])
+            // if no ongoing appointment during appointmentTime
+            if(!await isTimeWithin(appointments[i].start_at, appointments[i].end_at, appointmentTime)){
+                // console.log("C Out")
+                isVetOpen(vet, appointmentTime);
+                return appointmentTime;
             }
 
-            // Handle cases where the given time coincides with an existing appointment:
-            if (filteredAppointments.some(appointment => {
-                return timeInEpochSeconds >= appointment.start_at && timeInEpochSeconds < appointment.end_at;
-            })) {
-                // Time falls within an existing appointment, so skip to the next open segment
-                console.log('Given time coincides with an existing appointment, skipping to next open segment.');
-            }
-        } else {
-            // `timeInEpochSeconds` is before opening hours, so set start time to opening
-            timeInEpochSeconds = convertOpeningHoursToEpochSeconds(currentOpeningHours);
+            // else update appointmentTime to end of above appointment
+            appointmentTime = appointments[i].end_at;
+            // console.log("B: ", appointmentTime)
+
         }
 
-        // Find the next available slot by iterating through opening hours segments
-        let nextAvailableSlot = null;
-        for (const segment of currentOpeningHours) {
-            const [startHour, startMinute] = segment[0].split(':');
-            const [endHour, endMinute] = segment[1].split(':');
+        return appointments
 
-            const startTimeEpochSeconds = convertTimeStringToEpochSeconds(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate(),
-                startHour,
-                startMinute
-            );
-            const endTimeEpochSeconds = convertTimeStringToEpochSeconds(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate(),
-                endHour,
-                endMinute
-            );
-
-            // Check if there's any clash with existing appointments within this segment
-            const hasClash = await Appointment.exists({
-                vet_id: vetId,
-                $or: [
-                    { start_at: { $gt: startTimeEpochSeconds, $lt: endTimeEpochSeconds } },
-                    { end_at: { $gt: startTimeEpochSeconds, $lt: endTimeEpochSeconds } },
-                ],
-            });
-
-            if (!hasClash && endTimeEpochSeconds >= timeInEpochSeconds) {
-                nextAvailableSlot = startTimeEpochSeconds;
-                break; // Stop iterating if available slot found
-            }
-        }
-
-        return nextAvailableSlot;
     } catch (err) {
-        console.error('Error finding next available appointment:', err);
-        return null; // Indicate error
+        console.error("Error while finding next available appointment: " + err);
     }
+
 }
 
-// Helper functions for time conversions
-function convertOpeningHoursToEpochSeconds(openingHours) {
-    const [startHour, startMinute] = openingHours[0][0].split(':');
-    const date = new Date(Date.now()); // Use current date if exact date not provided
+function isVetOpen(vet, timeInEpochSecond){
+    epochToDate(timeInEpochSecond).get
 
-    // Assuming opening hours are on the same day as the provided time
-    const startTime = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        startHour,
-        startMinute,
-        0, // Set seconds to 0
-        0 // Set milliseconds to 0
-    );
+    console.log("Date: ", );
 
-    return Math.floor(startTime.getTime() / 1000); // Convert to epoch seconds
 }
+//
+function displayAppointment(appointments){
+    appointments.forEach(appointment => {
+        console.log(convertEpochToReadable(appointment.start_at), '-', convertEpochToReadable(appointment.end_at));
+    });
+
+
+}
+
+//
+// async function findNextAvailableAppointment(vetId, timeInEpochSeconds) {
+//     try {
+//         // Validate `vetId` and `timeInEpochSeconds`
+//         if (!mongoose.Types.ObjectId.isValid(vetId)) {
+//             throw new Error('Invalid vet ID');
+//         }
+//         if (!Number.isInteger(timeInEpochSeconds)) {
+//             throw new Error('Invalid time');
+//         }
+//
+//         const vet = await Vet.findById(vetId, { opening_hours: 1 }).lean(); // Use lean for efficiency
+//         if (!vet) {
+//             throw new Error('Vet not found');
+//         }
+//
+//         // Extract relevant day information from `timeInEpochSeconds`
+//         const date = new Date(timeInEpochSeconds * 1000); // Convert back to milliseconds
+//         const dayOfWeek = date.getDay(); // 0 (Sunday) to 6 (Saturday)
+//
+//         // Check if vet is closed on this day
+//         console.log("TEST: ", vet)
+//         const DAY = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+//         console.log(vet.opening_hours.get(DAY[dayOfWeek]))
+//         if (!vet.opening_hours.get(DAY[dayOfWeek])) {
+//             console.error(
+//                 'Error: Inconsistent data detected. Vet cannot be closed all week with working days specified.'
+//             );
+//             return null; // Indicate error due to data inconsistency
+//         }
+//
+//         // Check if `timeInEpochSeconds` is already during open hours
+//         const currentOpeningHours = vet.opening_hours[dayOfWeek];
+//         if (timeInEpochSeconds >= convertOpeningHoursToEpochSeconds(currentOpeningHours)) {
+//             // Find the next available slot starting from `timeInEpochSeconds`
+//             const filteredAppointments = await Appointment.find({
+//                 vet_id: vetId,
+//                 start_at: { $gt: timeInEpochSeconds },
+//                 end_at: { $lt: getNextClosingTime(currentOpeningHours, timeInEpochSeconds) },
+//             }).lean(); // Use lean for efficiency
+//
+//             if (filteredAppointments.length === 0) {
+//                 return timeInEpochSeconds; // Time is available
+//             }
+//
+//             // Handle cases where the given time coincides with an existing appointment:
+//             if (filteredAppointments.some(appointment => {
+//                 return timeInEpochSeconds >= appointment.start_at && timeInEpochSeconds < appointment.end_at;
+//             })) {
+//                 // Time falls within an existing appointment, so skip to the next open segment
+//                 console.log('Given time coincides with an existing appointment, skipping to next open segment.');
+//             }
+//         } else {
+//             // `timeInEpochSeconds` is before opening hours, so set start time to opening
+//             timeInEpochSeconds = convertOpeningHoursToEpochSeconds(currentOpeningHours);
+//         }
+//
+//         // Find the next available slot by iterating through opening hours segments
+//         let nextAvailableSlot = null;
+//         for (const segment of currentOpeningHours) {
+//             const [startHour, startMinute] = segment[0].split(':');
+//             const [endHour, endMinute] = segment[1].split(':');
+//
+//             const startTimeEpochSeconds = convertTimeStringToEpochSeconds(
+//                 date.getFullYear(),
+//                 date.getMonth(),
+//                 date.getDate(),
+//                 startHour,
+//                 startMinute
+//             );
+//             const endTimeEpochSeconds = convertTimeStringToEpochSeconds(
+//                 date.getFullYear(),
+//                 date.getMonth(),
+//                 date.getDate(),
+//                 endHour,
+//                 endMinute
+//             );
+//
+//             // Check if there's any clash with existing appointments within this segment
+//             const hasClash = await Appointment.exists({
+//                 vet_id: vetId,
+//                 $or: [
+//                     { start_at: { $gt: startTimeEpochSeconds, $lt: endTimeEpochSeconds } },
+//                     { end_at: { $gt: startTimeEpochSeconds, $lt: endTimeEpochSeconds } },
+//                 ],
+//             });
+//
+//             if (!hasClash && endTimeEpochSeconds >= timeInEpochSeconds) {
+//                 nextAvailableSlot = startTimeEpochSeconds;
+//                 break; // Stop iterating if available slot found
+//             }
+//         }
+//
+//         return nextAvailableSlot;
+//     } catch (err) {
+//         console.error('Error finding next available appointment:', err);
+//         return null; // Indicate error
+//     }
+// }
+//
+// // Helper functions for time conversions
+// function convertOpeningHoursToEpochSeconds(openingHours) {
+//     const [startHour, startMinute] = openingHours[0][0].split(':');
+//     const date = new Date(Date.now()); // Use current date if exact date not provided
+//
+//     // Assuming opening hours are on the same day as the provided time
+//     const startTime = new Date(
+//         date.getFullYear(),
+//         date.getMonth(),
+//         date.getDate(),
+//         startHour,
+//         startMinute,
+//         0, // Set seconds to 0
+//         0 // Set milliseconds to 0
+//     );
+//
+//     return Math.floor(startTime.getTime() / 1000); // Convert to epoch seconds
+// }
 
 // async function getEarliestAppointment(vet){
 //
@@ -257,6 +320,6 @@ function convertOpeningHoursToEpochSeconds(openingHours) {
 //     return getEpochInSeconds(date.getFullYear(), date.getMonth(), day, +(vetOpenHoursToday.open[0][0].substring(0,2)),+(vetOpenHoursToday.open[0][0].substring(3)))
 // }
 //
-// function isTimeWithin(start, end, target){
-//     return (target >= start && target < end)
-// }
+function isTimeWithin(start, end, target){
+    return (target >= start && target < end)
+}

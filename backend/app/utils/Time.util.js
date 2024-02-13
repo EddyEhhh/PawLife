@@ -27,3 +27,19 @@ export function convertTimetoEpochSecond(timeStr) {
     // Convert the Date object to epoch time (milliseconds since Jan 1, 1970)
     return today.getTime()/1000;
 }
+
+export function convertEpochToReadable(epochTimeInSeconds) {
+    const unixMilliSeconds = epochTimeInSeconds * 1000;
+    const myDate = new Date(unixMilliSeconds);
+    const options = {weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'};
+
+
+    return myDate.toLocaleString([], options);
+}
+
+export function epochToDate(epochTimeInSeconds) {
+    let date = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    date.setUTCSeconds(epochTimeInSeconds);
+
+    return date;
+}
