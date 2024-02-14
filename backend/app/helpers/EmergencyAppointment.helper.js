@@ -22,26 +22,45 @@ export async function getEmergencyAppointment(gps, petId){
     try {
         let allAppointments = [];
         console.log("===Emergency Appointment===")
-        const forceTime = getEpochInSecondsNow();
-        console.log("Current set time:", convertEpochToReadable(forceTime))
-        const vets = await Vet.find({});
+        // const currentTime = getEpochInSecondsNow();
+        // console.log("Finding appointment during/after:", convertEpochToReadable(forceTime))
+        const vets = await Vet.find({}).populate('location');
 
 
         // Wait for all appointments to be found and push them to allAppointments
         const appointmentsPromises = vets.map(async (vet) => {
-            const nextAvailable = await getNextAvailableAppointmentByVet(vet, forceTime);
-            return { vet, next_available: nextAvailable, travel_time_in_min: 20, travel_distance_in_m: 2000};
+
+
+            // console.log("VET TEST: ", vetDestinationAddress);
+            let travelInfo = await getTravelInfo(gps, vet.location)
+
+
+            let estTimeOfArrival = getEpochInSecondsNow() + (+travelInfo.data.rows[0].elements[0].duration.value) + SECONDS_IN_MINUTE * 10;
+
+            let nextAvailable = await getNextAvailableAppointmentByVet(vet, estTimeOfArrival);
+
+
+            console.log("Time now:", convertEpochToReadable(getEpochInSecondsNow()))
+            console.log("Travel Time:", +travelInfo.data.rows[0].elements[0].duration.value, "seconds")
+            console.log("est Time of arrival:", convertEpochToReadable(estTimeOfArrival) + "\n------")
+            console.log(`Go at: ${convertEpochToReadable(nextAvailable)}`);
+            console.log(`=====${vet.name}, ${vet._id}`);
+            return { vet, next_available: nextAvailable, distance_matrix: travelInfo.data};
+
         });
 
         const appointments = await Promise.all(appointmentsPromises);
 
         appointments.forEach((appointment) => {
             allAppointments.push(appointment);
-            console.log(`Go at: ${convertEpochToReadable(appointment.next_available)}`);
-            console.log(`=====${appointment.vet.name}, ${appointment.vet._id}`);
+            // console.log(`Go at: ${convertEpochToReadable(appointment.next_available)}`);
+            // console.log(`=====${appointment.vet.name}, ${appointment.vet._id}`);
         });
 
-        console.log("=====", allAppointments);
+        // Sort the vets by next_available date in ascending order (earlier dates first)
+        allAppointments.sort((a, b) => a.next_available - b.next_available);
+
+        // console.log("=====", allAppointments);
         return allAppointments;
     } catch (err) {
         console.error(err);
@@ -65,6 +84,7 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
         let appointments = await Appointment.find({vet_id: vetId, end_at: {$gt: minTimeInEpochSecond}}).limit(5);
 
         displayAppointment(appointments);
+        // console.log(`=====${vet.name}, ${vet._id}`);
 
         let is_found = false;
 

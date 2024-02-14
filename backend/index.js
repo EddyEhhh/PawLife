@@ -10,11 +10,13 @@ import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
 import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
 import emergencyRouter from "./app/routes/Emergency.route.js"
+import axios from "axios";
 
 dotenv.config({ path: './config/db.config.env' });
 
 const app = express();
 // const port = PORT || 5000;
+
 
 app.use(cors());
 app.use(express.json());
@@ -47,14 +49,10 @@ mongoose
 const testRouter = express.Router();
 async function testFunction(){
     try {
-        // return Appointment.find(
-        //     {
-        //         vet_id: '65c3e28a0a12842cbe8e88c1',
-        //         end_at: {$gt: getEpochInSecondsNow()}
-        //     })
-        //     .sort({start_at: 1})
-        //     .limit(50);
-        console.log("Test")
+
+        console.log("TEST");
+
+        return "TEST";
         const result = await getEmergencyAppointment("Hello").then((result) => {
             console.log("Result:", result);
         })
