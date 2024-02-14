@@ -4,6 +4,7 @@ import {Vet, Location} from "../models/Vet.model.js";
 import {Pet} from "../models/Pet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
 import {getEpochInSecondsNow} from "../utils/Time.util.js";
+import {User} from "../models/User.model.js";
 
 dotenv.config({ path: './config/db.config.env' });
 
@@ -253,6 +254,7 @@ const petsData = [
         contact: "+65-8123-0001"
     },
     {
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a01'),
         name: "Kiyo",
         species: "Dog",
         breed: "Shihpoo",
@@ -261,6 +263,7 @@ const petsData = [
         contact: "+65-8123-0001"
     },
     {
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a02'),
         name: "Whiskers",
         species: "Cat",
         breed: "Persian",
@@ -269,6 +272,7 @@ const petsData = [
         contact: "+65-8123-0002"
     },
     {
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a03'),
         name: "Charlie",
         species: "Rabbit",
         breed: "Holland Lop",
@@ -277,6 +281,7 @@ const petsData = [
         contact: "+65-8123-0003"
     },
     {
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a04'),
         name: "Luna",
         species: "Bird",
         breed: "Cockatiel",
@@ -285,6 +290,7 @@ const petsData = [
         contact: "+65-8123-0004"
     },
     {
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a05'),
         name: "Ellie",
         species: "Hamster",
         breed: "Syrian",
@@ -306,6 +312,36 @@ async function createPets() {
     }
 }
 
+const usersData = [
+    {
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a01'),
+        username: "Clarin",
+        email: "clarin@example.com",
+        pets:
+            [
+            new mongoose.Types.ObjectId('5e234f234f234f234f234a01')
+            , new mongoose.Types.ObjectId('5e234f234f234f234f234a02')
+            , new mongoose.Types.ObjectId('5e234f234f234f234f234a03')
+            , new mongoose.Types.ObjectId('5e234f234f234f234f234a04')
+            , new mongoose.Types.ObjectId('5e234f234f234f234f234a05')
+        ]
+    },
+    {
+        username: "john",
+        email: "john@example.com"
+    }
+
+]
+async function createUsers() {
+    try {
+        const userObjects = usersData.map(userData => new User(userData));
+        await User.insertMany(userObjects);
+        console.log("Users created successfully!");
+        return userObjects.map((user) => user._id);
+    } catch (err) {
+        console.error("Error creating user:", err);
+    }
+}
 
 const appointmentsData = [
     {
@@ -390,6 +426,16 @@ async function removePets(){
 
 }
 
+async function removeUsers(){
+    try {
+        await User.deleteMany();
+        console.log('User collection removed')
+    } catch (err) {
+        console.error("Error when removing user: ", err)
+    }
+
+}
+
 async function removeAppointments(){
     try {
         await Appointment.deleteMany();
@@ -408,10 +454,12 @@ async function run() {
         await removeLocations();
         await removePets();
         await removeAppointments();
+        await removeUsers();
 
         // Then proceed with creation operations
         createLocations()
             .then(createPets())
+            .then(createUsers())
             .then((locationIds) => createVets((locationIds)))
             .then((vet_ids) => createManualAppointmentsForVet(vet_ids))
             .catch((err) => ("Error", console.error))

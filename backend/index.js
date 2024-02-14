@@ -10,6 +10,8 @@ import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
 import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
 import emergencyRouter from "./app/routes/Emergency.route.js"
+import userRouter from "./app/routes/User.route.js"
+import petRouter from "./app/routes/Pet.route.js"
 import axios from "axios";
 
 dotenv.config({ path: './config/db.config.env' });
@@ -24,6 +26,8 @@ app.use(express.json());
 app.use('/api/v1', demoRouter);
 app.use('/api/v1/vets', vetRouter);
 app.use('/api/v1/emergency', emergencyRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/pets', petRouter);
 
 // console.log("DB:", process.env.MONGODBURL)
 
