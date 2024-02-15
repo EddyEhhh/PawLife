@@ -345,10 +345,10 @@ async function createUsers() {
 
 const appointmentsData = [
     {
-        // start_at: Date.now(),
-        // duration: 30,
-        // pet_id: "5e234f234f234f234f234f23",
-        // vet_id: "5e234f234f234f234f234f24",
+        start_at: Date.now(),
+        duration: 30,
+        pet_id: "5e234f234f234f234f234f23",
+        vet_id: "5e234f234f234f234f234f24",
         description: "General checkup"
     },
 ]
