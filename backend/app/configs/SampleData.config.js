@@ -354,13 +354,17 @@ const appointmentsData = [
 ]
 async function createEachAppointments(vet_id, interval_in_minutes) {
     try {
+        let start_at = (getEpochInSecondsNow() + interval_in_minutes * SECONDS_IN_MIN);
+        start_at = start_at - start_at%60
+        let end_at = (getEpochInSecondsNow() + (interval_in_minutes + 30) * SECONDS_IN_MIN)
+        end_at = end_at - end_at%60
         const appointmentObjects = appointmentsData
             .map((appointmentData, index) => new Appointment(
                 {
                     ...appointmentData,
-                    start_at: getEpochInSecondsNow() + interval_in_minutes * SECONDS_IN_MIN,
+                    start_at: start_at,
                     duration: 30,
-                    end_at: getEpochInSecondsNow() + (interval_in_minutes + 30) * SECONDS_IN_MIN ,
+                    end_at: end_at,
                     vet_id: vet_id,
                     pet_id: "5e234f234f234f234f234f24"
                 }));

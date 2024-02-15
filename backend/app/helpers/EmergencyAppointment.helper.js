@@ -11,11 +11,43 @@ import res from "express/lib/response.js";
 import {getTravelInfo} from "../utils/GoogleMap.utils.js";
 import mongoose from "mongoose";
 import convert from "lodash/fp/convert.js";
+import {Pet} from "../models/Pet.model.js";
 
 const DAY = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 const SECONDS_IN_MINUTE = 60;
 const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
 const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
+
+export async function createEmergencyAppointment(pet_id, vet_id, appointment_time, appointment_duration_minutes){[]
+
+    // console.log("input:",pet_id, vet_id, appointment_time, appointment_duration)
+    const pet = (await Pet.find({_id:  pet_id}))[0];
+    const vet = (await Vet.find({_id: vet_id}))[0];
+    // console.log("PET:", await pet)
+
+    await isAppointmentAvailable(vet, appointment_time).then(is_available => {
+        console.log("AVAIL:",is_available)
+        if(!is_available){
+            throw new Error("error.appointment.unavailable")
+        }
+    })
+
+    const appointmentData = {
+        start_at: appointment_time,
+        duration: appointment_duration_minutes,
+        end_at: appointment_time + (appointment_duration_minutes * SECONDS_IN_MINUTE),
+        pet_id: pet_id,
+        vet_id: vet_id,
+        is_emergency: true,
+        description: `Emergency appointment for ${pet.name} (${pet.species} - ${pet.breed})`
+    }
+    await Appointment.insertMany([appointmentData]).then(result => {
+
+    }).catch(err => {
+        throw new Error("error.appointment.unableToInsert", err.message)
+    });
+
+}
 
 export async function getEmergencyAppointment(gps, petId){
 
@@ -24,6 +56,7 @@ export async function getEmergencyAppointment(gps, petId){
         console.log("===Emergency Appointment===")
         // const currentTime = getEpochInSecondsNow();
         // console.log("Finding appointment during/after:", convertEpochToReadable(forceTime))
+
         const vets = await Vet.find({}).populate('location');
 
 
@@ -92,7 +125,7 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
 
         while(!is_found) {
             for(let i = 0 ; i < appointments.length ; i++){
-                appointmentTime = appointmentTime-appointmentTime%100
+                // appointmentTime = appointmentTime-appointmentTime%60
                 // console.log(appointments[0])
                 // if no ongoing appointment during appointmentTime
                 if(!await isTimeWithin(appointments[i].start_at, appointments[i].end_at, appointmentTime)){
@@ -103,7 +136,7 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
                 }
 
                 // else update appointmentTime to end of above appointment
-                appointmentTime = appointments[i].end_at/100*100;
+                appointmentTime = appointments[i].end_at;
                 // console.log("B: ", appointmentTime)
 
             }
@@ -122,6 +155,18 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
     } catch (err) {
         console.error("Error while finding next available appointment: " + err);
     }
+
+}
+
+async function isAppointmentAvailable(vet, appointmentTime){
+    // console.log("VET: ",vet)
+    return await Appointment.find({vet_id: vet._id, end_at: {$gte: appointmentTime}}).limit(1).then(appointment => {
+        // console.log("INPUT:",appointment[0].start_at, appointment[0].end_at, appointmentTime)
+        //     console.log("App:",!isTimeWithin(appointment[0].start_at, appointment[0].end_at, appointmentTime));
+        // console.log("App:2",isVetOpen(vet,  appointmentTime));
+            return (!isTimeWithin(appointment[0].start_at, appointment[0].end_at, appointmentTime)) && isVetOpen(vet,  appointmentTime);
+        }
+    );
 
 }
 
@@ -194,9 +239,14 @@ function nextVetOpen(vet, timeInEpochSecond){
 
 
 //
-function displayAppointment(appointments){
-    appointments.forEach(appointment => {
-        console.log(convertEpochToReadable(appointment.start_at), '-', convertEpochToReadable(appointment.end_at));
+async function displayAppointment(appointments){
+     appointments.forEach(appointment => {
+         // Vet.find({_id: appointment.vet_id}).then((vet) => {
+         //     if(isVetOpen(vet[0], appointment.end_at)){
+                 console.log(convertEpochToReadable(appointment.start_at), '-', convertEpochToReadable(appointment.end_at));
+             // }
+        // })
+
     });
 
 }

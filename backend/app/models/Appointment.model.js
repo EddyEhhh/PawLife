@@ -34,9 +34,9 @@ const appointmentSchema = mongoose.Schema({
                     required: true,
                     index: true,
                 },
-                is_active: {
+                is_emergency: {
                     type: Boolean,
-                    default: true, // Appointment active by default
+                    default: false, // Appointment active by default
                 },
                 description: {
                     type: String, // Optional description of the appointment

@@ -8,7 +8,7 @@ import vetRouter from "./app/routes/Vet.route.js"
 import {Appointment} from "./app/models/Appointment.model.js";
 import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
-import {getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
+import {createEmergencyAppointment, getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";
 import emergencyRouter from "./app/routes/Emergency.route.js"
 import userRouter from "./app/routes/User.route.js"
 import petRouter from "./app/routes/Pet.route.js"
@@ -51,18 +51,16 @@ mongoose
 // TESTING CODE
 
 const testRouter = express.Router();
-async function testFunction(){
+async function testFunction(pet_id, vet_id, appointment_time, appointment_duration){
     try {
 
         console.log("TEST");
 
-        return "TEST";
-        const result = await getEmergencyAppointment("Hello").then((result) => {
-            console.log("Result:", result);
-        })
+
+        await createEmergencyAppointment(pet_id, vet_id, appointment_time, appointment_duration)
 
     } catch (err) {
-        console.error(err);
+        throw new Error("error.appointment.unavailable")
     }
     // console.log("Test Result: ", result.explain()
     //     .then(explanation => {
@@ -73,13 +71,15 @@ async function testFunction(){
     //     }));
 }
 
-testRouter.get('/', async (req, res) =>{
+testRouter.post('/', async (req, res) =>{
     try {
-        const result = await testFunction();
+        const { pet_id, vet_id } = req.query;
+        const { appointment_time, appointment_duration } = req.body
+        const result = await testFunction(pet_id, vet_id, appointment_time, appointment_duration);
         return res.status(200).json(result);
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: "Error"});
+        res.status(500).json({message: err.message});
     }
 });
 

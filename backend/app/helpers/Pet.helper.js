@@ -17,9 +17,9 @@ export async function addPetToUser(userId, petData) {
         console.log("User: ", user);
         await User.updateOne({_id: user[0]._id}, user[0]);
 
-
         console.log("Pet added successfully!");
     } catch (error) {
         console.error("Error adding pet:", error);
     }
+
 }
