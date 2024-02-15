@@ -16,7 +16,8 @@ import axiosInstance from "./util/axiosInstance";
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [isModalVisible, setModalVisible] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +33,8 @@ const SosTab = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const toggleModal = () => {
+  const toggleModal = (item) => {
+    setSelectedItem(item);
     setModalVisible(!isModalVisible);
   };
 
@@ -44,7 +46,7 @@ const SosTab = ({ navigation }) => {
         </View>
       )}
       {!loading && (
-        <View>
+        <View style={globalStyles.container}>
           <ScrollView>
             <SafeAreaView style={styles.topContainer}>
               <Image
@@ -80,91 +82,6 @@ const SosTab = ({ navigation }) => {
             <SafeAreaView style={{ backgroundColor: "white" }}>
               {data.vets.map((item) => (
                 <View key={item._id}>
-                  <Modal
-                    transparent={true}
-                    visible={isModalVisible}
-                    onBackdropPress={() => setModalVisible(false)}
-                  >
-                    <View
-                      style={styles.modalContainer}
-                      backgroundColor="rgba(0,0,0,0.1)"
-                    >
-                      <View style={styles.modalBody}>
-                        <View style={styles.TopPressContainer}>
-                          <View style={styles.topWrapper}>
-                            <View style={styles.leftWrapper}>
-                              <Image
-                                source={{
-                                  uri: item.image_url,
-                                }}
-                                style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                              />
-                            </View>
-                            <View style={styles.rightWrapper}>
-                              <View style={styles.innerLeftWrapper}>
-                                <Text style={styles.clinicsName}>
-                                  {item.name}
-                                </Text>
-                                <Text style={styles.clinicsAddress}>
-                                  {item.location.street} {"\n"}
-                                  {item.location.country}
-                                  {item.location.postal_code}
-                                </Text>
-                              </View>
-                              <View>
-                                <Text style={styles.time}>1:45 AM</Text>
-                                <View style={styles.distanceWrapper}>
-                                  <View>
-                                    <Text style={styles.distance}>25 min</Text>
-                                    <Text style={styles.distance}>5 km</Text>
-                                  </View>
-                                  <View style={styles.distanceRightWrapper}>
-                                    <Image
-                                      source={require("../assets/sosPage-assets/car-logo.png")}
-                                      style={styles.carLogo}
-                                    />
-                                  </View>
-                                </View>
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-
-                        <View style={styles.BottomPressContainer}>
-                          <Text style={styles.Modalsubtitle}>
-                            Are you sure you want to schedule an urgent visit
-                            for your pet?
-                          </Text>
-                          <TouchableOpacity
-                            style={[
-                              styles.ModalCancelButton,
-                              { backgroundColor: "#A5A5A5" },
-                            ]}
-                            onPress={toggleModal}
-                          >
-                            <View>
-                              <Text style={styles.scheduleButtonTitle}>
-                                Cancel
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={[
-                              styles.ModalScheduleButton,
-                              { backgroundColor: "#F05D5E" },
-                            ]}
-                          >
-                            <View>
-                              <Text style={styles.scheduleButtonTitle}>
-                                Schedule
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </Modal>
-
                   <View style={styles.item}>
                     <View style={styles.topWrapper}>
                       <View style={styles.leftWrapper}>
@@ -203,7 +120,7 @@ const SosTab = ({ navigation }) => {
                     </View>
                     <TouchableOpacity
                       style={styles.scheduleButtonContainer}
-                      onPress={toggleModal}
+                      onPress={() => {toggleModal(item)}}
                     >
                       <Text style={styles.scheduleButtonTitle}>
                         Schedule Urgent Visit
@@ -212,8 +129,93 @@ const SosTab = ({ navigation }) => {
                   </View>
                 </View>
               ))}
+              <View style={{ height: 20 }} />
             </SafeAreaView>
           </ScrollView>
+          <Modal
+            transparent={true}
+            visible={isModalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+          >
+            <View
+              style={styles.modalContainer}
+              backgroundColor="rgba(0, 0, 0, 0.2)"
+            >{selectedItem && (
+              <View style={styles.modalBody}>
+                <View style={styles.TopPressContainer}>
+                  <View style={styles.topWrapper}>
+                    <View style={styles.leftWrapper}>
+                      <Image
+                        source={{
+                          uri: selectedItem.image_url,
+                        }}
+                        style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                      />
+                    </View>
+                    <View style={styles.rightWrapper}>
+                      <View style={styles.innerLeftWrapper}>
+                        <Text style={styles.clinicsName}>
+                          {selectedItem.name}
+                        </Text>
+                        <Text style={styles.clinicsAddress}>
+                          {selectedItem.location.street} {"\n"}
+                          {selectedItem.location.country}
+                          {selectedItem.location.postal_code}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text style={styles.time}>1:45 AM</Text>
+                        <View style={styles.distanceWrapper}>
+                          <View>
+                            <Text style={styles.distance}>25 min</Text>
+                            <Text style={styles.distance}>5 km</Text>
+                          </View>
+                          <View style={styles.distanceRightWrapper}>
+                            <Image
+                              source={require("../assets/sosPage-assets/car-logo.png")}
+                              style={styles.carLogo}
+                            />
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.BottomPressContainer}>
+                  <Text style={styles.Modalsubtitle}>
+                    Are you sure you want to schedule an urgent visit
+                    for your pet?
+                  </Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalCancelButton,
+                      { backgroundColor: "#A5A5A5" },
+                    ]}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>
+                        Cancel
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalScheduleButton,
+                      { backgroundColor: "#F05D5E" },
+                    ]}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>
+                        Schedule
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+            </View>
+          )}</View>
+          </Modal>
         </View>
       )}
     </View>
@@ -369,17 +371,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   modalContainer: {
-    flex: 1,
+    left: -20,
+    bottom: 0,
+    width: "120%",
+    height: "110%",
     alignContent: "center",
     justifyContent: "center",
   },
   modalBody: {
     display: "flex",
-    backgroundColor: "#D9FBF7",
+    backgroundColor: "#F2F2F2",
     marginTop: 10,
-    marginHorizontal: 5,
+    marginHorizontal: "5%",
     borderRadius: 20,
-    height: "30%",
+    height: "28%",
+    width: "85%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -387,9 +393,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    width: "90%",
   },
   BottomPressContainer: {
-    backgroundColor: "#F2F2F2",
+    marginTop: 0,
+    backgroundColor: "#FFFFFF",
     flex: 1.2,
     flexDirection: "row",
     flexWrap: "wrap",
@@ -402,7 +410,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginHorizontal: 7,
-    marginVertical: 5,
+    marginTop: 8,
     borderRadius: 18,
     alignItems: "center",
     width: 100,
@@ -413,7 +421,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginHorizontal: 7,
-    marginVertical: 5,
+    marginTop: 8,
     borderRadius: 18,
     alignItems: "center",
     width: 150,

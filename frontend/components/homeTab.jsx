@@ -82,6 +82,7 @@ const HomeTab = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
           </View>
+          <View style={{ height: 20 }} />
         </SafeAreaView>
       </ScrollView>
     </View>

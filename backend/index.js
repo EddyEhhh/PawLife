@@ -12,6 +12,7 @@ import {createEmergencyAppointment, getEmergencyAppointment} from "./app/helpers
 import emergencyRouter from "./app/routes/Emergency.route.js"
 import userRouter from "./app/routes/User.route.js"
 import petRouter from "./app/routes/Pet.route.js"
+import appointmentRouter from "./app/routes/Appointment.js"
 import axios from "axios";
 
 dotenv.config({ path: './config/db.config.env' });
@@ -28,6 +29,7 @@ app.use('/api/v1/vets', vetRouter);
 app.use('/api/v1/emergency', emergencyRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/pets', petRouter);
+app.use('/api/v1/appointments', appointmentRouter)
 
 // console.log("DB:", process.env.MONGODBURL)
 

@@ -60,7 +60,13 @@ const SettingStack = () => {
 
 const BottomTab = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveBackgroundColor: "#7BDFF2",
+        tabBarShowLabel: false,
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeStack}
@@ -76,7 +82,7 @@ const BottomTab = () => {
         }}
       />
       <Tab.Screen
-        name="SOS "
+        name="SOS"
         component={SosStack}
         options={{
           tabBarIcon: ({ size, focused, color }) => {
