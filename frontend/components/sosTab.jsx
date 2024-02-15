@@ -44,7 +44,7 @@ const SosTab = ({ navigation }) => {
         </View>
       )}
       {!loading && (
-        <View>
+        <View style={globalStyles.container}>
           <ScrollView>
             <SafeAreaView style={styles.topContainer}>
               <Image
@@ -87,7 +87,7 @@ const SosTab = ({ navigation }) => {
                   >
                     <View
                       style={styles.modalContainer}
-                      backgroundColor="rgba(0,0,0,0.1)"
+                      backgroundColor="rgba(0, 0, 0, 0.2)"
                     >
                       <View style={styles.modalBody}>
                         <View style={styles.TopPressContainer}>
@@ -212,6 +212,7 @@ const SosTab = ({ navigation }) => {
                   </View>
                 </View>
               ))}
+              <View style={{ height: 20 }} />
             </SafeAreaView>
           </ScrollView>
         </View>
@@ -369,17 +370,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   modalContainer: {
-    flex: 1,
+    left: -20,
+    bottom: 0,
+    width: "120%",
+    height: "110%",
     alignContent: "center",
     justifyContent: "center",
   },
   modalBody: {
     display: "flex",
-    backgroundColor: "#D9FBF7",
+    backgroundColor: "#F2F2F2",
     marginTop: 10,
-    marginHorizontal: 5,
+    marginHorizontal: "5%",
     borderRadius: 20,
-    height: "30%",
+    height: "28%",
+    width: "85%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -387,9 +392,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    width: "90%",
   },
   BottomPressContainer: {
-    backgroundColor: "#F2F2F2",
+    marginTop: 0,
+    backgroundColor: "#FFFFFF",
     flex: 1.2,
     flexDirection: "row",
     flexWrap: "wrap",
@@ -402,7 +409,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginHorizontal: 7,
-    marginVertical: 5,
+    marginTop: 8,
     borderRadius: 18,
     alignItems: "center",
     width: 100,
@@ -413,7 +420,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginHorizontal: 7,
-    marginVertical: 5,
+    marginTop: 8,
     borderRadius: 18,
     alignItems: "center",
     width: 150,
