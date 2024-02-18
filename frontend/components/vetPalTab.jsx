@@ -60,6 +60,9 @@ const VetPalAssist = ({ navigation }) => {
         }, 1000);
       }, 1000);
     }
+    if (selectedSymptomDetails.length !== 0) {
+      setChatTracker((prevChatTracker) => prevChatTracker + 1);
+    }
   };
 
   return (
@@ -74,75 +77,98 @@ const VetPalAssist = ({ navigation }) => {
             source={require("../assets/vetPalPage-assets/logo.png")}
           />
         </View>
-        <ScrollView style={styles.chatContainer}>
-          {/* Display pet details */}
-          {petDetails && (
-            <View style={styles.systemPrompt}>
-              <Text style={styles.systemMessage}>Name: {petDetails.name}</Text>
-              <Text style={styles.systemMessage}>
-                Species: {petDetails.species}
-              </Text>
-              <Text style={styles.systemMessage}>
-                Breed: {petDetails.breed}
-              </Text>
-              <Text style={styles.systemMessage}>Age: {petDetails.age}</Text>
-            </View>
-          )}
+        <ScrollView
+          contentContainerStyle={styles.contentContainer}
+          style={styles.chatContainer}
+          ref={(ref) => {
+            this.scrollView = ref;
+          }}
+          onContentSizeChange={() =>
+            this.scrollView.scrollToEnd({ animated: true })
+          }
+        >
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+            {/* Display pet details */}
+            {petDetails && (
+              <View style={styles.systemPrompt}>
+                <Text style={styles.systemMessage}>Dog Details</Text>
+                <Text style={styles.systemMessage}>
+                  Name: {petDetails.name}
+                </Text>
+                <Text style={styles.systemMessage}>
+                  Species: {petDetails.species}
+                </Text>
+                <Text style={styles.systemMessage}>
+                  Breed: {petDetails.breed}
+                </Text>
+                <Text style={styles.systemMessage}>Age: {petDetails.age}</Text>
+              </View>
+            )}
 
-          <View style={styles.userInput}>
-            <Text
-              style={[
-                styles.systemMessage,
-                { marginBottom: 10, fontFamily: "frank-bold" },
-              ]}
-            >
-              What's your pet's main symptom(s)?
-            </Text>
-            {/* Dropdown to select symptoms */}
-            <MultipleSelectList
-              style={styles.userInput}
-              setSelected={(val) => setSelectedSymptoms(val)}
-              data={symptoms}
-              save="value"
-              label="Symptoms"
-              maxHeight={200}
-              inputStyles={{ fontFamily: "frank-regular" }}
-              dropdownTextStyles={{ fontFamily: "frank-regular" }}
-              badgeTextStyles={{ fontFamily: "frank-regular" }}
-              labelStyles={{ fontFamily: "frank-black" }}
-            />
-          </View>
-
-          {chatTracker >= 1 && (
-            <View style={styles.systemPrompt}>
-              <Text style={styles.systemMessage}>
-                Tell us more about your dog's symptoms
-              </Text>
-            </View>
-          )}
-
-          {chatTracker >= 2 && (
-            <View style={styles.systemPrompt}>
-              <Text style={styles.systemMessage}>
-                Is your pet lethargic, or do they have a reduced appetite?
-              </Text>
-            </View>
-          )}
-
-          {chatTracker >= 3 && (
             <View style={styles.userInput}>
-              <SelectList
+              <Text
+                style={[
+                  styles.systemMessage,
+                  { marginBottom: 10, fontFamily: "frank-bold" },
+                ]}
+              >
+                What's your pet's main symptom(s)?
+              </Text>
+              {/* Dropdown to select symptoms */}
+              <MultipleSelectList
                 style={styles.userInput}
-                setSelected={(val) => setSelectedSymptomDetails(val)}
-                data={["Yes", "No"]}
+                setSelected={(val) => setSelectedSymptoms(val)}
+                data={symptoms}
                 save="value"
+                label="Symptoms"
                 maxHeight={200}
                 inputStyles={{ fontFamily: "frank-regular" }}
+                dropdownTextStyles={{ fontFamily: "frank-regular" }}
                 badgeTextStyles={{ fontFamily: "frank-regular" }}
                 labelStyles={{ fontFamily: "frank-black" }}
               />
             </View>
-          )}
+
+            {chatTracker >= 1 && (
+              <View style={styles.systemPrompt}>
+                <Text style={styles.systemMessage}>
+                  Tell us more about your dog's symptoms
+                </Text>
+              </View>
+            )}
+
+            {chatTracker >= 2 && (
+              <View style={styles.systemPrompt}>
+                <Text style={styles.systemMessage}>
+                  Is your pet lethargic, or do they have a reduced appetite?
+                </Text>
+              </View>
+            )}
+
+            {chatTracker >= 3 && (
+              <View style={styles.userInput}>
+                <SelectList
+                  style={styles.userInput}
+                  setSelected={(val) => setSelectedSymptomDetails(val)}
+                  data={["Yes", "No"]}
+                  save="value"
+                  maxHeight={200}
+                  inputStyles={{ fontFamily: "frank-regular" }}
+                  badgeTextStyles={{ fontFamily: "frank-regular" }}
+                  labelStyles={{ fontFamily: "frank-black" }}
+                />
+              </View>
+            )}
+
+            {chatTracker >= 4 && (
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => navigation.navigate("SOS")}
+              >
+                <Text style={styles.buttonTitle}>Locate Nearest Vets Now!</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </ScrollView>
       </View>
       {/* Button to submit symptoms and details for diagnosis */}
@@ -156,6 +182,7 @@ const VetPalAssist = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: "100%",
   },
   header: {
     paddingTop: 60,
@@ -166,12 +193,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 1,
   },
+  contentContainer: {
+    flexGrow: 1,
+    justifyContent: "space-between",
+    flexDirection: "column",
+  },
   chatContainer: {
-    position: "absolute",
-    bottom: 0,
     paddingHorizontal: 25,
-    height: "auto",
-    width: "100%",
   },
   systemPrompt: {
     marginBottom: 15,
@@ -202,6 +230,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontFamily: "frank-bold",
+  },
+  buttonContainer: {
+    paddingVertical: 20,
+    marginBottom: 20,
+    backgroundColor: "#F05D5E",
+    borderRadius: 18,
+    alignItems: "center",
+    width: "100%",
+  },
+  buttonTitle: {
+    fontFamily: "frank-bold",
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
