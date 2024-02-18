@@ -56,9 +56,6 @@ const testRouter = express.Router();
 async function testFunction(pet_id, vet_id, appointment_time, appointment_duration){
     try {
 
-        console.log("TEST");
-
-
         await createEmergencyAppointment(pet_id, vet_id, appointment_time, appointment_duration)
 
     } catch (err) {
@@ -77,7 +74,7 @@ testRouter.post('/', async (req, res) =>{
     try {
         const { pet_id, vet_id } = req.query;
         const { appointment_time, appointment_duration } = req.body
-        const result = await testFunction(pet_id, vet_id, appointment_time, appointment_duration);
+        const result = await createEmergencyAppointment(pet_id, vet_id, appointment_time, appointment_duration);
         return res.status(200).json(result);
     } catch (err) {
         console.error(err);

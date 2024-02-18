@@ -11,7 +11,7 @@ const appointmentSchema = mongoose.Schema({
                     default: Date.now, // Automatic timestamp upon modification
                 },
                 start_at: {
-                    type: Number, // Timestamp in UNIX format (milliseconds since epoch)
+                    type: Number, // Timestamp in UNIX format (Second since epoch)
                     required: true,
                 },
                 duration: {
