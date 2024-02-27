@@ -21,7 +21,7 @@ export default function App() {
         return;
       }
       let currentlocation = await Location.getCurrentPositionAsync({});
-      console.log(currentlocation);
+      global.currentLocation = currentlocation;
     };
     getPermissions();
   }, []);

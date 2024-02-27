@@ -57,6 +57,7 @@ const HomeTab = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.featureBox, { backgroundColor: "#E0FCF9" }]}
+              onPress={() => navigation.navigate("TeleScreen")}
             >
               <Image
                 style={{ resizeMode: "contain" }}

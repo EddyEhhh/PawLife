@@ -163,7 +163,13 @@ const VetPalAssist = ({ navigation }) => {
             {chatTracker >= 4 && (
               <TouchableOpacity
                 style={styles.buttonContainer}
-                onPress={() => navigation.navigate("SOS")}
+                onPress={() => {
+                  if (global.navFromSos) {
+                    navigation.goBack();
+                  } else {
+                    navigation.navigate("SOS");
+                  }
+                }}
               >
                 <Text style={styles.buttonTitle}>Locate Nearest Vets Now!</Text>
               </TouchableOpacity>

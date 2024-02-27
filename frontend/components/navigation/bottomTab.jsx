@@ -7,6 +7,8 @@ import SettingScreen from "../settingTab";
 import PawScreen from "../pawTab";
 import SosScreen from "../sosTab";
 import VetPalScreen from "../vetPalTab";
+import TeleScreen from "../teleTab";
+import TeleDetailsScreen from "../teleDetailsTab";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -20,6 +22,8 @@ const HomeStack = () => {
     >
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="VetPalScreen" component={VetPalScreen} />
+      <Stack.Screen name="TeleScreen" component={TeleScreen} />
+      <Stack.Screen name="TeleDetailsScreen" component={TeleDetailsScreen} />
     </Stack.Navigator>
   );
 };

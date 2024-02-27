@@ -18,7 +18,6 @@ const SosTab = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-
   useEffect(() => {
     const fetchData = async () => {
       await axiosInstance
@@ -64,7 +63,10 @@ const SosTab = ({ navigation }) => {
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => navigation.navigate("VetPalScreen")}
+                  onPress={() => {
+                    navigation.navigate("VetPalScreen");
+                    global.navFromSos = true;
+                  }}
                 >
                   <Image
                     source={require("../assets/sosPage-assets/lightbulb-logo.png")}
@@ -120,7 +122,9 @@ const SosTab = ({ navigation }) => {
                     </View>
                     <TouchableOpacity
                       style={styles.scheduleButtonContainer}
-                      onPress={() => {toggleModal(item)}}
+                      onPress={() => {
+                        toggleModal(item);
+                      }}
                     >
                       <Text style={styles.scheduleButtonTitle}>
                         Schedule Urgent Visit
@@ -140,81 +144,79 @@ const SosTab = ({ navigation }) => {
             <View
               style={styles.modalContainer}
               backgroundColor="rgba(0, 0, 0, 0.2)"
-            >{selectedItem && (
-              <View style={styles.modalBody}>
-                <View style={styles.TopPressContainer}>
-                  <View style={styles.topWrapper}>
-                    <View style={styles.leftWrapper}>
-                      <Image
-                        source={{
-                          uri: selectedItem.image_url,
-                        }}
-                        style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                      />
-                    </View>
-                    <View style={styles.rightWrapper}>
-                      <View style={styles.innerLeftWrapper}>
-                        <Text style={styles.clinicsName}>
-                          {selectedItem.name}
-                        </Text>
-                        <Text style={styles.clinicsAddress}>
-                          {selectedItem.location.street} {"\n"}
-                          {selectedItem.location.country}
-                          {selectedItem.location.postal_code}
-                        </Text>
+            >
+              {selectedItem && (
+                <View style={styles.modalBody}>
+                  <View style={styles.TopPressContainer}>
+                    <View style={styles.topWrapper}>
+                      <View style={styles.leftWrapper}>
+                        <Image
+                          source={{
+                            uri: selectedItem.image_url,
+                          }}
+                          style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                        />
                       </View>
-                      <View>
-                        <Text style={styles.time}>1:45 AM</Text>
-                        <View style={styles.distanceWrapper}>
-                          <View>
-                            <Text style={styles.distance}>25 min</Text>
-                            <Text style={styles.distance}>5 km</Text>
-                          </View>
-                          <View style={styles.distanceRightWrapper}>
-                            <Image
-                              source={require("../assets/sosPage-assets/car-logo.png")}
-                              style={styles.carLogo}
-                            />
+                      <View style={styles.rightWrapper}>
+                        <View style={styles.innerLeftWrapper}>
+                          <Text style={styles.clinicsName}>
+                            {selectedItem.name}
+                          </Text>
+                          <Text style={styles.clinicsAddress}>
+                            {selectedItem.location.street} {"\n"}
+                            {selectedItem.location.country}
+                            {selectedItem.location.postal_code}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text style={styles.time}>1:45 AM</Text>
+                          <View style={styles.distanceWrapper}>
+                            <View>
+                              <Text style={styles.distance}>25 min</Text>
+                              <Text style={styles.distance}>5 km</Text>
+                            </View>
+                            <View style={styles.distanceRightWrapper}>
+                              <Image
+                                source={require("../assets/sosPage-assets/car-logo.png")}
+                                style={styles.carLogo}
+                              />
+                            </View>
                           </View>
                         </View>
                       </View>
                     </View>
                   </View>
-                </View>
 
-                <View style={styles.BottomPressContainer}>
-                  <Text style={styles.Modalsubtitle}>
-                    Are you sure you want to schedule an urgent visit
-                    for your pet?
-                  </Text>
-                  <TouchableOpacity
-                    style={[
-                      styles.ModalCancelButton,
-                      { backgroundColor: "#A5A5A5" },
-                    ]}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <View>
-                      <Text style={styles.scheduleButtonTitle}>
-                        Cancel
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      styles.ModalScheduleButton,
-                      { backgroundColor: "#F05D5E" },
-                    ]}
-                  >
-                    <View>
-                      <Text style={styles.scheduleButtonTitle}>
-                        Schedule
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                  <View style={styles.BottomPressContainer}>
+                    <Text style={styles.Modalsubtitle}>
+                      Are you sure you want to schedule an urgent visit for your
+                      pet?
+                    </Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.ModalCancelButton,
+                        { backgroundColor: "#A5A5A5" },
+                      ]}
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <View>
+                        <Text style={styles.scheduleButtonTitle}>Cancel</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.ModalScheduleButton,
+                        { backgroundColor: "#F05D5E" },
+                      ]}
+                    >
+                      <View>
+                        <Text style={styles.scheduleButtonTitle}>Schedule</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
+              )}
             </View>
-          )}</View>
           </Modal>
         </View>
       )}
