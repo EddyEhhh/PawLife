@@ -5,10 +5,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../homeTab";
 import SettingScreen from "../settingTab";
 import PawScreen from "../pawTab";
+import PawAddScreen from "../pawAddTab";
 import SosScreen from "../sosTab";
 import VetPalScreen from "../vetPalTab";
 import TeleScreen from "../teleTab";
 import TeleDetailsScreen from "../teleDetailsTab";
+import TelePaymentScreen from "../telePaymentTab";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -24,6 +26,7 @@ const HomeStack = () => {
       <Stack.Screen name="VetPalScreen" component={VetPalScreen} />
       <Stack.Screen name="TeleScreen" component={TeleScreen} />
       <Stack.Screen name="TeleDetailsScreen" component={TeleDetailsScreen} />
+      <Stack.Screen name="TelePaymentScreen" component={TelePaymentScreen} />
     </Stack.Navigator>
   );
 };
@@ -47,6 +50,7 @@ const PawStack = () => {
       }}
     >
       <Stack.Screen name="PawScreen" component={PawScreen} />
+      <Stack.Screen name="PawAddScreen" component={PawAddScreen} />
     </Stack.Navigator>
   );
 };

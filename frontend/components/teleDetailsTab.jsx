@@ -9,7 +9,6 @@ import {
   ScrollView,
   Button,
 } from "react-native";
-import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 
@@ -165,7 +164,10 @@ const TeleDetails = ({ navigation }) => {
                 ]}
                 disabled={!isButtonClickable}
                 onPress={() => {
-                  // Handle appointment booking
+                  navigation.navigate("TelePaymentScreen", {
+                    selectedDate: selectedDate,
+                    selectedTime: selectedTime,
+                  });
                 }}
               >
                 <Text

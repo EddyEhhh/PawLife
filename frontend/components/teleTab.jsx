@@ -62,7 +62,7 @@ const TeleTab = ({ navigation }) => {
               <Text style={styles.title}>Teleconsultation</Text>
               <Text style={styles.subtitle}>
                 Connect with trusted veterinarians through live video
-                consultations{" "}
+                consultations
               </Text>
             </SafeAreaView>
 
