@@ -52,7 +52,7 @@ const TeleTab = ({ navigation }) => {
       )}
       {!loading && (
         <View style={globalStyles.container}>
-          <ScrollView>
+          <ScrollView scrollIndicatorInsets={{ right: 1 }}>
             <SafeAreaView style={styles.topContainer}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Image
@@ -129,6 +129,9 @@ const TeleTab = ({ navigation }) => {
                 </View>
               ))}
               <View style={{ height: 20 }} />
+              <View
+                style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+              />
             </SafeAreaView>
           </ScrollView>
         </View>

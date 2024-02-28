@@ -84,6 +84,9 @@ const HomeTab = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={{ height: 20 }} />
+          <View
+            style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+          />
         </SafeAreaView>
       </ScrollView>
     </View>
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
   topContainer: {
     marginHorizontal: 25,
     marginTop: 60,
-    height: 310,
+    height: 300,
   },
   bottomContainer: {
     backgroundColor: "#fff",
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     fontFamily: "frank-regular",
     fontSize: 16,
-    paddingTop: 40,
+    paddingTop: 25,
   },
   buttonContainer: {
     marginTop: 20,

@@ -134,6 +134,9 @@ const SosTab = ({ navigation }) => {
                 </View>
               ))}
               <View style={{ height: 20 }} />
+              <View
+                style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+              />
             </SafeAreaView>
           </ScrollView>
           <Modal

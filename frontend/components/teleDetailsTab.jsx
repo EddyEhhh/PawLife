@@ -8,7 +8,6 @@ import {
   StyleSheet,
   ScrollView,
   Button,
-  TextInput,
 } from "react-native";
 import Modal from "react-native-modal";
 import globalStyles from "../style/global";
@@ -17,8 +16,7 @@ import axiosInstance from "./util/axiosInstance";
 const TeleDetails = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+  // const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +25,6 @@ const TeleDetails = ({ navigation }) => {
         .catch((err) => console.log(err))
         .then((response) => {
           setData(response.data);
-          setFilteredData(response.data.vets);
           setLoading(false);
         });
     };
@@ -35,13 +32,40 @@ const TeleDetails = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    const filteredClinics = data.vets.filter((clinic) =>
-      clinic.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredData(filteredClinics);
+  const mockData = {
+    availDate: {
+      "15 Feb, Thurs": [
+        "1000 AM",
+        "1100 AM",
+        "1300 PM",
+        "1400 PM",
+        "1500 PM",
+        "1600 PM",
+        "1700 PM",
+        "1800 PM",
+        "1900 PM",
+      ],
+      "16 Feb, Fri": ["0900 AM", "1200 PM", "0300 PM"],
+      "17 Feb, Sat": ["1100 AM", "0100 PM", "0400 PM"],
+      "18 Feb, Sun": ["1100 AM", "0100 PM", "0400 PM"],
+      "19 Feb, Mon": ["1100 AM", "0100 PM", "0400 PM"],
+    },
   };
+  const [selectedDate, setSelectedDate] = useState(
+    Object.keys(mockData.availDate)[0]
+  );
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  const handleDatePress = (date) => {
+    setSelectedDate(date);
+    setSelectedTime(null);
+  };
+
+  const handleTimePress = (time) => {
+    setSelectedTime(time);
+  };
+
+  const isButtonClickable = selectedTime !== null;
 
   return (
     <View style={globalStyles.container}>
@@ -52,84 +76,112 @@ const TeleDetails = ({ navigation }) => {
       )}
       {!loading && (
         <View style={globalStyles.container}>
-          <ScrollView>
+          <ScrollView scrollIndicatorInsets={{ right: 1, flex: 1 }}>
             <SafeAreaView style={styles.topContainer}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <View>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Image
+                    source={require("../assets/sosPage-assets/back-icon.png")}
+                  />
+                </TouchableOpacity>
                 <Image
-                  source={require("../assets/sosPage-assets/back-icon.png")}
-                />
-              </TouchableOpacity>
-              <Text style={styles.title}>Teleconsultation</Text>
-              <Text style={styles.subtitle}>
-                Connect with trusted veterinarians through live video
-                consultations{" "}
-              </Text>
-            </SafeAreaView>
-
-            <SafeAreaView style={{ backgroundColor: "white" }}>
-              <View style={styles.SectionStyle}>
-                <Image
-                  source={require("../assets/paws.png")} //Change your icon image here
-                  style={styles.ImageStyle}
-                />
-
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Search for clinics or vets..."
-                  clearButtonMode="while-editing"
-                  onChangeText={(query) => handleSearch(query)}
+                  source={{
+                    uri: data.vets[0].image_url,
+                  }}
+                  style={styles.clinicsLogo} // Apply styles to the Image component if necessary
                 />
               </View>
 
-              {filteredData.map((item) => (
-                <View key={item._id}>
-                  <View style={styles.item}>
-                    <View style={styles.topWrapper}>
-                      <View style={styles.leftWrapper}>
-                        <Image
-                          source={{
-                            uri: item.image_url,
-                          }}
-                          style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                        />
-                      </View>
-                      <View style={styles.rightWrapper}>
-                        <View style={styles.innerLeftWrapper}>
-                          <Text style={styles.clinicsName}>{item.name}</Text>
-                          <Text style={styles.clinicsAddress}>
-                            {item.location.street} {"\n"}
-                            {item.location.country}
-                            {item.location.postal_code}
-                          </Text>
-                        </View>
-                        <View>
-                          <Text style={styles.time}>Fee: $90</Text>
-                        </View>
-                      </View>
-                    </View>
-                    <View>
-                      <Text style={styles.clincisDetails}>
-                        Pets Treated: Dog, Cat, Guinea Pig, Reptile, Hamster,
-                        Rat, Tortoise, Rabbit
-                      </Text>
-                      <Text style={styles.clincisDetails}>
-                        Speciality(s): Ophthalmology, Canine Medicine,
-                        Cardiology
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.scheduleButtonContainer}
-                      onPress={() => {
-                        navigation.navigate("TeleDetailsScreen");
-                      }}
-                    >
-                      <Text style={styles.scheduleButtonTitle}>Schedule</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ))}
-              <View style={{ height: 20 }} />
+              <Text style={styles.title}>{data.vets[0].name}</Text>
+              <Text style={styles.subtitle}>
+                {data.vets[0].location.street}, {data.vets[0].location.country}{" "}
+                {data.vets[0].location.postal_code}
+              </Text>
+              <Text style={styles.subtitle2}>
+                Pets Treated: Dog, Cat, Guinea Pig, Reptile, Hamster, Rat,
+                Tortoise, Rabbit
+              </Text>
+              <Text style={styles.subtitle2}>
+                Speciality(s): Ophthalmology, Canine Medicine, Cardiology
+              </Text>
+              <View style={{ height: 25 }} />
             </SafeAreaView>
+
+            <SafeAreaView style={{ backgroundColor: "white" }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {Object.keys(mockData.availDate).map((date, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleDatePress(date)}
+                  >
+                    <View
+                      style={[
+                        styles.dateContainer,
+                        selectedDate === date
+                          ? styles.selectedDate
+                          : styles.unselectedDate,
+                      ]}
+                    >
+                      <Text style={styles.dateText}>{date}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <View style={{ marginHorizontal: 25 }}>
+                <Text style={styles.consultFee}>Consultation Fee: $90</Text>
+                <Text style={styles.availTimeSlotText}>
+                  Available timeslot(s):
+                </Text>
+              </View>
+              <View>
+                {selectedDate && (
+                  <View style={styles.timeContainer}>
+                    {mockData.availDate[selectedDate].map((time, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => handleTimePress(time)}
+                      >
+                        <Text
+                          style={[
+                            styles.timeText,
+                            selectedTime === time
+                              ? styles.selectedTime
+                              : styles.unselectedTime,
+                          ]}
+                        >
+                          {time}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
+              <TouchableOpacity
+                style={[
+                  styles.buttonContainer,
+                  isButtonClickable
+                    ? styles.buttonClickable
+                    : styles.buttonDisabled,
+                ]}
+                disabled={!isButtonClickable}
+                onPress={() => {
+                  // Handle appointment booking
+                }}
+              >
+                <Text
+                  style={[
+                    styles.buttonTextisButtonClickable
+                      ? styles.textClickable
+                      : styles.textDisabled,
+                  ]}
+                >
+                  Schedule
+                </Text>
+              </TouchableOpacity>
+            </SafeAreaView>
+            <View
+              style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+            />
           </ScrollView>
         </View>
       )}
@@ -140,8 +192,16 @@ const TeleDetails = ({ navigation }) => {
 const styles = StyleSheet.create({
   topContainer: {
     marginTop: 64,
-    height: 140,
+    height: "auto",
     marginHorizontal: 25,
+  },
+  clinicsLogo: {
+    height: 70,
+    width: 70,
+    borderRadius: 10,
+    resizeMode: "contain",
+    right: 0,
+    position: "absolute",
   },
   title: {
     color: "#164348",
@@ -151,7 +211,8 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "900",
     lineHeight: 50,
-    marginTop: 15,
+    marginTop: 30,
+    maxWidth: 270,
   },
   subtitle: {
     color: "#164348",
@@ -161,100 +222,106 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "300",
     lineHeight: 18,
+    marginVertical: 10,
   },
-  SectionStyle: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F9F9F9",
-    borderWidth: 1,
-    borderColor: "#D8D8D8",
-    borderRadius: 20,
-    fontFamily: "frank-regular",
-    color: "#5A7A7D",
-    fontSize: 14,
-    marginHorizontal: 20,
-    marginTop: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  ImageStyle: {
-    alignItems: "center",
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    color: "#5A7A7D",
-  },
-  item: {
-    display: "flex",
-    marginTop: 18,
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    backgroundColor: "#F2F2F2",
-    marginHorizontal: 15,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#171717",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-  },
-  topWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  leftWrapper: {
-    marginRight: 20,
-  },
-  clinicsLogo: {
-    height: 60,
-    width: 60,
-    borderRadius: 10,
-    resizeMode: "contain",
-  },
-  clinicsName: {
-    fontFamily: "frank-regular",
-    color: "#000",
-    fontSize: 12,
-  },
-  clinicsAddress: {
-    marginTop: 20,
-    fontFamily: "frank-regular",
-    color: "#3B8989",
-    fontSize: 12,
-  },
-  rightWrapper: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  innerLeftWrapper: {
-    flex: 1,
-  },
-  time: {
-    fontFamily: "frank-regular",
-    color: "#000",
-    fontSize: 14,
-  },
-  clincisDetails: {
-    marginTop: 10,
-    fontFamily: "frank-light",
-    color: "#000",
-    fontSize: 12,
-  },
-  scheduleButtonContainer: {
-    marginTop: 15,
-    paddingVertical: 15,
-    backgroundColor: "#E0FCF9",
-    borderRadius: 18,
-    alignItems: "center",
-    width: 230,
-  },
-  scheduleButtonTitle: {
-    fontFamily: "frank-bold",
+  subtitle2: {
     color: "#164348",
+    justifyContent: "center",
+    fontFamily: "frank-regular",
+    fontSize: 12,
+    fontStyle: "normal",
+    fontWeight: "300",
+    lineHeight: 18,
+    marginTop: 5,
+  },
+  dateContainer: {
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    backgroundColor: "fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedDate: {
+    backgroundColor: "#E0FCF9",
+    borderWidth: 0.5,
+    borderColor: "#164348",
+  },
+  unselectedDate: {
+    backgroundColor: "#F9F9F9",
+    borderWidth: 0.5,
+    borderColor: "#B2B2B2",
+  },
+  dateText: {
     fontSize: 14,
+    fontFamily: "frank-regular",
+  },
+  consultFee: {
+    marginTop: 20,
+    fontSize: 14,
+    fontFamily: "frank-regular",
+    alignSelf: "flex-end",
+  },
+  availTimeSlotText: {
+    marginTop: 20,
+    fontSize: 18,
+    fontFamily: "frank-regular",
+    color: "#164348",
+  },
+  timeContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedTime: {
+    backgroundColor: "#E0FCF9",
+    borderWidth: 0.5,
+    borderColor: "#164348",
+  },
+  unselectedTime: {
+    backgroundColor: "#F9F9F9",
+    borderWidth: 0.5,
+    borderColor: "#B2B2B2",
+  },
+  timeText: {
+    marginHorizontal: 5,
+    marginTop: 10,
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    fontSize: 12,
+    fontFamily: "frank-regular",
+  },
+  buttonContainer: {
+    marginTop: 30,
+    alignSelf: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonClickable: {
+    paddingVertical: 15,
+    width: 230,
+    borderRadius: 18,
+    backgroundColor: "#E0FCF9",
+  },
+  buttonDisabled: {
+    backgroundColor: "#DADADA",
+    width: 230,
+    paddingVertical: 15,
+    borderRadius: 18,
+  },
+  textClickable: {
+    color: "#164348",
+    textAlign: "center",
+    fontFamily: "frank-bold",
+    fontSize: 16,
+  },
+  textDisabled: {
+    color: "#5A7A7D",
+    textAlign: "center",
+    fontFamily: "frank-bold",
+    fontSize: 16,
   },
 });
 
