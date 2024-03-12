@@ -5,8 +5,10 @@ import {createEmergencyAppointment, getEmergencyAppointment} from "../helpers/Em
 
 export async function getEmergency(req, res){
     try {
-        // const { longitude, latitude, petId } = req.params;
-        await getEmergencyAppointment(req.body.coords, "placeholderPet").then(vets => {
+        // const { longitude, latitude, petId } = req.params
+        
+        // axios cannot use body as input
+        await getEmergencyAppointment(req.query.coords, "placeholderPet").then(vets => {
             return res.status(200).json({
                 vets: vets
             });
