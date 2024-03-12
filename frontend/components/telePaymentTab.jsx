@@ -292,7 +292,6 @@ const styles = StyleSheet.create({
     fontFamily: "frank-regular",
     color: "#5A7A7D",
     fontSize: 14,
-    marginHorizontal: 20,
     marginTop: 20,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -306,7 +305,7 @@ const styles = StyleSheet.create({
     color: "#5A7A7D",
   },
   searchInput2: {
-    flex: 0.4,
+    flex: 0.35,
     color: "#5A7A7D",
   },
   checkoutButtonContainer: {
