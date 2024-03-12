@@ -37,9 +37,12 @@ const SosTab = ({ navigation }) => {
     setSelectedPet(mockPetsData[0]);
     const fetchData = async () => {
       await axiosInstance
-        .get("/api/v1/vets")
+        .get("/api/v1/emergency", {
+          params : global.currentLocation
+        })
         .catch((err) => console.log(err))
         .then((response) => {
+          // console.log(response.data.vets[0])
           setData(response.data);
           setLoading(false);
         });
@@ -193,14 +196,16 @@ const SosTab = ({ navigation }) => {
               )}
               {clinicSelectionVisible && (
                 <View>
+
                   {data.vets.map((item) => (
-                    <View key={item._id}>
+
+                    <View key={item.vet._id}>
                       <View style={styles.item}>
                         <View style={styles.topWrapper}>
                           <View style={styles.leftWrapper}>
                             <Image
                               source={{
-                                uri: item.image_url,
+                                uri: item.vet.image_url,
                               }}
                               style={styles.clinicsLogo} // Apply styles to the Image component if necessary
                             />
@@ -208,16 +213,16 @@ const SosTab = ({ navigation }) => {
                           <View style={styles.rightWrapper}>
                             <View style={styles.innerLeftWrapper}>
                               <Text style={styles.clinicsName}>
-                                {item.name}
+                                {item.vet.name}
                               </Text>
                               <Text style={styles.clinicsAddress}>
-                                {item.location.street} {"\n"}
-                                {item.location.country}
-                                {item.location.postal_code}
+                                {item.vet.location.street} {"\n"}
+                                {item.vet.location.country}
+                                {item.vet.location.postal_code}
                               </Text>
                             </View>
                             <View>
-                              <Text style={styles.time}>1:45 AM</Text>
+                              <Text style={styles.time}>{item.vet.next_available}</Text>
                               <View style={styles.distanceWrapper}>
                                 <View>
                                   <Text style={styles.distance}>25 min</Text>
@@ -274,7 +279,7 @@ const SosTab = ({ navigation }) => {
                       <View style={styles.leftWrapper}>
                         <Image
                           source={{
-                            uri: selectedItem.image_url,
+                            uri: selectedItem.vet.image_url,
                           }}
                           style={styles.clinicsLogo} // Apply styles to the Image component if necessary
                         />
@@ -282,12 +287,12 @@ const SosTab = ({ navigation }) => {
                       <View style={styles.rightWrapper}>
                         <View style={styles.innerLeftWrapper}>
                           <Text style={styles.clinicsName}>
-                            {selectedItem.name}
+                            {selectedItem.vet.name}
                           </Text>
                           <Text style={styles.clinicsAddress}>
-                            {selectedItem.location.street} {"\n"}
-                            {selectedItem.location.country}
-                            {selectedItem.location.postal_code}
+                            {selectedItem.vet.location.street} {"\n"}
+                            {selectedItem.vet.location.country}
+                            {selectedItem.vet.location.postal_code}
                           </Text>
                         </View>
                         <View>
