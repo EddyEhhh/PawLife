@@ -12,13 +12,29 @@ import {
 import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
+import * as Location from "expo-location";
 
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [clinicSelectionVisible, setClinicSelectionVisible] = useState(false);
+  const [petSelectionVisible, setPetSelectionVisible] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState("");
+
   useEffect(() => {
+    setCurrentLocation(
+      global.address[0].streetNumber +
+        " " +
+        global.address[0].street +
+        ", " +
+        global.address[0].country +
+        " " +
+        global.address[0].postalCode
+    );
+    setSelectedPet(mockPetsData[0]);
     const fetchData = async () => {
       await axiosInstance
         .get("/api/v1/vets")
@@ -28,7 +44,6 @@ const SosTab = ({ navigation }) => {
           setLoading(false);
         });
     };
-
     fetchData();
   }, []);
 
@@ -36,6 +51,25 @@ const SosTab = ({ navigation }) => {
     setSelectedItem(item);
     setModalVisible(!isModalVisible);
   };
+
+  const mockPetsData = [
+    {
+      _id: 1,
+      name: "Gigi",
+      species: "Dog",
+      breed: "Shih Tzu",
+      imageURL:
+        "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSVcpEF_CefMEBZr08-Y2Fj1fpedpf3PXQyiDphvQWcA6rJvdGh",
+    },
+    {
+      _id: 2,
+      name: "Abby",
+      species: "Dog",
+      breed: "Poodle",
+      imageURL:
+        "https://www.purina.com.sg/sites/default/files/styles/ttt_image_original/public/2021-02/BREED%20Hero%20Desktop_0050_poodle_toy.webp?itok=7Y1anr9w",
+    },
+  ];
 
   return (
     <View style={globalStyles.container}>
@@ -52,6 +86,30 @@ const SosTab = ({ navigation }) => {
                 style={{ resizeMode: "contain" }}
                 source={require("../assets/logo.png")}
               />
+              {petSelectionVisible && (
+                <TouchableOpacity
+                  style={styles.selectedPetContainer}
+                  onPress={() => {
+                    setClinicSelectionVisible(false);
+                  }}
+                >
+                  <View style={{ alignItems: "flex-end" }}>
+                    <Text style={styles.petsName}>{selectedPet.name}</Text>
+                    <Text style={styles.selectedPetsDetails}>
+                      {" "}
+                      {selectedPet.species}
+                      {" • "}
+                      {selectedPet.breed}
+                    </Text>
+                  </View>
+                  <Image
+                    source={{
+                      uri: selectedPet.imageURL,
+                    }}
+                    style={styles.selectedPetsImage} // Apply styles to the Image component if necessary
+                  />
+                </TouchableOpacity>
+              )}
               <Text style={styles.title}>Emergency Pet Aid</Text>
               <Text style={styles.subtitle}>
                 Instant Access to Nearest Vet Clinic Now!
@@ -82,60 +140,121 @@ const SosTab = ({ navigation }) => {
             </SafeAreaView>
 
             <SafeAreaView style={{ backgroundColor: "white" }}>
-              {data.vets.map((item) => (
-                <View key={item._id}>
-                  <View style={styles.item}>
-                    <View style={styles.topWrapper}>
-                      <View style={styles.leftWrapper}>
-                        <Image
-                          source={{
-                            uri: item.image_url,
-                          }}
-                          style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                        />
-                      </View>
-                      <View style={styles.rightWrapper}>
-                        <View style={styles.innerLeftWrapper}>
-                          <Text style={styles.clinicsName}>{item.name}</Text>
-                          <Text style={styles.clinicsAddress}>
-                            {item.location.street} {"\n"}
-                            {item.location.country}
-                            {item.location.postal_code}
-                          </Text>
-                        </View>
-                        <View>
-                          <Text style={styles.time}>1:45 AM</Text>
-                          <View style={styles.distanceWrapper}>
-                            <View>
-                              <Text style={styles.distance}>25 min</Text>
-                              <Text style={styles.distance}>5 km</Text>
-                            </View>
-                            <View style={styles.distanceRightWrapper}>
+              <View style={{ marginHorizontal: 25, marginTop: 25 }}>
+                <View style={styles.locationContainer}>
+                  <Image
+                    style={styles.locationLogo}
+                    source={require("../assets/sosPage-assets/location.png")}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.currentLocation}>{currentLocation}</Text>
+                </View>
+              </View>
+              {!clinicSelectionVisible && (
+                <View>
+                  <Text style={styles.petSelectionTitle}>
+                    Select your pet for emergency vet help.
+                  </Text>
+                  {mockPetsData.map((item) => (
+                    <View key={item._id}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedPet(item);
+                          setPetSelectionVisible(true);
+                          setClinicSelectionVisible(true);
+                        }}
+                      >
+                        <View style={styles.petItem}>
+                          <View style={styles.petTopWrapper}>
+                            <View style={styles.petLeftWrapper}>
                               <Image
-                                source={require("../assets/sosPage-assets/car-logo.png")}
-                                style={styles.carLogo}
+                                source={{
+                                  uri: item.imageURL,
+                                }}
+                                style={styles.petsImage} // Apply styles to the Image component if necessary
                               />
+                            </View>
+                            <View style={styles.petRightWrapper}>
+                              <View style={styles.petInnerLeftWrapper}>
+                                <Text style={styles.petsName}>{item.name}</Text>
+                                <Text style={styles.petsDetails}>
+                                  {item.species}
+                                  {" • "}
+                                  {item.breed}
+                                </Text>
+                              </View>
                             </View>
                           </View>
                         </View>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              )}
+              {clinicSelectionVisible && (
+                <View>
+                  {data.vets.map((item) => (
+                    <View key={item._id}>
+                      <View style={styles.item}>
+                        <View style={styles.topWrapper}>
+                          <View style={styles.leftWrapper}>
+                            <Image
+                              source={{
+                                uri: item.image_url,
+                              }}
+                              style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                            />
+                          </View>
+                          <View style={styles.rightWrapper}>
+                            <View style={styles.innerLeftWrapper}>
+                              <Text style={styles.clinicsName}>
+                                {item.name}
+                              </Text>
+                              <Text style={styles.clinicsAddress}>
+                                {item.location.street} {"\n"}
+                                {item.location.country}
+                                {item.location.postal_code}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={styles.time}>1:45 AM</Text>
+                              <View style={styles.distanceWrapper}>
+                                <View>
+                                  <Text style={styles.distance}>25 min</Text>
+                                  <Text style={styles.distance}>5 km</Text>
+                                </View>
+                                <View style={styles.distanceRightWrapper}>
+                                  <Image
+                                    source={require("../assets/sosPage-assets/car-logo.png")}
+                                    style={styles.carLogo}
+                                  />
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.scheduleButtonContainer}
+                          onPress={() => {
+                            toggleModal(item);
+                          }}
+                        >
+                          <Text style={styles.scheduleButtonTitle}>
+                            Schedule Urgent Visit
+                          </Text>
+                        </TouchableOpacity>
                       </View>
                     </View>
-                    <TouchableOpacity
-                      style={styles.scheduleButtonContainer}
-                      onPress={() => {
-                        toggleModal(item);
-                      }}
-                    >
-                      <Text style={styles.scheduleButtonTitle}>
-                        Schedule Urgent Visit
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                  ))}
                 </View>
-              ))}
+              )}
               <View style={{ height: 20 }} />
               <View
-                style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+                style={{
+                  flexGrow: 1,
+                  height: "100%",
+                  backgroundColor: "#fff",
+                }}
               />
             </SafeAreaView>
           </ScrollView>
@@ -230,8 +349,25 @@ const SosTab = ({ navigation }) => {
 const styles = StyleSheet.create({
   topContainer: {
     marginTop: 60,
-    height: 330,
+    height: 335,
     marginHorizontal: 25,
+  },
+  selectedPetContainer: {
+    position: "absolute",
+    right: 0,
+    flexDirection: "row",
+  },
+  selectedPetsDetails: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 12,
+  },
+  selectedPetsImage: {
+    height: 40,
+    width: 40,
+    borderRadius: 50,
+    resizeMode: "cover",
+    marginLeft: 5,
   },
   title: {
     color: "#164348",
@@ -241,7 +377,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "900",
     lineHeight: 50,
-    marginTop: 15,
+    marginTop: 20,
   },
   subtitle: {
     color: "#164348",
@@ -293,6 +429,71 @@ const styles = StyleSheet.create({
     color: "#164348",
     fontSize: 10,
     textAlign: "center",
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  locationLogo: {
+    marginRight: 10,
+  },
+  currentLocation: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 12,
+  },
+  petSelectionTitle: {
+    marginHorizontal: 25,
+    fontFamily: "frank-medium",
+    color: "#164348",
+    fontSize: 16,
+    marginTop: 20,
+  },
+  petItem: {
+    display: "flex",
+    marginTop: 18,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    backgroundColor: "#F2F2F2",
+    marginHorizontal: 15,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  petTopWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  petLeftWrapper: {
+    marginRight: 20,
+  },
+  petsImage: {
+    height: 60,
+    width: 60,
+    borderRadius: 50,
+    resizeMode: "cover",
+  },
+  petsName: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 16,
+  },
+  petsDetails: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 12,
+  },
+  petRightWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  petInnerLeftWrapper: {
+    flex: 1,
   },
   item: {
     display: "flex",

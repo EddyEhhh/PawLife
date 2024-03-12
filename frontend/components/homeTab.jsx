@@ -54,8 +54,8 @@ const HomeTab = ({ navigation }) => {
   };
 
   const url = Platform.select({
-    ios: `maps:0,0?q=${mockData.name}, ${mockData.location.street}`,
-    android: `geo:0,0?q=${mockData.name}, ${mockData.location.street}`,
+    ios: `maps:0,0?q=${mockData.name}, ${mockData.location.street}, ${mockData.location.country}`,
+    android: `geo:0,0?q=${mockData.name}, ${mockData.location.street}, ${mockData.location.country}`,
   });
 
   const toggleModal = () => {

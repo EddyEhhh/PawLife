@@ -21,7 +21,12 @@ export default function App() {
         return;
       }
       let currentlocation = await Location.getCurrentPositionAsync({});
+      const address = await Location.reverseGeocodeAsync({
+        latitude: currentlocation.coords.latitude,
+        longitude: currentlocation.coords.longitude,
+      });
       global.currentLocation = currentlocation;
+      global.address = address;
     };
     getPermissions();
   }, []);
