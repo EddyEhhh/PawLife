@@ -6,11 +6,16 @@ import HomeScreen from "../homeTab";
 import SettingScreen from "../settingTab";
 import PawScreen from "../pawTab";
 import PawAddScreen from "../pawAddTab";
+import PawEditScreen from "../pawEditTab";
 import SosScreen from "../sosTab";
 import VetPalScreen from "../vetPalTab";
 import TeleScreen from "../teleTab";
 import TeleDetailsScreen from "../teleDetailsTab";
 import TelePaymentScreen from "../telePaymentTab";
+
+import Octicons from "react-native-vector-icons/Octicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -51,6 +56,7 @@ const PawStack = () => {
     >
       <Stack.Screen name="PawScreen" component={PawScreen} />
       <Stack.Screen name="PawAddScreen" component={PawAddScreen} />
+      <Stack.Screen name="PawEditScreen" component={PawEditScreen} />
     </Stack.Navigator>
   );
 };
@@ -73,6 +79,8 @@ const BottomTab = () => {
         headerShown: false,
         tabBarActiveBackgroundColor: "#7BDFF2",
         tabBarShowLabel: false,
+        tabBarInactiveTintColor: "#164348",
+        tabBarActiveTintColor: "#FFFFFF",
       }}
     >
       <Tab.Screen
@@ -81,10 +89,7 @@ const BottomTab = () => {
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
-              <Image
-                style={{ width: size, height: size }}
-                source={require("../../assets/tabsIcon/home.png")}
-              />
+              <Octicons name="home" style={{ color: color, fontSize: 15 }} />
             );
           },
         }}
@@ -95,9 +100,9 @@ const BottomTab = () => {
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
-              <Image
-                style={{ width: size, height: size }}
-                source={require("../../assets/tabsIcon/sos.png")}
+              <MaterialIcons
+                name="sos"
+                style={{ color: color, fontSize: 20 }}
               />
             );
           },
@@ -109,10 +114,7 @@ const BottomTab = () => {
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
-              <Image
-                style={{ width: size, height: size }}
-                source={require("../../assets/tabsIcon/paw.png")}
-              />
+              <Ionicons name="paw" style={{ color: color, fontSize: 20 }} />
             );
           },
         }}
@@ -123,9 +125,9 @@ const BottomTab = () => {
         options={{
           tabBarIcon: ({ size, focused, color }) => {
             return (
-              <Image
-                style={{ width: size, height: size }}
-                source={require("../../assets/tabsIcon/settings.png")}
+              <Ionicons
+                name="settings-outline"
+                style={{ color: color, fontSize: 20 }}
               />
             );
           },

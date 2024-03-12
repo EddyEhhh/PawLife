@@ -272,7 +272,7 @@ const HomeTab = ({ navigation }) => {
               <TouchableOpacity
                 style={[
                   styles.ModalScheduleButton,
-                  { backgroundColor: "#F05D5E" },
+                  { backgroundColor: "#D45C57" },
                 ]}
               >
                 <View>

@@ -49,7 +49,7 @@ const PawTab = ({ navigation }) => {
             {mockPetsData.map((item) => (
               <View key={item._id}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("PawAddScreen")}
+                  onPress={() => navigation.navigate("PawEditScreen")}
                 >
                   <View style={styles.item}>
                     <View style={styles.topWrapper}>
@@ -83,7 +83,10 @@ const PawTab = ({ navigation }) => {
             ))}
           </View>
           <View style={{ marginHorizontal: 25 }}>
-            <TouchableOpacity style={styles.addPetContainer}>
+            <TouchableOpacity
+              style={styles.addPetContainer}
+              onPress={() => navigation.navigate("PawAddScreen")}
+            >
               <Image source={require("../assets/add.png")} />
               <Text style={styles.addPetText}>Add Pet</Text>
             </TouchableOpacity>

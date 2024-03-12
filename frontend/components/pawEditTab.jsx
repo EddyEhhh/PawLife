@@ -15,7 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-const PawAddTab = ({ navigation }) => {
+const PawEditTab = ({ navigation }) => {
   const [petImage, setPetImage] = useState(null);
   const [petName, setPetName] = useState(null);
   const [petSpecies, setPetSpecies] = useState(null);
@@ -26,9 +26,10 @@ const PawAddTab = ({ navigation }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   useEffect(() => {
-    setPetImage(
-      "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc"
-    );
+    setPetImage(mockPetData.imageURL);
+    setPetBirthday(mockPetData.birthday);
+    setPetSpecies(mockPetData.species);
+    setPetGender(mockPetData.gender);
   }, []);
 
   const pickImage = async () => {
@@ -69,6 +70,17 @@ const PawAddTab = ({ navigation }) => {
     { label: "Pig", value: "Pig" },
   ];
 
+  const mockPetData = {
+    _id: 2,
+    name: "Abby",
+    species: "Dog",
+    breed: "Poodle",
+    birthday: "May 21 2019",
+    gender: "Female",
+    imageURL:
+      "https://www.purina.com.sg/sites/default/files/styles/ttt_image_original/public/2021-02/BREED%20Hero%20Desktop_0050_poodle_toy.webp?itok=7Y1anr9w",
+  };
+
   return (
     <View style={globalStyles.container}>
       <ScrollView>
@@ -92,7 +104,7 @@ const PawAddTab = ({ navigation }) => {
               <Image
                 source={require("../assets/sosPage-assets/back-icon.png")}
               />
-              <Text style={styles.backIconText}>Add Pet</Text>
+              <Text style={styles.backIconText}>{mockPetData.name}</Text>
             </TouchableOpacity>
             <View style={styles.petsImageContainer}>
               <TouchableOpacity onPress={pickImage}>
@@ -109,10 +121,12 @@ const PawAddTab = ({ navigation }) => {
               style={styles.searchInput}
               placeholder="Name"
               clearButtonMode="never"
+              defaultValue={mockPetData.name}
               onChangeText={(text) => setPetName(text)}
             />
             <Dropdown
               style={styles.dropdown}
+              defaultValue={mockPetData.species}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -134,6 +148,7 @@ const PawAddTab = ({ navigation }) => {
               style={styles.searchInput}
               placeholder="Breed"
               clearButtonMode="never"
+              defaultValue={mockPetData.breed}
               onChangeText={(text) => setPetBreed(text)}
             />
             <TextInput
@@ -341,4 +356,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default PawAddTab;
+export default PawEditTab;

@@ -25,8 +25,11 @@
     "react-native-screens": "~3.29.0",
     "tamagui": "^1.88.18",
     "react-native-dropdown-select-list": "2.0.5",
-    "@react-navigation/stack": "6.3.21"
-
+    "@react-navigation/stack": "6.3.21",
+    "react-native-element-dropdown": "2.10.2",
+    "react-native-modal-datetime-picker": "17.1.0",
+    "expo-image-picker": "14.7.1",
+    "react-native-vector-icons": "10.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
