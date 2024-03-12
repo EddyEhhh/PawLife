@@ -25,8 +25,25 @@ export default function App() {
         latitude: currentlocation.coords.latitude,
         longitude: currentlocation.coords.longitude,
       });
-      global.currentLocation = currentlocation;
+
+      // let currentlocation = await Location.watchPositionAsync({
+      //   accuracy: Location.Accuracy.High,
+      //   timeInterval: 5000,
+      //   distanceInterval: 50
+        
+      // },
+      //   location => {
+      //       console.log('Update location:', location.coords.latitude, location.coords.longitude)
+      //       const address = {
+      //         latitude:location.coords.latitude,
+      //         longitude:location.coords.longitude
+      //       }
+      //       global.address = address;
+      //       global.currentLocation = currentlocation;
+      // });
+      console.log(currentlocation)
       global.address = address;
+      global.currentLocation = currentlocation;
     };
     getPermissions();
   }, []);
