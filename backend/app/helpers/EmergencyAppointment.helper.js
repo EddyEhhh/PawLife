@@ -49,8 +49,6 @@ export async function createEmergencyAppointment(pet_id, vet_id, appointment_tim
         }
     })
 
-
-
 }
 
 export async function getEmergencyAppointment(gps, petId){
@@ -102,29 +100,6 @@ export async function getEmergencyAppointment(gps, petId){
     } catch (err) {
         console.error(err);
         // res.status(500).json({ error_message: "Unable to get vets"})
-    }
-}
-
-// Get upcoming appointments in HomePage
-export async function getUpcomingEmergencyAppoinments(req, res){
-    try {
-        const { user_id } = '5e234f234f234f234f234a01';
-        const appointments = await Appointment
-            .find({
-                user_id: user_id,
-                is_emergency: true
-            })
-            .then(appointments => {
-                return res.status(200).json({
-                    appointments: appointments
-                });
-            }).catch(err => {
-                console.error("Error while populating location: " + err);
-            });
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ error_message: "Unable to Upcoming Appointments"})
     }
 }
 
