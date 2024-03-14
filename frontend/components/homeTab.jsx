@@ -17,24 +17,29 @@ import axiosInstance from "./util/axiosInstance";
 const HomeTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [urgentAppointmentVisibile, setUrgentAppointmentVisibile] =
     useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     await axiosInstance
-  //       .get("/api/v1/vets")
-  //       .catch((err) => console.log(err))
-  //       .then((response) => {
-  //         setData(response.data);
-  //         setLoading(false);
-  //       });
-  //   };
-
-  //   fetchData();
-  // }, []);
-
+  useEffect(() => {
+    const fetchData = async () => {
+      await axiosInstance
+        .get("/api/v1/appointments/emergency")
+        .catch((err) => console.log(err))
+        .then((response) => {
+          if (!Object.keys(response.data.appointments).length) {
+            setUrgentAppointmentVisibile(false)
+          }
+          else {
+            setUrgentAppointmentVisibile(true)
+            setData(response.data);
+          }
+          setLoading(false);
+        });
+    };
+    fetchData();
+  }, []);
   const mockData = {
     _id: 1,
     name: "Mount Pleasant Veterinary Centre",
@@ -53,236 +58,267 @@ const HomeTab = ({ navigation }) => {
     },
   };
 
-  const url = Platform.select({
-    ios: `maps:0,0?q=${mockData.name}, ${mockData.location.street}, ${mockData.location.country}`,
-    android: `geo:0,0?q=${mockData.name}, ${mockData.location.street}, ${mockData.location.country}`,
-  });
+  const CovertTime = (datetime) => {
+    var utcSeconds = datetime;
+    var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    d.setUTCSeconds(utcSeconds);
+    var options = {
+      timeZone: 'Asia/Singapore',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    };
+    return d.toLocaleString('en-US', options)
+  }
 
-  const toggleModal = () => {
+  const url = (item) => {
+    Platform.select({
+      ios: `maps:0,0?q=${item.vet_id.name}, ${item.vet_id.location.street}, ${item.vet_id.location.country}`,
+      android: `geo:0,0?q=${item.vet_id.name}, ${item.vet_id.location.street}, ${item.vet_id.location.country}`,
+    });
+  }
+
+  const toggleModal = (item) => {
     setModalVisible(!isModalVisible);
+    setSelectedItem(item)
   };
 
   return (
     <View style={globalStyles.container}>
-      <ScrollView>
-        <SafeAreaView style={styles.topContainer}>
-          <Image
-            style={{ resizeMode: "contain" }}
-            source={require("../assets/logo.png")}
-          />
-          <Text style={styles.h1}>Emergency Pet Aid</Text>
-          <Text style={styles.h2}>at Your Fingertips</Text>
-          <Text style={styles.h3}>
-            Find Nearby Veterinary Care in Emergency Situations: Your Pet's
-            Lifeline!
-          </Text>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={() => navigation.navigate("SOS")}
-          >
-            <Text style={styles.buttonTitle}>Locate Nearest Vets Now!</Text>
-          </TouchableOpacity>
-        </SafeAreaView>
-        <SafeAreaView style={styles.bottomContainer}>
-          <Text style={styles.h4}>Upcoming Emergency Appointment</Text>
-          {!urgentAppointmentVisibile && (
-            <TouchableOpacity style={styles.apptContainer} disabled={true}>
-              <Text style={styles.apptObject}>
-                You have no upcoming appointment currently...
-              </Text>
-            </TouchableOpacity>
-          )}
-          {urgentAppointmentVisibile && (
-            <View key={mockData._id}>
-              <View style={styles.item}>
-                <View style={styles.topWrapper}>
-                  <View style={styles.leftWrapper}>
-                    <Image
-                      source={{
-                        uri: mockData.image_url,
-                      }}
-                      style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                    />
-                  </View>
-                  <View style={styles.rightWrapper}>
-                    <View
-                      style={[styles.innerLeftWrapper, { marginRight: 15 }]}
-                    >
-                      <Text style={styles.clinicsName}>{mockData.name}</Text>
-                      <Text style={styles.clinicsAddress}>
-                        {mockData.location.street} {"\n"}
-                        {mockData.location.country}
-                        {mockData.location.postal_code}
-                      </Text>
-                      <View style={[styles.rightWrapper, { marginTop: 10 }]}>
-                        <View style={styles.innerLeftWrapper}>
-                          <Text style={styles.time}>
-                            {mockData.estimateArrivingTime}
-                          </Text>
-                        </View>
-                        <View>
-                          <Text style={styles.dogDetails}>Gigi</Text>
-                          <Text style={styles.dogDetails}>
-                            {" "}
-                            {mockData.pet.species}
-                            {" • "}
-                            {mockData.pet.breed}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                    <View>
-                      <TouchableOpacity
-                        onPress={() => {
-                          toggleModal();
-                        }}
-                      >
-                        <Image
-                          style={{ resizeMode: "contain" }}
-                          source={require("../assets/homePage-assets/calendar-cancel.png")}
-                        />
-                      </TouchableOpacity>
-                      <View style={styles.distanceWrapper}>
-                        <TouchableOpacity onPress={() => Linking.openURL(url)}>
-                          <Image
-                            style={{ resizeMode: "contain" }}
-                            source={require("../assets/homePage-assets/direction.png")}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          )}
-          <Text style={styles.h4}>Feature lists</Text>
-          <View style={styles.featureContainer}>
-            <TouchableOpacity
-              style={[styles.featureBox, { backgroundColor: "#FBE9F2" }]}
-              onPress={() => navigation.navigate("VetPalScreen")}
-            >
-              <Image
-                style={{ resizeMode: "contain" }}
-                source={require("../assets/homePage-assets/lightbulb.png")}
-              />
-              <Text style={styles.featureObject}>VetPal Assist</Text>
-              <Text style={styles.featureDesc}>
-                Offering tailored triage solutions and expert advice at your
-                fingertips.
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.featureBox, { backgroundColor: "#E0FCF9" }]}
-              onPress={() => navigation.navigate("TeleScreen")}
-            >
-              <Image
-                style={{ resizeMode: "contain" }}
-                source={require("../assets/homePage-assets/onlinemedical.png")}
-              />
-              <Text style={styles.featureObject}>Teleconsultation</Text>
-              <Text style={styles.featureDesc}>
-                Connect with trusted veterinarians through live video
-                consultations
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.featureBox, { backgroundColor: "#E8D1CF" }]}
-            >
-              <Image
-                style={{ resizeMode: "contain" }}
-                source={require("../assets/homePage-assets/onlinemedical.png")}
-              />
-              <Text style={styles.featureObject}>PawsBooking</Text>
-              <Text style={styles.featureDesc}>
-                Schedule appointment directly from the Clinic Directory, keeping
-                your pet's healthcare on track
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ height: 20 }} />
-          <View
-            style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
-          />
-        </SafeAreaView>
-      </ScrollView>
-      <Modal
-        transparent={true}
-        visible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-      >
-        <View
-          style={styles.modalContainer}
-          backgroundColor="rgba(0, 0, 0, 0.2)"
-        >
-          <View style={styles.modalBody}>
-            <View style={styles.TopPressContainer}>
-              <View style={styles.topWrapper}>
-                <View style={styles.leftWrapper}>
-                  <Image
-                    source={{
-                      uri: mockData.image_url,
-                    }}
-                    style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                  />
-                </View>
-                <View style={styles.rightWrapper}>
-                  <View style={styles.innerLeftWrapper}>
-                    <Text style={styles.clinicsName}>{mockData.name}</Text>
-                    <Text style={styles.clinicsAddress}>
-                      {mockData.location.street} {"\n"}
-                      {mockData.location.country}
-                      {mockData.location.postal_code}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text style={styles.modalTime}>1:45 AM</Text>
-                    <View style={styles.modalDistanceWrapper}>
-                      <View>
-                        <Text style={styles.modalDistance}>25 min</Text>
-                        <Text style={styles.modalDistance}>5 km</Text>
-                      </View>
-                      <View style={styles.modalDistanceRightWrapper}>
-                        <Image
-                          source={require("../assets/sosPage-assets/car-logo.png")}
-                          style={styles.carLogo}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.BottomPressContainer}>
-              <Text style={styles.Modalsubtitle}>
-                Are you sure you want to cancel the emergency appointment?
-              </Text>
-              <TouchableOpacity
-                style={[
-                  styles.ModalCancelButton,
-                  { backgroundColor: "#A5A5A5" },
-                ]}
-                onPress={() => setModalVisible(false)}
-              >
-                <View>
-                  <Text style={styles.scheduleButtonTitle}>Cancel</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.ModalScheduleButton,
-                  { backgroundColor: "#D45C57" },
-                ]}
-              >
-                <View>
-                  <Text style={styles.scheduleButtonTitle}>Confirm</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
+      {loading && (
+        <View>
+          <Text>loading</Text>
         </View>
-      </Modal>
+      )}
+      {!loading && (
+        <View style={globalStyles.container}>
+          <ScrollView>
+            <SafeAreaView style={styles.topContainer}>
+              <Image
+                style={{ resizeMode: "contain" }}
+                source={require("../assets/logo.png")}
+              />
+              <Text style={styles.h1}>Emergency Pet Aid</Text>
+              <Text style={styles.h2}>at Your Fingertips</Text>
+              <Text style={styles.h3}>
+                Find Nearby Veterinary Care in Emergency Situations: Your Pet's
+                Lifeline!
+              </Text>
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => navigation.navigate("SOS")}
+              >
+                <Text style={styles.buttonTitle}>Locate Nearest Vets Now!</Text>
+              </TouchableOpacity>
+            </SafeAreaView>
+            <SafeAreaView style={styles.bottomContainer}>
+              <Text style={styles.h4}>Upcoming Emergency Appointment</Text>
+              {!urgentAppointmentVisibile && (
+                <TouchableOpacity style={styles.apptContainer} disabled={true}>
+                  <Text style={styles.apptObject}>
+                    You have no upcoming appointment currently...
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {urgentAppointmentVisibile && (
+                <View>
+                  {data.appointments.map((item) => {
+                    <View key={item._id}>
+                      <View style={styles.item}>
+                        <View style={styles.topWrapper}>
+                          <View style={styles.leftWrapper}>
+                            <Image
+                              source={{
+                                uri: item.vet_id.image_url,
+                              }}
+                              style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                            />
+                          </View>
+                          <View style={styles.rightWrapper}>
+                            <View
+                              style={[styles.innerLeftWrapper, { marginRight: 15 }]}
+                            >
+                              <Text style={styles.clinicsName}>{item.vet_id.name}</Text>
+                              <Text style={styles.clinicsAddress}>
+                                {item.vet_id.location.street} {"\n"}
+                                {item.vet_id.location.country}
+                                {item.vet_id.location.postal_code}
+                              </Text>
+                              <View style={[styles.rightWrapper, { marginTop: 10 }]}>
+                                <View style={styles.innerLeftWrapper}>
+                                  <Text style={styles.time}>
+                                    {CovertTime(item.start_at)}
+                                  </Text>
+                                </View>
+                                <View>
+                                  <Text style={styles.dogDetails}>{item.pet_id.name}</Text>
+                                  <Text style={styles.dogDetails}>
+                                    {" "}
+                                    {item.pet_id.species}
+                                    {" • "}
+                                    {item.pet_id.breed}
+                                  </Text>
+                                </View>
+                              </View>
+                            </View>
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  toggleModal(item);
+                                }}
+                              >
+                                <Image
+                                  style={{ resizeMode: "contain" }}
+                                  source={require("../assets/homePage-assets/calendar-cancel.png")}
+                                />
+                              </TouchableOpacity>
+                              <View style={styles.distanceWrapper}>
+                                <TouchableOpacity onPress={() => Linking.openURL(url(item))}>
+                                  <Image
+                                    style={{ resizeMode: "contain" }}
+                                    source={require("../assets/homePage-assets/direction.png")}
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  })}
+                </View>
+              )}
+              <Text style={styles.h4}>Feature lists</Text>
+              <View style={styles.featureContainer}>
+                <TouchableOpacity
+                  style={[styles.featureBox, { backgroundColor: "#FBE9F2" }]}
+                  onPress={() => navigation.navigate("VetPalScreen")}
+                >
+                  <Image
+                    style={{ resizeMode: "contain" }}
+                    source={require("../assets/homePage-assets/lightbulb.png")}
+                  />
+                  <Text style={styles.featureObject}>VetPal Assist</Text>
+                  <Text style={styles.featureDesc}>
+                    Offering tailored triage solutions and expert advice at your
+                    fingertips.
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.featureBox, { backgroundColor: "#E0FCF9" }]}
+                  onPress={() => navigation.navigate("TeleScreen")}
+                >
+                  <Image
+                    style={{ resizeMode: "contain" }}
+                    source={require("../assets/homePage-assets/onlinemedical.png")}
+                  />
+                  <Text style={styles.featureObject}>Teleconsultation</Text>
+                  <Text style={styles.featureDesc}>
+                    Connect with trusted veterinarians through live video
+                    consultations
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.featureBox, { backgroundColor: "#E8D1CF" }]}
+                >
+                  <Image
+                    style={{ resizeMode: "contain" }}
+                    source={require("../assets/homePage-assets/onlinemedical.png")}
+                  />
+                  <Text style={styles.featureObject}>PawsBooking</Text>
+                  <Text style={styles.featureDesc}>
+                    Schedule appointment directly from the Clinic Directory, keeping
+                    your pet's healthcare on track
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{ height: 20 }} />
+              <View
+                style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+              />
+            </SafeAreaView>
+          </ScrollView>
+          {selectedItem && (<Modal
+            transparent={true}
+            visible={isModalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+          >
+            <View
+              style={styles.modalContainer}
+              backgroundColor="rgba(0, 0, 0, 0.2)"
+            >
+              <View style={styles.modalBody}>
+                <View style={styles.TopPressContainer}>
+                  <View style={styles.topWrapper}>
+                    <View style={styles.leftWrapper}>
+                      <Image
+                        source={{
+                          uri: selectedItem.vet_id.image_url,
+                        }}
+                        style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                      />
+                    </View>
+                    <View style={styles.rightWrapper}>
+                      <View style={styles.innerLeftWrapper}>
+                        <Text style={styles.clinicsName}>{selectedItem.vet_id.name}</Text>
+                        <Text style={styles.clinicsAddress}>
+                          {selectedItem.vet_id.location.street} {"\n"}
+                          {selectedItem.vet_id.location.country}
+                          {selectedItem.vet_id.location.postal_code}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text style={styles.modalTime}>1:45 AM</Text>
+                        <View style={styles.modalDistanceWrapper}>
+                          <View>
+                            <Text style={styles.modalDistance}>25 min</Text>
+                            <Text style={styles.modalDistance}>5 km</Text>
+                          </View>
+                          <View style={styles.modalDistanceRightWrapper}>
+                            <Image
+                              source={require("../assets/sosPage-assets/car-logo.png")}
+                              style={styles.carLogo}
+                            />
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.BottomPressContainer}>
+                  <Text style={styles.Modalsubtitle}>
+                    Are you sure you want to cancel the emergency appointment?
+                  </Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalCancelButton,
+                      { backgroundColor: "#A5A5A5" },
+                    ]}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>Cancel</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalScheduleButton,
+                      { backgroundColor: "#D45C57" },
+                    ]}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>Confirm</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>)}
+        </View>
+      )}
+
     </View>
   );
 };
