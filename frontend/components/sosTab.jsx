@@ -36,10 +36,16 @@ const SosTab = ({ navigation }) => {
     );
     setSelectedPet(mockPetsData[0]);
     const fetchData = async () => {
+      var getData = {
+        longitude: global.currentLocation.coords.longitude,
+        latitude: global.currentLocation.coords.latitude
+      };
+      const config = {
+        headers : {'Content-Type': 'application/json'},
+        params : getData
+      }
       await axiosInstance
-        .get("/api/v1/emergency", {
-          params : global.currentLocation
-        })
+        .get("/api/v1/emergency", config)
         .catch((err) => console.log(err))
         .then((response) => {
           setData(response.data);
