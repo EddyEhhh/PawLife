@@ -42,7 +42,6 @@ const SosTab = ({ navigation }) => {
         })
         .catch((err) => console.log(err))
         .then((response) => {
-          // console.log(response.data.vets[0])
           setData(response.data);
           setLoading(false);
         });
@@ -55,6 +54,19 @@ const SosTab = ({ navigation }) => {
     setModalVisible(!isModalVisible);
   };
 
+  const CovertTime = (datetime) =>{
+    var utcSeconds = datetime;
+    var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    d.setUTCSeconds(utcSeconds);
+    var options = {
+      timeZone: 'Asia/Singapore',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    };
+    return d.toLocaleString('en-US', options)
+  }
   const mockPetsData = [
     {
       _id: 1,
@@ -222,11 +234,11 @@ const SosTab = ({ navigation }) => {
                               </Text>
                             </View>
                             <View>
-                              <Text style={styles.time}>{item.vet.next_available}</Text>
+                              <Text style={styles.time}>{CovertTime(item.next_available)}</Text>
                               <View style={styles.distanceWrapper}>
                                 <View>
-                                  <Text style={styles.distance}>25 min</Text>
-                                  <Text style={styles.distance}>5 km</Text>
+                                  <Text style={styles.distance}>{item.distance_matrix.rows[0].elements[0].duration.text}</Text>
+                                  <Text style={styles.distance}>{item.distance_matrix.rows[0].elements[0].distance.text}</Text>
                                 </View>
                                 <View style={styles.distanceRightWrapper}>
                                   <Image
@@ -296,11 +308,11 @@ const SosTab = ({ navigation }) => {
                           </Text>
                         </View>
                         <View>
-                          <Text style={styles.time}>1:45 AM</Text>
+                          <Text style={styles.time}>{CovertTime(selectedItem.next_available)}</Text>
                           <View style={styles.distanceWrapper}>
                             <View>
-                              <Text style={styles.distance}>25 min</Text>
-                              <Text style={styles.distance}>5 km</Text>
+                              <Text style={styles.distance}>{selectedItem.distance_matrix.rows[0].elements[0].duration.text}</Text>
+                              <Text style={styles.distance}>{selectedItem.distance_matrix.rows[0].elements[0].distance.text}</Text>
                             </View>
                             <View style={styles.distanceRightWrapper}>
                               <Image
@@ -550,11 +562,13 @@ const styles = StyleSheet.create({
     fontFamily: "frank-regular",
     color: "#000",
     fontSize: 14,
+    paddingLeft: 5
   },
   distanceWrapper: {
     position: "absolute",
     bottom: 0,
     flexDirection: "row",
+    paddingLeft: 15
   },
   distanceRightWrapper: {
     flex: 1,
