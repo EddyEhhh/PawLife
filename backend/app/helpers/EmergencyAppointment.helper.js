@@ -25,6 +25,7 @@ export async function createEmergencyAppointment(pet_id, vet_id, appointment_tim
     const vet = (await Vet.find({_id: vet_id}))[0];
     // console.log("PET:", await pet)
 
+
     await isAppointmentAvailable(vet, appointment_time).then(is_available => {
         console.log("AVAIL:",is_available)
         if(!is_available){
@@ -95,12 +96,35 @@ export async function getEmergencyAppointment(gps, petId){
 
         // Sort the vets by next_available date in ascending order (earlier dates first)
         allAppointments.sort((a, b) => a.next_available - b.next_available);
-
+        
         // console.log("=====", allAppointments);
         return allAppointments;
     } catch (err) {
         console.error(err);
         // res.status(500).json({ error_message: "Unable to get vets"})
+    }
+}
+
+// Get upcoming appointments in HomePage
+export async function getUpcomingEmergencyAppoinments(req, res){
+    try {
+        const { user_id } = '5e234f234f234f234f234a01';
+        const appointments = await Appointment
+            .find({
+                user_id: user_id,
+                is_emergency: true
+            })
+            .then(appointments => {
+                return res.status(200).json({
+                    appointments: appointments
+                });
+            }).catch(err => {
+                console.error("Error while populating location: " + err);
+            });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error_message: "Unable to Upcoming Appointments"})
     }
 }
 
