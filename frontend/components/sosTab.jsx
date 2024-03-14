@@ -54,6 +54,27 @@ const SosTab = ({ navigation }) => {
     setModalVisible(!isModalVisible);
   };
 
+  const confirmedModalClick = async (vet_id , appointmentTime) => {
+    // console.log(selectedPet._id)
+    // console.log(appointmentTime)
+    // console.log(vet_id)
+    // console.log(30)
+    setModalVisible(!isModalVisible);
+    await axiosInstance.post('/api/v1/emergency', {
+      params:{
+        pet_id: selectedPet._id,
+        vet_id: vet_id,
+        appointment_time: appointmentTime,
+        appointment_duration: 30
+      }
+    }).then((response) => {
+      console.log("Appointment Confirmed")
+    }).catch((e) => {
+      console.log(e)
+    })
+
+  }
+
   const CovertTime = (datetime) =>{
     var utcSeconds = datetime;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
@@ -69,7 +90,7 @@ const SosTab = ({ navigation }) => {
   }
   const mockPetsData = [
     {
-      _id: 1,
+      _id: '5e234f234f234f234f234a01',
       name: "Gigi",
       species: "Dog",
       breed: "Shih Tzu",
@@ -347,6 +368,7 @@ const SosTab = ({ navigation }) => {
                         styles.ModalScheduleButton,
                         { backgroundColor: "#F05D5E" },
                       ]}
+                      onPress={() => confirmedModalClick(selectedItem.vet._id , selectedItem.next_available)}
                     >
                       <View>
                         <Text style={styles.scheduleButtonTitle}>Schedule</Text>
