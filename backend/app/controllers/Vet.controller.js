@@ -23,3 +23,24 @@ export async function getVets(req, res){
         res.status(500).json({ error_message: "Unable to get vets"})
     }
 }
+
+export async function getVetsById(req, res){
+    try {
+
+        const {_id} = req.query
+        // console.log(pet_id)
+        const vet = await Vet
+            .find({_id: _id})
+            .then(vet => {
+                return res.status(200).json({
+                    vet: vet
+                });
+            }).catch(err => {
+                console.error("Vet not found " + err);
+            });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error_message: "Unable to get Vet"})
+    }
+}

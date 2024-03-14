@@ -47,7 +47,15 @@ export async function getEmergencyAppointmentsByVet(req, res){
                 is_emergency: true
             })
             .sort({start_at: 1})
-            .limit().then(appointments => {
+            .limit()
+            .populate("pet_id")
+            .populate({
+                path: "vet_id",
+                populate :{
+                    path:"location",
+                }
+            })
+            .then(appointments => {
                 console.log(appointments)
                 return res.status(200).json({
                     appointments: appointments

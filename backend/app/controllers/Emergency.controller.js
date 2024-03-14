@@ -1,7 +1,7 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
-import {createEmergencyAppointment, getEmergencyAppointment , getUpcomingEmergencyAppoinments} from "../helpers/EmergencyAppointment.helper.js";
+import {createEmergencyAppointment, getEmergencyAppointment} from "../helpers/EmergencyAppointment.helper.js";
 
 export async function getEmergency(req, res){
     try {
@@ -32,16 +32,4 @@ export async function postEmergency(req, res){
         res.status(500).json({message: err.message});
     }
 
-}
-
-// Get upcoming appointments in HomePage
-export async function getUpcomingEmergency(req, res){
-    try {
-        const result = await getUpcomingEmergencyAppoinments();
-        return res.status(200).json(result);
-
-    } catch (err) {
-        console.log("ERROR:", err);
-        res.status(500).json({ error_message: "Unable to get Upcoming Appoinments"})
-    }
 }
