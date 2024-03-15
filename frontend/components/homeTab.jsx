@@ -29,10 +29,9 @@ const HomeTab = ({ navigation }) => {
         .catch((err) => console.log(err))
         .then((response) => {
           if (!Object.keys(response.data.appointments).length) {
-            setUrgentAppointmentVisibile(false)
-          }
-          else {
-            setUrgentAppointmentVisibile(true)
+            setUrgentAppointmentVisibile(false);
+          } else {
+            setUrgentAppointmentVisibile(true);
             setData(response.data);
           }
           setLoading(false);
@@ -40,48 +39,32 @@ const HomeTab = ({ navigation }) => {
     };
     fetchData();
   }, []);
-  const mockData = {
-    _id: 1,
-    name: "Mount Pleasant Veterinary Centre",
-    image_url:
-      "https://i.ibb.co/HnZq4fq/Mount-Pleasant-Animal-Medical-Centre.jpg",
-    location: {
-      street: "491 River Valley Rd, #01-05/06 Valley Point Shopping Centre",
-      country: "Singapore",
-      postal_code: "248371",
-    },
-    estimateArrivingTime: "1:45 AM",
-    pet: {
-      name: "Gigi",
-      species: "Dog",
-      breed: "Shih Tzu",
-    },
-  };
 
   const CovertTime = (datetime) => {
     var utcSeconds = datetime;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
     d.setUTCSeconds(utcSeconds);
     var options = {
-      timeZone: 'Asia/Singapore',
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
+      timeZone: "Asia/Singapore",
+      weekday: "short",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
     };
-    return d.toLocaleString('en-US', options)
-  }
+    return d.toLocaleString("en-US", options);
+  };
 
-  const url = (item) => {
-    Platform.select({
+  const directToMap = (item) => {
+    const url = Platform.select({
       ios: `maps:0,0?q=${item.vet_id.name}, ${item.vet_id.location.street}, ${item.vet_id.location.country}`,
       android: `geo:0,0?q=${item.vet_id.name}, ${item.vet_id.location.street}, ${item.vet_id.location.country}`,
     });
-  }
+    Linking.openURL(url);
+  };
 
   const toggleModal = (item) => {
     setModalVisible(!isModalVisible);
-    setSelectedItem(item)
+    setSelectedItem(item);
   };
 
   return (
@@ -123,7 +106,7 @@ const HomeTab = ({ navigation }) => {
               )}
               {urgentAppointmentVisibile && (
                 <View>
-                  {data.appointments.map((item) => {
+                  {data.appointments.map((item) => (
                     <View key={item._id}>
                       <View style={styles.item}>
                         <View style={styles.topWrapper}>
@@ -137,22 +120,29 @@ const HomeTab = ({ navigation }) => {
                           </View>
                           <View style={styles.rightWrapper}>
                             <View
-                              style={[styles.innerLeftWrapper, { marginRight: 15 }]}
+                              style={[
+                                styles.innerLeftWrapper,
+                                { marginRight: 15 },
+                              ]}
                             >
-                              <Text style={styles.clinicsName}>{item.vet_id.name}</Text>
+                              <Text style={styles.clinicsName}>
+                                {item.vet_id.name}
+                              </Text>
                               <Text style={styles.clinicsAddress}>
                                 {item.vet_id.location.street} {"\n"}
                                 {item.vet_id.location.country}
                                 {item.vet_id.location.postal_code}
                               </Text>
-                              <View style={[styles.rightWrapper, { marginTop: 10 }]}>
+                              <View
+                                style={[styles.rightWrapper, { marginTop: 10 }]}
+                              >
                                 <View style={styles.innerLeftWrapper}>
                                   <Text style={styles.time}>
                                     {CovertTime(item.start_at)}
                                   </Text>
                                 </View>
                                 <View>
-                                  <Text style={styles.dogDetails}>{item.pet_id.name}</Text>
+                                  <Text style={styles.dogDetails}>Gigi</Text>
                                   <Text style={styles.dogDetails}>
                                     {" "}
                                     {item.pet_id.species}
@@ -165,7 +155,7 @@ const HomeTab = ({ navigation }) => {
                             <View>
                               <TouchableOpacity
                                 onPress={() => {
-                                  toggleModal(item);
+                                  toggleModal();
                                 }}
                               >
                                 <Image
@@ -174,7 +164,9 @@ const HomeTab = ({ navigation }) => {
                                 />
                               </TouchableOpacity>
                               <View style={styles.distanceWrapper}>
-                                <TouchableOpacity onPress={() => Linking.openURL(url(item))}>
+                                <TouchableOpacity
+                                  onPress={() => directToMap(item)}
+                                >
                                   <Image
                                     style={{ resizeMode: "contain" }}
                                     source={require("../assets/homePage-assets/direction.png")}
@@ -186,7 +178,7 @@ const HomeTab = ({ navigation }) => {
                         </View>
                       </View>
                     </View>
-                  })}
+                  ))}
                 </View>
               )}
               <Text style={styles.h4}>Feature lists</Text>
@@ -228,8 +220,8 @@ const HomeTab = ({ navigation }) => {
                   />
                   <Text style={styles.featureObject}>PawsBooking</Text>
                   <Text style={styles.featureDesc}>
-                    Schedule appointment directly from the Clinic Directory, keeping
-                    your pet's healthcare on track
+                    Schedule appointment directly from the Clinic Directory,
+                    keeping your pet's healthcare on track
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -239,86 +231,89 @@ const HomeTab = ({ navigation }) => {
               />
             </SafeAreaView>
           </ScrollView>
-          {selectedItem && (<Modal
-            transparent={true}
-            visible={isModalVisible}
-            onBackdropPress={() => setModalVisible(false)}
-          >
-            <View
-              style={styles.modalContainer}
-              backgroundColor="rgba(0, 0, 0, 0.2)"
+          {selectedItem && (
+            <Modal
+              transparent={true}
+              visible={isModalVisible}
+              onBackdropPress={() => setModalVisible(false)}
             >
-              <View style={styles.modalBody}>
-                <View style={styles.TopPressContainer}>
-                  <View style={styles.topWrapper}>
-                    <View style={styles.leftWrapper}>
-                      <Image
-                        source={{
-                          uri: selectedItem.vet_id.image_url,
-                        }}
-                        style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                      />
-                    </View>
-                    <View style={styles.rightWrapper}>
-                      <View style={styles.innerLeftWrapper}>
-                        <Text style={styles.clinicsName}>{selectedItem.vet_id.name}</Text>
-                        <Text style={styles.clinicsAddress}>
-                          {selectedItem.vet_id.location.street} {"\n"}
-                          {selectedItem.vet_id.location.country}
-                          {selectedItem.vet_id.location.postal_code}
-                        </Text>
+              <View
+                style={styles.modalContainer}
+                backgroundColor="rgba(0, 0, 0, 0.2)"
+              >
+                <View style={styles.modalBody}>
+                  <View style={styles.TopPressContainer}>
+                    <View style={styles.topWrapper}>
+                      <View style={styles.leftWrapper}>
+                        <Image
+                          source={{
+                            uri: selectedItem.vet_id.image_url,
+                          }}
+                          style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                        />
                       </View>
-                      <View>
-                        <Text style={styles.modalTime}>1:45 AM</Text>
-                        <View style={styles.modalDistanceWrapper}>
-                          <View>
-                            <Text style={styles.modalDistance}>25 min</Text>
-                            <Text style={styles.modalDistance}>5 km</Text>
-                          </View>
-                          <View style={styles.modalDistanceRightWrapper}>
-                            <Image
-                              source={require("../assets/sosPage-assets/car-logo.png")}
-                              style={styles.carLogo}
-                            />
+                      <View style={styles.rightWrapper}>
+                        <View style={styles.innerLeftWrapper}>
+                          <Text style={styles.clinicsName}>
+                            {selectedItem.vet_id.name}
+                          </Text>
+                          <Text style={styles.clinicsAddress}>
+                            {selectedItem.vet_id.location.street} {"\n"}
+                            {selectedItem.vet_id.location.country}
+                            {selectedItem.vet_id.location.postal_code}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text style={styles.modalTime}>1:45 AM</Text>
+                          <View style={styles.modalDistanceWrapper}>
+                            <View>
+                              <Text style={styles.modalDistance}>25 min</Text>
+                              <Text style={styles.modalDistance}>5 km</Text>
+                            </View>
+                            <View style={styles.modalDistanceRightWrapper}>
+                              <Image
+                                source={require("../assets/sosPage-assets/car-logo.png")}
+                                style={styles.carLogo}
+                              />
+                            </View>
                           </View>
                         </View>
                       </View>
                     </View>
                   </View>
-                </View>
 
-                <View style={styles.BottomPressContainer}>
-                  <Text style={styles.Modalsubtitle}>
-                    Are you sure you want to cancel the emergency appointment?
-                  </Text>
-                  <TouchableOpacity
-                    style={[
-                      styles.ModalCancelButton,
-                      { backgroundColor: "#A5A5A5" },
-                    ]}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <View>
-                      <Text style={styles.scheduleButtonTitle}>Cancel</Text>
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      styles.ModalScheduleButton,
-                      { backgroundColor: "#D45C57" },
-                    ]}
-                  >
-                    <View>
-                      <Text style={styles.scheduleButtonTitle}>Confirm</Text>
-                    </View>
-                  </TouchableOpacity>
+                  <View style={styles.BottomPressContainer}>
+                    <Text style={styles.Modalsubtitle}>
+                      Are you sure you want to cancel the emergency appointment?
+                    </Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.ModalCancelButton,
+                        { backgroundColor: "#A5A5A5" },
+                      ]}
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <View>
+                        <Text style={styles.scheduleButtonTitle}>Cancel</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.ModalScheduleButton,
+                        { backgroundColor: "#D45C57" },
+                      ]}
+                    >
+                      <View>
+                        <Text style={styles.scheduleButtonTitle}>Confirm</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-          </Modal>)}
+            </Modal>
+          )}
         </View>
       )}
-
     </View>
   );
 };

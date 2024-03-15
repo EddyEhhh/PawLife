@@ -30,7 +30,7 @@ export default function App() {
       //   accuracy: Location.Accuracy.High,
       //   timeInterval: 5000,
       //   distanceInterval: 50
-        
+
       // },
       //   location => {
       //       console.log('Update location:', location.coords.latitude, location.coords.longitude)
@@ -41,7 +41,6 @@ export default function App() {
       //       global.address = address;
       //       global.currentLocation = currentlocation;
       // });
-      console.log(currentlocation)
       global.address = address;
       global.currentLocation = currentlocation;
     };
