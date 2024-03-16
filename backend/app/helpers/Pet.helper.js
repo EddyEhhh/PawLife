@@ -23,3 +23,12 @@ export async function addPetToUser(userId, petData) {
     }
 
 }
+
+export async function deletePet(userId, petData) {
+    try {
+//
+    } catch (error) {
+        console.error("Error adding pet:", error);
+    }
+
+}

@@ -64,3 +64,21 @@ export async function postPets(req, res){
         res.status(500).json({ error_message: "Unable to add pet"})
     }
 }
+
+export async function deletePets(req, res){
+    try {
+
+        const userId = req.body.userId || "5e234f234f234f234f234a01";
+        const petId = req.body.petId;
+
+        // const pet = await addPetToUser(userId, petData).then(pet => {
+        //     return res.status(200).json({
+        //         pets: petData
+        //     });
+        // });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error_message: "Unable to add pet"})
+    }
+}

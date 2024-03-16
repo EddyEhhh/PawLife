@@ -23,6 +23,7 @@ export async function getEmergency(req, res){
 export async function postEmergency(req, res){
 
     try {
+        console.log("T:", req.body.params)
         const { pet_id, vet_id, appointment_time, appointment_duration } = req.body.params;
         // const { appointment_time, appointment_duration } = req.body
         const result = await createEmergencyAppointment(pet_id, vet_id, appointment_time, appointment_duration);
