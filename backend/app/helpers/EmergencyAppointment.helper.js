@@ -25,6 +25,7 @@ export async function createEmergencyAppointment(pet_id, vet_id, appointment_tim
     const vet = (await Vet.find({_id: vet_id}))[0];
     // console.log("PET:", await pet)
 
+
     await isAppointmentAvailable(vet, appointment_time).then(is_available => {
         console.log("AVAIL:",is_available)
         if(!is_available){
@@ -47,8 +48,6 @@ export async function createEmergencyAppointment(pet_id, vet_id, appointment_tim
             });
         }
     })
-
-
 
 }
 
@@ -95,7 +94,7 @@ export async function getEmergencyAppointment(gps, petId){
 
         // Sort the vets by next_available date in ascending order (earlier dates first)
         allAppointments.sort((a, b) => a.next_available - b.next_available);
-
+        
         // console.log("=====", allAppointments);
         return allAppointments;
     } catch (err) {

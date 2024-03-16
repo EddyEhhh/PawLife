@@ -1,6 +1,7 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
 import {User} from "../models/User.model.js";
+import {Pet} from "../models/Pet.model.js";
 import {addPetToUser} from "../helpers/Pet.helper.js";
 
 export async function getPets(req, res){
@@ -25,6 +26,26 @@ export async function getPets(req, res){
     }
 }
 
+export async function getPetsById(req, res){
+    try {
+
+        const {_id} = req.query
+        // console.log(pet_id)
+        const pet = await Pet
+            .find({_id: _id})
+            .then(pet => {
+                return res.status(200).json({
+                    pet: pet
+                });
+            }).catch(err => {
+                console.error("Pet not found " + err);
+            });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error_message: "Unable to get Pet"})
+    }
+}
 
 export async function postPets(req, res){
     try {

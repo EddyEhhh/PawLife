@@ -23,14 +23,13 @@ export async function getEmergency(req, res){
 export async function postEmergency(req, res){
 
     try {
-        const { pet_id, vet_id } = req.query;
-        const { appointment_time, appointment_duration } = req.body
+        const { pet_id, vet_id, appointment_time, appointment_duration } = req.body.params;
+        // const { appointment_time, appointment_duration } = req.body
         const result = await createEmergencyAppointment(pet_id, vet_id, appointment_time, appointment_duration);
         return res.status(200).json(result);
     } catch (err) {
         console.error(err);
         res.status(500).json({message: err.message});
     }
-
 
 }

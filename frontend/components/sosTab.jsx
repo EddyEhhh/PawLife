@@ -36,10 +36,16 @@ const SosTab = ({ navigation }) => {
     );
     setSelectedPet(mockPetsData[0]);
     const fetchData = async () => {
+      var getData = {
+        longitude: global.currentLocation.coords.longitude,
+        latitude: global.currentLocation.coords.latitude
+      };
+      const config = {
+        headers : {'Content-Type': 'application/json'},
+        params : getData
+      }
       await axiosInstance
-        .get("/api/v1/emergency", {
-          params : global.currentLocation
-        })
+        .get("/api/v1/emergency", config)
         .catch((err) => console.log(err))
         .then((response) => {
           setData(response.data);
@@ -53,6 +59,27 @@ const SosTab = ({ navigation }) => {
     setSelectedItem(item);
     setModalVisible(!isModalVisible);
   };
+
+  const confirmedModalClick = async (vet_id , appointmentTime) => {
+    // console.log(selectedPet._id)
+    // console.log(appointmentTime)
+    // console.log(vet_id)
+    // console.log(30)
+    setModalVisible(!isModalVisible);
+    await axiosInstance.post('/api/v1/emergency', {
+      params:{
+        pet_id: selectedPet._id,
+        vet_id: vet_id,
+        appointment_time: appointmentTime,
+        appointment_duration: 30
+      }
+    }).then((response) => {
+      console.log("Appointment Confirmed")
+    }).catch((e) => {
+      console.log(e)
+    })
+
+  }
 
   const CovertTime = (datetime) =>{
     var utcSeconds = datetime;
@@ -69,7 +96,7 @@ const SosTab = ({ navigation }) => {
   }
   const mockPetsData = [
     {
-      _id: 1,
+      _id: '5e234f234f234f234f234a01',
       name: "Gigi",
       species: "Dog",
       breed: "Shih Tzu",
@@ -347,6 +374,7 @@ const SosTab = ({ navigation }) => {
                         styles.ModalScheduleButton,
                         { backgroundColor: "#F05D5E" },
                       ]}
+                      onPress={() => confirmedModalClick(selectedItem.vet._id , selectedItem.next_available)}
                     >
                       <View>
                         <Text style={styles.scheduleButtonTitle}>Schedule</Text>
