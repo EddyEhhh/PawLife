@@ -14,8 +14,12 @@ import { Dropdown } from "react-native-element-dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import axiosInstance from "./util/axiosInstance";
 
-const PawEditTab = ({ navigation }) => {
+const PawEditTab = ({ route, navigation }) => {
+  const { petID } = route.params;
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
   const [petImage, setPetImage] = useState(null);
   const [petName, setPetName] = useState(null);
   const [petSpecies, setPetSpecies] = useState(null);
@@ -26,11 +30,30 @@ const PawEditTab = ({ navigation }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   useEffect(() => {
-    setPetImage(mockPetData.imageURL);
-    setPetBirthday(mockPetData.birthday);
-    setPetSpecies(mockPetData.species);
-    setPetGender(mockPetData.gender);
-  }, []);
+    const fetchData = async () => {
+      await axiosInstance
+        .get("/api/v1/pets/pet", {
+          params: {
+            _id: petID,
+          },
+        })
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setData(response.data.pet[0]);
+          setLoading(false);
+          setPetImage(imgPlaceholder);
+          setPetBirthday(mockPetData.birthday);
+          setPetSpecies(data.species);
+          setPetGender(mockPetData.gender);
+        });
+    };
+    fetchData();
+  }, [petID]);
+
+  useEffect(() => {}, []);
+
+  const imgPlaceholder =
+    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -68,6 +91,7 @@ const PawEditTab = ({ navigation }) => {
     { label: "Rabbit", value: "Rabbit" },
     { label: "Hamster", value: "Hamster" },
     { label: "Pig", value: "Pig" },
+    { label: "Bird", value: "Bird" },
   ];
 
   const mockPetData = {
@@ -83,135 +107,147 @@ const PawEditTab = ({ navigation }) => {
 
   return (
     <View style={globalStyles.container}>
-      <ScrollView>
-        <SafeAreaView style={styles.topContainer}>
-          <Image
-            style={{ resizeMode: "contain" }}
-            source={require("../assets/logo.png")}
-          />
-          <Text style={styles.title}>Pet Details</Text>
-          <Text style={styles.subtitle}>
-            Learn more about your furry friend.
-          </Text>
-        </SafeAreaView>
+      {loading && (
+        <View>
+          <Text>loading</Text>
+        </View>
+      )}
+      {!loading && (
+        <ScrollView scrollIndicatorInsets={{ right: 1 }}>
+          <SafeAreaView style={styles.topContainer}>
+            <Image
+              style={{ resizeMode: "contain" }}
+              source={require("../assets/logo.png")}
+            />
+            <Text style={styles.title}>Pet Details</Text>
+            <Text style={styles.subtitle}>
+              Learn more about your furry friend.
+            </Text>
+          </SafeAreaView>
 
-        <SafeAreaView style={{ backgroundColor: "white" }}>
-          <View style={styles.bottomContainer}>
-            <TouchableOpacity
-              style={styles.backIconContainer}
-              onPress={() => navigation.goBack()}
-            >
-              <Image
-                source={require("../assets/sosPage-assets/back-icon.png")}
-              />
-              <Text style={styles.backIconText}>{mockPetData.name}</Text>
-            </TouchableOpacity>
-            <View style={styles.petsImageContainer}>
-              <TouchableOpacity onPress={pickImage}>
+          <SafeAreaView style={{ backgroundColor: "white" }}>
+            <View style={styles.bottomContainer}>
+              <TouchableOpacity
+                style={styles.backIconContainer}
+                onPress={() => navigation.goBack()}
+              >
                 <Image
-                  source={require("../assets/edit.png")}
-                  style={{ position: "absolute", top: 0, right: -20 }}
+                  source={require("../assets/sosPage-assets/back-icon.png")}
                 />
-                {petImage && (
-                  <Image source={{ uri: petImage }} style={styles.petsImage} />
-                )}
+                <Text style={styles.backIconText}>{data.name}</Text>
+              </TouchableOpacity>
+              <View style={styles.petsImageContainer}>
+                <TouchableOpacity onPress={pickImage}>
+                  <Image
+                    source={require("../assets/edit.png")}
+                    style={{ position: "absolute", top: 0, right: -20 }}
+                  />
+                  {petImage && (
+                    <Image
+                      source={{ uri: petImage }}
+                      style={styles.petsImage}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Name"
+                clearButtonMode="never"
+                defaultValue={data.name}
+                onChangeText={(text) => setPetName(text)}
+              />
+              <Dropdown
+                style={styles.dropdown}
+                value={petSpecies}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                itemTextStyle={styles.itemTextStyle}
+                iconStyle={styles.iconStyle}
+                data={speciesList}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder="Species"
+                searchPlaceholder="Search..."
+                onChange={(item) => {
+                  setPetSpecies(item.value);
+                }}
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Breed"
+                clearButtonMode="never"
+                defaultValue={data.breed}
+                onChangeText={(text) => setPetBreed(text)}
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Birthday"
+                clearButtonMode="never"
+                onPressIn={showDatePicker}
+                value={petBirthday}
+              />
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+              <View style={styles.genderContainer}>
+                <TouchableOpacity
+                  onPress={() => handleSelection("Male")}
+                  style={[
+                    styles.genderButton,
+                    petGender === "Male" && styles.selectedButton,
+                  ]}
+                >
+                  <MaterialIcons
+                    name="male"
+                    style={[
+                      styles.genderIcon,
+                      petGender === "Male" && styles.selectedIcon,
+                    ]}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleSelection("Female")}
+                  style={[
+                    styles.genderButton,
+                    petGender === "Female" && styles.selectedButton,
+                  ]}
+                >
+                  <MaterialIcons
+                    name="female"
+                    style={[
+                      styles.genderIcon,
+                      petGender === "Female" && styles.selectedIcon,
+                    ]}
+                  />
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Chip Number"
+                clearButtonMode="never"
+                onChangeText={(text) => setChipNumber(text)}
+              />
+              <TouchableOpacity
+                style={styles.buttonContainer}
+                onPress={() => {}}
+              >
+                <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
             </View>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Name"
-              clearButtonMode="never"
-              defaultValue={mockPetData.name}
-              onChangeText={(text) => setPetName(text)}
+            <View style={{ height: 30 }} />
+            <View
+              style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
             />
-            <Dropdown
-              style={styles.dropdown}
-              defaultValue={mockPetData.species}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              itemTextStyle={styles.itemTextStyle}
-              iconStyle={styles.iconStyle}
-              data={speciesList}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder="Species"
-              searchPlaceholder="Search..."
-              value={petSpecies}
-              onChange={(item) => {
-                setPetSpecies(item.value);
-              }}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Breed"
-              clearButtonMode="never"
-              defaultValue={mockPetData.breed}
-              onChangeText={(text) => setPetBreed(text)}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Birthday"
-              clearButtonMode="never"
-              onPressIn={showDatePicker}
-              value={petBirthday}
-            />
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={handleConfirm}
-              onCancel={hideDatePicker}
-            />
-            <View style={styles.genderContainer}>
-              <TouchableOpacity
-                onPress={() => handleSelection("Male")}
-                style={[
-                  styles.genderButton,
-                  petGender === "Male" && styles.selectedButton,
-                ]}
-              >
-                <MaterialIcons
-                  name="male"
-                  style={[
-                    styles.genderIcon,
-                    petGender === "Male" && styles.selectedIcon,
-                  ]}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleSelection("Female")}
-                style={[
-                  styles.genderButton,
-                  petGender === "Female" && styles.selectedButton,
-                ]}
-              >
-                <MaterialIcons
-                  name="female"
-                  style={[
-                    styles.genderIcon,
-                    petGender === "Female" && styles.selectedIcon,
-                  ]}
-                />
-              </TouchableOpacity>
-            </View>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Chip Number"
-              clearButtonMode="never"
-              onChangeText={(text) => setChipNumber(text)}
-            />
-            <TouchableOpacity style={styles.buttonContainer} onPress={() => {}}>
-              <Text style={styles.buttonText}>Save</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ height: 30 }} />
-          <View
-            style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
-          />
-        </SafeAreaView>
-      </ScrollView>
+          </SafeAreaView>
+        </ScrollView>
+      )}
     </View>
   );
 };

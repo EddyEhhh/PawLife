@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,94 +9,110 @@ import {
   ScrollView,
 } from "react-native";
 import globalStyles from "../style/global";
-
-const mockPetsData = [
-  {
-    _id: 1,
-    name: "Gigi",
-    species: "Dog",
-    breed: "Shih Tzu",
-    imageURL:
-      "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSVcpEF_CefMEBZr08-Y2Fj1fpedpf3PXQyiDphvQWcA6rJvdGh",
-  },
-  {
-    _id: 2,
-    name: "Abby",
-    species: "Dog",
-    breed: "Poodle",
-    imageURL:
-      "https://www.purina.com.sg/sites/default/files/styles/ttt_image_original/public/2021-02/BREED%20Hero%20Desktop_0050_poodle_toy.webp?itok=7Y1anr9w",
-  },
-];
+import axiosInstance from "./util/axiosInstance";
 
 const PawTab = ({ navigation }) => {
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await axiosInstance
+        .get("/api/v1/pets")
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setData(response.data);
+          setLoading(false);
+        });
+    };
+    fetchData();
+  }, []);
+
+  const imgPlaceholder =
+    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
+
   return (
     <View style={globalStyles.container}>
-      <ScrollView>
-        <SafeAreaView style={styles.topContainer}>
-          <Image
-            style={{ resizeMode: "contain" }}
-            source={require("../assets/logo.png")}
-          />
-          <Text style={styles.title}>Pet Details</Text>
-          <Text style={styles.subtitle}>
-            Learn more about your furry friend.
-          </Text>
-        </SafeAreaView>
+      {loading && (
+        <View>
+          <Text>loading</Text>
+        </View>
+      )}
+      {!loading && (
+        <ScrollView>
+          <SafeAreaView style={styles.topContainer}>
+            <Image
+              style={{ resizeMode: "contain" }}
+              source={require("../assets/logo.png")}
+            />
+            <Text style={styles.title}>Pet Details</Text>
+            <Text style={styles.subtitle}>
+              Learn more about your furry friend.
+            </Text>
+          </SafeAreaView>
 
-        <SafeAreaView style={{ backgroundColor: "white" }}>
-          <View>
-            {mockPetsData.map((item) => (
-              <View key={item._id}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("PawEditScreen")}
-                >
-                  <View style={styles.item}>
-                    <View style={styles.topWrapper}>
-                      <View style={styles.leftWrapper}>
-                        <Image
-                          source={{
-                            uri: item.imageURL,
-                          }}
-                          style={styles.petsImage} // Apply styles to the Image component if necessary
-                        />
-                      </View>
-                      <View style={styles.rightWrapper}>
-                        <View style={styles.innerLeftWrapper}>
-                          <Text style={styles.petsName}>{item.name}</Text>
-                          <Text style={styles.petsDetails}>
-                            {item.species}
-                            {" • "}
-                            {item.breed}
-                          </Text>
+          <SafeAreaView style={{ backgroundColor: "white" }}>
+            <View>
+              {data.pets.map((item) => (
+                <View key={item._id}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("PawEditScreen", { petID: item._id })
+                    }
+                  >
+                    <View style={styles.item}>
+                      <View style={styles.topWrapper}>
+                        <View style={styles.leftWrapper}>
+                          <Image
+                            source={{
+                              uri: imgPlaceholder,
+                            }}
+                            style={styles.petsImage} // Apply styles to the Image component if necessary
+                          />
                         </View>
-                        <View>
-                          <TouchableOpacity>
-                            <Image source={require("../assets/edit.png")} />
-                          </TouchableOpacity>
+                        <View style={styles.rightWrapper}>
+                          <View style={styles.innerLeftWrapper}>
+                            <Text style={styles.petsName}>{item.name}</Text>
+                            <Text style={styles.petsDetails}>
+                              {item.species}
+                              {" • "}
+                              {item.breed}
+                            </Text>
+                          </View>
+                          <View>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate("PawEditScreen", {
+                                  petID: item._id,
+                                })
+                              }
+                            >
+                              <Image source={require("../assets/edit.png")} />
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-          <View style={{ marginHorizontal: 25 }}>
-            <TouchableOpacity
-              style={styles.addPetContainer}
-              onPress={() => navigation.navigate("PawAddScreen")}
-            >
-              <Image source={require("../assets/add.png")} />
-              <Text style={styles.addPetText}>Add Pet</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ height: 20 }} />
-          <View
-            style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
-          />
-        </SafeAreaView>
-      </ScrollView>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+            <View style={{ marginHorizontal: 25 }}>
+              <TouchableOpacity
+                style={styles.addPetContainer}
+                onPress={() => navigation.navigate("PawAddScreen")}
+              >
+                <Image source={require("../assets/add.png")} />
+                <Text style={styles.addPetText}>Add Pet</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: 20 }} />
+            <View
+              style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+            />
+          </SafeAreaView>
+        </ScrollView>
+      )}
     </View>
   );
 };

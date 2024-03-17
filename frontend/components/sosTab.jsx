@@ -16,6 +16,7 @@ import * as Location from "expo-location";
 
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
+  const [petData, setPetData] = useState({});
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -34,16 +35,16 @@ const SosTab = ({ navigation }) => {
         " " +
         global.address[0].postalCode
     );
-    setSelectedPet(mockPetsData[0]);
+    // setSelectedPet(mockPetsData[0]);
     const fetchData = async () => {
       var getData = {
         longitude: global.currentLocation.coords.longitude,
-        latitude: global.currentLocation.coords.latitude
+        latitude: global.currentLocation.coords.latitude,
       };
       const config = {
-        headers : {'Content-Type': 'application/json'},
-        params : getData
-      }
+        headers: { "Content-Type": "application/json" },
+        params: getData,
+      };
       await axiosInstance
         .get("/api/v1/emergency", config)
         .catch((err) => console.log(err))
@@ -51,52 +52,60 @@ const SosTab = ({ navigation }) => {
           setData(response.data);
           setLoading(false);
         });
+      await axiosInstance
+        .get("/api/v1/pets")
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setPetData(response.data);
+          setLoading(false);
+        });
     };
     fetchData();
   }, []);
+
+  const imgPlaceholder =
+    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
 
   const toggleModal = (item) => {
     setSelectedItem(item);
     setModalVisible(!isModalVisible);
   };
 
-  const confirmedModalClick = async (vet_id , appointmentTime) => {
-    // console.log(selectedPet._id)
-    // console.log(appointmentTime)
-    // console.log(vet_id)
-    // console.log(30)
+  const confirmedModalClick = async (vet_id, appointmentTime) => {
     setModalVisible(!isModalVisible);
-    await axiosInstance.post('/api/v1/emergency', {
-      params:{
-        pet_id: selectedPet._id,
-        vet_id: vet_id,
-        appointment_time: appointmentTime,
-        appointment_duration: 30
-      }
-    }).then((response) => {
-      console.log("Appointment Confirmed")
-    }).catch((e) => {
-      console.log(e)
-    })
+    await axiosInstance
+      .post("/api/v1/emergency", {
+        params: {
+          pet_id: selectedPet._id,
+          vet_id: vet_id,
+          appointment_time: appointmentTime,
+          appointment_duration: 30,
+        },
+      })
+      .then((response) => {
+        console.log("Appointment Confirmed");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
-  }
-
-  const CovertTime = (datetime) =>{
+  const CovertTime = (datetime) => {
     var utcSeconds = datetime;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
     d.setUTCSeconds(utcSeconds);
     var options = {
-      timeZone: 'Asia/Singapore',
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
+      timeZone: "Asia/Singapore",
+      weekday: "short",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
     };
-    return d.toLocaleString('en-US', options)
-  }
+    return d.toLocaleString("en-US", options);
+  };
   const mockPetsData = [
     {
-      _id: '5e234f234f234f234f234a01',
+      _id: "5e234f234f234f234f234a01",
       name: "Gigi",
       species: "Dog",
       breed: "Shih Tzu",
@@ -146,7 +155,7 @@ const SosTab = ({ navigation }) => {
                   </View>
                   <Image
                     source={{
-                      uri: selectedPet.imageURL,
+                      uri: imgPlaceholder,
                     }}
                     style={styles.selectedPetsImage} // Apply styles to the Image component if necessary
                   />
@@ -197,7 +206,7 @@ const SosTab = ({ navigation }) => {
                   <Text style={styles.petSelectionTitle}>
                     Select your pet for emergency vet help.
                   </Text>
-                  {mockPetsData.map((item) => (
+                  {petData.pets.map((item) => (
                     <View key={item._id}>
                       <TouchableOpacity
                         onPress={() => {
@@ -211,7 +220,7 @@ const SosTab = ({ navigation }) => {
                             <View style={styles.petLeftWrapper}>
                               <Image
                                 source={{
-                                  uri: item.imageURL,
+                                  uri: imgPlaceholder,
                                 }}
                                 style={styles.petsImage} // Apply styles to the Image component if necessary
                               />
@@ -235,9 +244,7 @@ const SosTab = ({ navigation }) => {
               )}
               {clinicSelectionVisible && (
                 <View>
-
                   {data.vets.map((item) => (
-
                     <View key={item.vet._id}>
                       <View style={styles.item}>
                         <View style={styles.topWrapper}>
@@ -261,11 +268,23 @@ const SosTab = ({ navigation }) => {
                               </Text>
                             </View>
                             <View>
-                              <Text style={styles.time}>{CovertTime(item.next_available)}</Text>
+                              <Text style={styles.time}>
+                                {CovertTime(item.next_available)}
+                              </Text>
                               <View style={styles.distanceWrapper}>
                                 <View>
-                                  <Text style={styles.distance}>{item.distance_matrix.rows[0].elements[0].duration.text}</Text>
-                                  <Text style={styles.distance}>{item.distance_matrix.rows[0].elements[0].distance.text}</Text>
+                                  <Text style={styles.distance}>
+                                    {
+                                      item.distance_matrix.rows[0].elements[0]
+                                        .duration.text
+                                    }
+                                  </Text>
+                                  <Text style={styles.distance}>
+                                    {
+                                      item.distance_matrix.rows[0].elements[0]
+                                        .distance.text
+                                    }
+                                  </Text>
                                 </View>
                                 <View style={styles.distanceRightWrapper}>
                                   <Image
@@ -335,11 +354,23 @@ const SosTab = ({ navigation }) => {
                           </Text>
                         </View>
                         <View>
-                          <Text style={styles.time}>{CovertTime(selectedItem.next_available)}</Text>
+                          <Text style={styles.time}>
+                            {CovertTime(selectedItem.next_available)}
+                          </Text>
                           <View style={styles.distanceWrapper}>
                             <View>
-                              <Text style={styles.distance}>{selectedItem.distance_matrix.rows[0].elements[0].duration.text}</Text>
-                              <Text style={styles.distance}>{selectedItem.distance_matrix.rows[0].elements[0].distance.text}</Text>
+                              <Text style={styles.distance}>
+                                {
+                                  selectedItem.distance_matrix.rows[0]
+                                    .elements[0].duration.text
+                                }
+                              </Text>
+                              <Text style={styles.distance}>
+                                {
+                                  selectedItem.distance_matrix.rows[0]
+                                    .elements[0].distance.text
+                                }
+                              </Text>
                             </View>
                             <View style={styles.distanceRightWrapper}>
                               <Image
@@ -374,7 +405,12 @@ const SosTab = ({ navigation }) => {
                         styles.ModalScheduleButton,
                         { backgroundColor: "#F05D5E" },
                       ]}
-                      onPress={() => confirmedModalClick(selectedItem.vet._id , selectedItem.next_available)}
+                      onPress={() =>
+                        confirmedModalClick(
+                          selectedItem.vet._id,
+                          selectedItem.next_available
+                        )
+                      }
                     >
                       <View>
                         <Text style={styles.scheduleButtonTitle}>Schedule</Text>
@@ -590,13 +626,13 @@ const styles = StyleSheet.create({
     fontFamily: "frank-regular",
     color: "#000",
     fontSize: 14,
-    paddingLeft: 5
+    paddingLeft: 5,
   },
   distanceWrapper: {
     position: "absolute",
     bottom: 0,
     flexDirection: "row",
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   distanceRightWrapper: {
     flex: 1,
