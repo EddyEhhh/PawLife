@@ -243,6 +243,132 @@ async function createVets(locationIds) {
     }
 }
 
+const petHealths = [
+    {
+        medical_history: {
+            allergies:
+                [
+                    {
+                        type: "food", // "medication" or "food"
+                        description: "Wheat allergy, causes itching and vomiting"
+                    },
+                    {
+                        type: "food", // "medication" or "food"
+                        description: "Chicken allergy, causes diarrhea"
+                    }
+                ],
+            previous_conditions: [
+                {
+                condition: "Ear infection",
+                notes: "Treated with antibiotics in 2022"
+            }
+            ],
+            previous_surgeries: [{
+                surgery_name: "Spay",
+                surgery_date: new Date("2023-06-15"),
+                notes: "Uneventful surgery, recovered well"
+            }]
+        },
+        existing_conditions: [
+            {
+                condition: "Arthritis",
+                notes: "Managed with joint supplements and pain medication"
+            }
+        ],
+        medications: [{
+            medication_name: "Glucosamine Chondroitin",
+            dosage: "1 chewable tablet, daily",
+            frequency: "daily",
+            notes: "Joint supplement for arthritis"
+        }],
+        vaccinations: [{
+            vaccine_name: "Rabies",
+            date_administered: new Date("2024-02-01"),
+            notes: "Valid until 2027"
+        },
+            {
+                vaccine_name: "DHPP",
+                date_administered: new Date("2024-02-01"),
+                notes: "Valid until 2025"
+            }],
+        extra_notes: "Friendly and energetic but can be wary of strangers. Responds well to positive reinforcement training."
+    },
+    {
+        medical_history: {
+            allergies: [],
+            previous_conditions: [],
+            previous_surgeries: [
+                {
+                    surgery_name: "Spay",
+                    surgery_date: new Date("2023-06-15"),
+                    notes: "Uneventful surgery, recovered well"
+                }
+            ]
+        },
+        existing_conditions: [],
+        medications: [],
+        vaccinations: [
+            {
+                vaccine_name: "Rabies",
+                date_administered: new Date("2024-01-10"),
+                notes: "Valid until 2027"
+            },
+            {
+                vaccine_name: "FVRCP",
+                date_administered: new Date("2024-01-10"),
+                notes: "Valid until 2025"
+            }
+        ],
+        extra_notes: "Playful and curious. Loves climbing and scratching posts. Tends to be shy around new people, give time to warm up."
+    },
+    {
+        medical_history: {
+            allergies: [],
+            previous_conditions: [],
+            previous_surgeries: []
+        },
+                existing_conditions: [
+                    {
+                        condition: "Dental malocclusion",
+                        notes: "Requires regular teeth trimming to prevent overgrown teeth"
+                    }
+                ],
+                medications: [
+                    {
+                        medication_name: "Critical Care",
+                        dosage: "1 ml, twice daily",
+                        frequency: "twice daily",
+                        notes: "Nutritional supplement for rabbits with dental problems"
+                    }
+                ],
+                vaccinations: [
+                    {
+                        vaccine_name: "Rabbit hemorrhagic disease virus (RHDV)",
+                        date_administered: new Date("2024-02-14"),
+                        notes: "Valid until 2026"
+                    },
+                    {
+                        vaccine_name: "Pasteurella multocida",
+                        date_administered: new Date("2024-02-14"),
+                        notes: "Valid until 2025"
+                    }
+                ],
+                extra_notes: "Bun Bun is a sweet and cuddly rabbit. Prefers hay and vegetables over treats. Gets scared easily by loud noises."
+    },
+    {
+        medical_history: {
+            allergies: [],
+            previous_conditions: [],
+            previous_surgeries: []
+        },
+        existing_conditions: [],
+        medications: [],
+        vaccinations: [],
+        extra_notes: "No notes"
+    }
+
+]
+
 const petsData = [
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234f23'),
@@ -303,7 +429,14 @@ const petsData = [
 async function createPets() {
     try {
 
-        const petObjects = petsData.map(petData => new Pet(petData));
+        let petObjects = petsData.map(petData => new Pet(petData) );
+        let index = 0;
+        for (let pet of petObjects) {
+            petObjects[index % petObjects.length].health = petHealths[index % petHealths.length]
+            console.log(index + ": " +petObjects[index % petObjects.length])
+            index += 1;
+        }
+        console.log(petObjects)
         await Pet.insertMany(petObjects);
         console.log("Pets created successfully!");
         return petObjects.map((pet) => pet._id);
