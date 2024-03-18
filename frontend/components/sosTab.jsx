@@ -46,17 +46,17 @@ const SosTab = ({ navigation }) => {
         params: getData,
       };
       await axiosInstance
-        .get("/api/v1/emergency", config)
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        });
-      await axiosInstance
         .get("/api/v1/pets")
         .catch((err) => console.log(err))
         .then((response) => {
           setPetData(response.data);
+          setLoading(false);
+        });
+      await axiosInstance
+        .get("/api/v1/emergency", config)
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setData(response.data);
           setLoading(false);
         });
     };
