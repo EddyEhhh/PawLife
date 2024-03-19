@@ -218,6 +218,7 @@ const HomeTab = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.featureBox, { backgroundColor: "#E8D1CF" }]}
+                  onPress={() => navigation.navigate("BookingScreen")}
                 >
                   <Image
                     style={{ resizeMode: "contain" }}

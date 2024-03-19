@@ -12,6 +12,9 @@ import VetPalScreen from "../vetPalTab";
 import TeleScreen from "../teleTab";
 import TeleDetailsScreen from "../teleDetailsTab";
 import TelePaymentScreen from "../telePaymentTab";
+import BookingScreen from "../bookingTab";
+import BookingPaymentScreen from "../bookingPaymentTab";
+import BookingDetailsScreen from "../bookingDetailsTab";
 
 import Octicons from "react-native-vector-icons/Octicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -32,6 +35,15 @@ const HomeStack = () => {
       <Stack.Screen name="TeleScreen" component={TeleScreen} />
       <Stack.Screen name="TeleDetailsScreen" component={TeleDetailsScreen} />
       <Stack.Screen name="TelePaymentScreen" component={TelePaymentScreen} />
+      <Stack.Screen name="BookingScreen" component={BookingScreen} />
+      <Stack.Screen
+        name="BookingDetailsScreen"
+        component={BookingDetailsScreen}
+      />
+      <Stack.Screen
+        name="BookingPaymentScreen"
+        component={BookingPaymentScreen}
+      />
     </Stack.Navigator>
   );
 };
