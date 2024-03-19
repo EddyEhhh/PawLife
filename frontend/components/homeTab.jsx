@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
+import { useIsFocused } from "@react-navigation/native";
 
 const HomeTab = ({ navigation }) => {
   const [data, setData] = useState({});
@@ -21,24 +22,28 @@ const HomeTab = ({ navigation }) => {
   const [urgentAppointmentVisibile, setUrgentAppointmentVisibile] =
     useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    const fetchData = async () => {
-      await axiosInstance
-        .get("/api/v1/appointments/emergency")
-        .catch((err) => console.log(err))
-        .then((response) => {
-          if (!Object.keys(response.data.appointments).length) {
-            setUrgentAppointmentVisibile(false);
-          } else {
-            setUrgentAppointmentVisibile(true);
-            setData(response.data);
-          }
-          setLoading(false);
-        });
-    };
-    fetchData();
-  }, []);
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
+
+  const fetchData = async () => {
+    await axiosInstance
+      .get("/api/v1/appointments/emergency")
+      .catch((err) => console.log(err))
+      .then((response) => {
+        if (!Object.keys(response.data.appointments).length) {
+          setUrgentAppointmentVisibile(false);
+        } else {
+          setUrgentAppointmentVisibile(true);
+          setData(response.data);
+        }
+        setLoading(false);
+      });
+  };
 
   const CovertTime = (datetime) => {
     var utcSeconds = datetime;
@@ -433,14 +438,14 @@ const styles = StyleSheet.create({
   time: {
     fontFamily: "frank-regular",
     color: "#000",
-    fontSize: 14,
+    fontSize: 13,
     position: "absolute",
     bottom: 0,
   },
   dogDetails: {
     fontFamily: "frank-regular",
     color: "#164348",
-    fontSize: 14,
+    fontSize: 12,
     right: 0,
     alignSelf: "flex-end",
   },

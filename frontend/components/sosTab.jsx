@@ -46,17 +46,17 @@ const SosTab = ({ navigation }) => {
         params: getData,
       };
       await axiosInstance
-        .get("/api/v1/emergency", config)
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        });
-      await axiosInstance
         .get("/api/v1/pets")
         .catch((err) => console.log(err))
         .then((response) => {
           setPetData(response.data);
+          setLoading(false);
+        });
+      await axiosInstance
+        .get("/api/v1/emergency", config)
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setData(response.data);
           setLoading(false);
         });
     };
@@ -103,24 +103,6 @@ const SosTab = ({ navigation }) => {
     };
     return d.toLocaleString("en-US", options);
   };
-  const mockPetsData = [
-    {
-      _id: "5e234f234f234f234f234a01",
-      name: "Gigi",
-      species: "Dog",
-      breed: "Shih Tzu",
-      imageURL:
-        "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSVcpEF_CefMEBZr08-Y2Fj1fpedpf3PXQyiDphvQWcA6rJvdGh",
-    },
-    {
-      _id: 2,
-      name: "Abby",
-      species: "Dog",
-      breed: "Poodle",
-      imageURL:
-        "https://www.purina.com.sg/sites/default/files/styles/ttt_image_original/public/2021-02/BREED%20Hero%20Desktop_0050_poodle_toy.webp?itok=7Y1anr9w",
-    },
-  ];
 
   return (
     <View style={globalStyles.container}>
