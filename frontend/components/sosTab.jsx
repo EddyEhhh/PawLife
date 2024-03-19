@@ -63,9 +63,6 @@ const SosTab = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const imgPlaceholder =
-    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
-
   const toggleModal = (item) => {
     setSelectedItem(item);
     setModalVisible(!isModalVisible);
@@ -137,7 +134,7 @@ const SosTab = ({ navigation }) => {
                   </View>
                   <Image
                     source={{
-                      uri: imgPlaceholder,
+                      uri: selectedPet.image_url,
                     }}
                     style={styles.selectedPetsImage} // Apply styles to the Image component if necessary
                   />
@@ -202,7 +199,7 @@ const SosTab = ({ navigation }) => {
                             <View style={styles.petLeftWrapper}>
                               <Image
                                 source={{
-                                  uri: imgPlaceholder,
+                                  uri: item.image_url,
                                 }}
                                 style={styles.petsImage} // Apply styles to the Image component if necessary
                               />
