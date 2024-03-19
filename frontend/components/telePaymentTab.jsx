@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
-  Button,
   TextInput,
 } from "react-native";
 import globalStyles from "../style/global";
@@ -16,7 +15,7 @@ import axiosInstance from "./util/axiosInstance";
 const TelePayment = ({ navigation, route }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const { selectedDate, selectedTime } = route.params;
+  const { vetID, selectedDate, selectedTime } = route.params;
   const [cardNumber, setCardNumber] = useState(null);
   const [MMYY, setMMYY] = useState(null);
   const [CVC, setCVC] = useState(null);
@@ -24,7 +23,11 @@ const TelePayment = ({ navigation, route }) => {
   useEffect(() => {
     const fetchData = async () => {
       await axiosInstance
-        .get("/api/v1/vets")
+        .get("/api/v1/vets/vet", {
+          params: {
+            _id: vetID,
+          },
+        })
         .catch((err) => console.log(err))
         .then((response) => {
           setData(response.data);
@@ -64,16 +67,16 @@ const TelePayment = ({ navigation, route }) => {
                 </TouchableOpacity>
                 <Image
                   source={{
-                    uri: data.vets[0].image_url,
+                    uri: data.vet[0].image_url,
                   }}
                   style={styles.clinicsLogo} // Apply styles to the Image component if necessary
                 />
               </View>
 
-              <Text style={styles.title}>{data.vets[0].name}</Text>
+              <Text style={styles.title}>{data.vet[0].name}</Text>
               <Text style={styles.subtitle}>
-                {data.vets[0].location.street}, {data.vets[0].location.country}{" "}
-                {data.vets[0].location.postal_code}
+                {data.vet[0].location.street}, {data.vet[0].location.country}{" "}
+                {data.vet[0].location.postal_code}
               </Text>
               <Text style={styles.subtitle2}>
                 Pets Treated: Dog, Cat, Guinea Pig, Reptile, Hamster, Rat,

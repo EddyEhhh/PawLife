@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
-  Button,
   TextInput,
 } from "react-native";
 import Modal from "react-native-modal";
@@ -120,7 +119,9 @@ const TeleTab = ({ navigation }) => {
                     <TouchableOpacity
                       style={styles.scheduleButtonContainer}
                       onPress={() => {
-                        navigation.navigate("TeleDetailsScreen");
+                        navigation.navigate("TeleDetailsScreen", {
+                          vetID: item._id,
+                        });
                       }}
                     >
                       <Text style={styles.scheduleButtonTitle}>Schedule</Text>
