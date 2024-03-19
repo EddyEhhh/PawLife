@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     backgroundColor: "white",
-    marginTop: 30,
+    marginTop: 20,
     marginHorizontal: 25,
   },
   sectionTitle: {

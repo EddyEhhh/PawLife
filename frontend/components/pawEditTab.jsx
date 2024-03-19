@@ -94,16 +94,13 @@ const PawEditTab = ({ route, navigation }) => {
           );
           setExistingMedications(response.data.pet[0].health.medications);
           setVaccinations(response.data.pet[0].health.vaccinations);
-          setPetImage(imgPlaceholder);
+          setPetImage(response.data.pet[0].image_url);
           setPetGender("Female");
           setLoading(false);
         });
     };
     fetchData();
   }, [petID]);
-
-  const imgPlaceholder =
-    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -913,7 +910,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     backgroundColor: "white",
-    marginTop: 30,
+    marginTop: 20,
     marginHorizontal: 25,
   },
   sectionTitle: {
