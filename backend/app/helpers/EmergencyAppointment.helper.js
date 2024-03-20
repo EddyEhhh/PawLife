@@ -166,7 +166,7 @@ async function isAppointmentAvailable(vet, appointmentTime){
         // console.log("INPUT:",appointment[0].start_at, appointment[0].end_at, appointmentTime)
         //     console.log("App:",!isTimeWithin(appointment[0].start_at, appointment[0].end_at, appointmentTime));
         // console.log("App:2",isVetOpen(vet,  appointmentTime));
-            return (!isTimeWithin(appointment[0].start_at, appointment[0].end_at, appointmentTime)) && isVetOpen(vet,  appointmentTime);
+            return (!appointment[0] || !isTimeWithin(appointment[0].start_at, appointment[0].end_at, appointmentTime)) && isVetOpen(vet,  appointmentTime);
         }
     );
 

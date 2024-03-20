@@ -8,7 +8,9 @@ import {
   Image,
   ScrollView,
   TextInput,
+  useColorScheme
 } from "react-native";
+
 import globalStyles from "../style/global";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -17,6 +19,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import axiosInstance from "./util/axiosInstance";
 import Modal from "react-native-modal";
+import SelectDropdown from 'react-native-select-dropdown'
 
 const PawEditTab = ({ route, navigation }) => {
   const { petID } = route.params;
@@ -69,6 +72,15 @@ const PawEditTab = ({ route, navigation }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [newVaccNotes, setNewVaccNotes] = useState("");
 
+  const [isSaved, setSaved] = useState(false);
+  const [savedResult, setSavedResult] = useState("");
+
+  const [isModified, setModified] = useState(false);
+  const [isModifiedVisible, setModifiedVisible] = useState(false);
+
+
+  const colorScheme = useColorScheme();
+
   useEffect(() => {
     const fetchData = async () => {
       await axiosInstance
@@ -80,6 +92,9 @@ const PawEditTab = ({ route, navigation }) => {
         .catch((err) => console.log(err))
         .then((response) => {
           setData(response.data.pet[0]);
+          setPetName(response.data.pet[0].name);
+          setPetBreed(response.data.pet[0].breed);
+          setChipNumber(response.data.pet[0].microchip_number)
           setPetSpecies(response.data.pet[0].species);
           setPetAge(response.data.pet[0].age.toString());
           setAllergies(response.data.pet[0].health.medical_history.allergies);
@@ -101,7 +116,6 @@ const PawEditTab = ({ route, navigation }) => {
     };
     fetchData();
   }, [petID]);
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -135,6 +149,13 @@ const PawEditTab = ({ route, navigation }) => {
     { label: "Hamster", value: "Hamster" },
     { label: "Pig", value: "Pig" },
     { label: "Bird", value: "Bird" },
+  ];
+
+  const allergiesType = [
+    { label: "Food", value: "Food" },
+    { label: "Drugs", value: "Drugs" },
+    { label: "Environment", value: "Environment" },
+    { label: "Others", value: "Others" },
   ];
 
   const FormatDate = (data) => {
@@ -203,6 +224,7 @@ const PawEditTab = ({ route, navigation }) => {
       alert("Please fill in all fields.");
       return;
     }
+    setModified(true);
 
     setVaccinations([
       ...vaccinations,
@@ -218,11 +240,50 @@ const PawEditTab = ({ route, navigation }) => {
     setVaccModalVisible(false);
   };
 
+  const handleUpdatePetDetail = async () => {
+
+    let updatedPetDetail = {
+      health: {
+        medical_history: {
+          allergies: allergies,
+          previous_conditions:  prevConditions,
+          previous_surgeries: prevSurgery
+        },
+        existing_conditions: existingConditions,
+        medications: existingMedications,
+        vaccinations: vaccinations,
+        extra_notes: ""
+      },
+      name: petName,
+      image_url: petImage,
+      species: petSpecies,
+      breed: petBreed,
+      age: petAge,
+      microchip_number: chipNumber,
+      // contact: "+65-8123-0002",
+    };
+
+    await axiosInstance
+        .patch("/api/v1/pets/"+petID,
+          updatedPetDetail,
+        )
+        .then(response => {
+          setSavedResult("Successfully updated pet");
+          setSaved(true);
+        })
+        .catch(error => {
+          setSavedResult("Error occured while updating pet");
+          setSaved(true);
+        })
+    console.log("TEST: " + updatedPetDetail.breed);
+  }
+
   const handleAddPrevCondition = () => {
     if (!newPrevCondition.trim() || !newPrevNotes.trim()) {
       alert("Please fill in all fields.");
       return;
     }
+    setModified(true);
 
     setPrevConditions([
       ...prevConditions,
@@ -237,15 +298,16 @@ const PawEditTab = ({ route, navigation }) => {
   };
 
   const handleAddAllergy = () => {
-    if (!newAllergyType.trim() || !newAllergyDesc.trim()) {
+    if (!newAllergyType.value || !newAllergyDesc.trim()) {
       alert("Please fill in all fields.");
       return;
     }
+    setModified(true);
 
     setAllergies([
       ...allergies,
       {
-        type: newAllergyType,
+        type: newAllergyType.value,
         description: newAllergyDesc,
       },
     ]);
@@ -311,12 +373,18 @@ const PawEditTab = ({ route, navigation }) => {
             <View style={styles.bottomContainer}>
               <TouchableOpacity
                 style={styles.backIconContainer}
-                onPress={() => navigation.goBack()}
+                onPress={() => {
+                  if(isModified) {
+                    setModifiedVisible(true);
+                  }else {
+                    navigation.goBack()
+                  }
+                }}
               >
                 <Image
                   source={require("../assets/sosPage-assets/back-icon.png")}
                 />
-                <Text style={styles.backIconText}>{data.name}</Text>
+                <Text style={styles.backIconText}>{petName}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.backIconContainer}
@@ -351,8 +419,11 @@ const PawEditTab = ({ route, navigation }) => {
                 style={styles.searchInput}
                 placeholder="Name"
                 clearButtonMode="never"
-                defaultValue={data.name}
-                onChangeText={(text) => setPetName(text)}
+                defaultValue={petName}
+                onChangeText={(text) => {
+                  setModified(true);
+                  setPetName(text)}
+              }
               />
               <Dropdown
                 style={styles.dropdown}
@@ -377,8 +448,12 @@ const PawEditTab = ({ route, navigation }) => {
                 style={styles.searchInput}
                 placeholder="Breed"
                 clearButtonMode="never"
-                defaultValue={data.breed}
-                onChangeText={(text) => setPetBreed(text)}
+                defaultValue={petBreed}
+                onChangeText={(text) => {
+                  setModified(true);
+
+                  setPetBreed(text)
+                }}
               />
               <TextInput
                 style={styles.searchInput}
@@ -386,7 +461,10 @@ const PawEditTab = ({ route, navigation }) => {
                 clearButtonMode="never"
                 keyboardType="number-pad"
                 defaultValue={petAge}
-                onChangeText={(text) => setPetBreed(text)}
+                onChangeText={(text) => {
+                  setModified(true);
+                  setPetAge(text)
+                }}
               />
               {/* <TextInput
                 style={styles.searchInput}
@@ -436,9 +514,12 @@ const PawEditTab = ({ route, navigation }) => {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Chip Number"
-                defaultValue={data.microchip_number}
+                defaultValue={chipNumber}
                 clearButtonMode="never"
-                onChangeText={(text) => setChipNumber(text)}
+                onChangeText={(text) => {
+                  setModified(true);
+                  setChipNumber(text)
+                }}
               />
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Health</Text>
@@ -564,7 +645,9 @@ const PawEditTab = ({ route, navigation }) => {
                 </View>
                 <TouchableOpacity
                   style={styles.buttonContainer}
-                  onPress={() => {}}
+                  onPress={() => {
+                    handleUpdatePetDetail();
+                  }}
                 >
                   <Text style={styles.buttonText}>Save</Text>
                 </TouchableOpacity>
@@ -574,16 +657,39 @@ const PawEditTab = ({ route, navigation }) => {
                   onBackdropPress={() => setAllergyModalVisible(false)}
                 >
                   <View style={styles.modalContent}>
-                    <TextInput
-                      placeholder="Type"
-                      value={newAllergyType}
-                      onChangeText={setNewAllergyType}
-                      style={styles.input}
+                    <Text style={styles.sectionTitle2}>ts</Text>
+                    {/*<SelectDropdown*/}
+                    {/*  placeholder="Type"*/}
+                    {/*  value={newAllergyType}*/}
+                    {/*  data={}*/}
+                    {/*  onChangeText={setNewAllergyType}*/}
+                    {/*  // dropdownStyle={}*/}
+                    {/*  buttonStyle={styles.input}*/}
+                    {/*/>*/}
+                    <Dropdown
+                        style={styles.input}
+                        value={newAllergyType}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        itemTextStyle={styles.itemTextStyle}
+                        iconStyle={styles.iconStyle}
+                        data={allergiesType}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder="Type of allergy"
+                        searchPlaceholder="Search..."
+                        onChange={(item) => {
+                          setNewAllergyType(item);
+                          // console.log("G:" + newAllergyType.value);
+                        }}
                     />
                     <TextInput
                       placeholder="Description"
                       value={newAllergyDesc}
                       onChangeText={setNewAllergyDesc}
+                      placeholderTextColor='#c7c7cd'
                       style={[styles.input, { marginTop: 10 }]}
                     />
                     <TouchableOpacity
@@ -601,12 +707,14 @@ const PawEditTab = ({ route, navigation }) => {
                   <View style={styles.modalContent}>
                     <TextInput
                       placeholder="Condition"
+                      placeholderTextColor='#c7c7cd'
                       value={newPrevCondition}
                       onChangeText={setNewPrevCondition}
                       style={styles.input}
                     />
                     <TextInput
                       placeholder="Notes"
+                      placeholderTextColor='#c7c7cd'
                       value={newPrevNotes}
                       onChangeText={setPrevNewNotes}
                       style={[styles.input, { marginTop: 10 }]}
@@ -626,12 +734,14 @@ const PawEditTab = ({ route, navigation }) => {
                   <View style={styles.modalContent}>
                     <TextInput
                       placeholder="Surgery Name"
+                      placeholderTextColor='#c7c7cd'
                       value={newSurgery}
                       onChangeText={setNewSurgery}
                       style={styles.input}
                     />
                     <TextInput
                       style={[styles.input, { marginTop: 10 }]}
+                      placeholderTextColor='#c7c7cd'
                       placeholder="Surgery Date"
                       onPressIn={showSurgeryDatePicker}
                       value={newSurgeryDate}
@@ -640,10 +750,12 @@ const PawEditTab = ({ route, navigation }) => {
                       isVisible={isSurgeryDatePickerVisible}
                       mode="date"
                       onConfirm={handleSurgeryConfirm}
+                      isDarkModeEnabled={colorScheme === "dark"}
                       onCancel={hideSurgeryDatePicker}
                     />
                     <TextInput
                       placeholder="Notes"
+                      placeholderTextColor='#c7c7cd'
                       value={newSurgeryNotes}
                       onChangeText={setNewSurgeryNotes}
                       style={[styles.input, { marginTop: 10 }]}
@@ -718,6 +830,62 @@ const PawEditTab = ({ route, navigation }) => {
                     </TouchableOpacity>
                   </View>
                 </Modal>
+                <Modal
+                    isVisible={isSaved}
+                    onBackdropPress={() => setSaved(false)}
+                >
+                  <View style={styles.modalContent}>
+                    <Text>{savedResult}</Text>
+                    <TouchableOpacity
+                        style={[styles.buttonContainer, { marginTop: 20 }]}
+                        onPress={() => setSaved(false)}
+                    >
+                      <Text style={styles.buttonText}>Okay</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Modal>
+
+                <Modal
+                    isVisible={isModifiedVisible}
+                    onBackdropPress={() => setModifiedVisible(false)}
+                >
+                  <View style={styles.BottomPressContainer}>
+                    <Text style={styles.sectionTitle}>        Discard changes?        </Text>
+                    <TouchableOpacity
+                        style={[
+                          styles.ModalDiscardButton,
+                          { backgroundColor: "#A5A5A5" },
+                        ]}
+                        // style={[styles.modalCancelButton, { marginTop: 20}]}
+                        onPress={() => setModifiedVisible(false)}
+                    >
+                      <Text style={styles.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[
+                          styles.ModalDiscardButton,
+                          { backgroundColor: "#e69797" },
+                        ]}
+                        // style={[styles.modalButton, { marginTop: 20 }]}
+                        onPress={() => {
+                          setModifiedVisible(false);
+                          navigation.goBack()
+                        }}
+                    >
+                      <Text style={styles.buttonText}>Discard</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/*<View style={styles.BottomPressContainer}>*/}
+                  {/*  <Text style={styles.Modalsubtitle}>*/}
+                  {/*    Are you sure you want to schedule an urgent visit for your*/}
+                  {/*    pet?*/}
+                  {/*  </Text>*/}
+
+                  {/*</View>*/}
+
+                </Modal>
+
                 <Modal
                   isVisible={isVaccModalVisible}
                   onBackdropPress={() => setVaccModalVisible(false)}
@@ -902,6 +1070,17 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: "#E0FCF9",
   },
+  ModalDiscardButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 7,
+    marginTop: 15,
+    borderRadius: 18,
+    alignItems: "center",
+    width: 150,
+    height: 50,
+    justifyContent: "center",
+  },
   buttonText: {
     color: "#164348",
     textAlign: "center",
@@ -973,6 +1152,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: 230,
   },
+  modalCancelButton: {
+    marginTop: 10,
+    backgroundColor: "#9e9e9e",
+    color: "#164348",
+    padding: 10,
+    borderRadius: 20,
+    textAlign: "center",
+    fontFamily: "frank-bold",
+    fontSize: 16,
+    width: 230,
+  },
+  BottomPressContainer: {
+    alignItems: "center",
+    borderRadius: 20,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+    marginTop: 0,
+    backgroundColor: "#FFFFFF",
+    flex: 0.23,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignContent: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  ModalCancelButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 7,
+    marginTop: 15,
+    borderRadius: 18,
+    alignItems: "center",
+    width: 100,
+    height: 50,
+    justifyContent: "center",
+  },
   modalContent: {
     backgroundColor: "white",
     padding: 22,
@@ -992,5 +1207,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     width: "100%",
   },
+  modalInput: {
+    fontFamily: "frank-regular",
+    fontSize: 16,
+    color: "#5A7A7D",
+    marginTop: 5,
+    textAlign: "left",
+  }
 });
 export default PawEditTab;

@@ -265,7 +265,7 @@ const petHealths = [
             ],
             previous_surgeries: [{
                 surgery_name: "Spay",
-                surgery_date: new Date("2023-06-15"),
+                surgery_date: "15-06-2023",
                 notes: "Uneventful surgery, recovered well"
             }]
         },
@@ -283,12 +283,12 @@ const petHealths = [
         }],
         vaccinations: [{
             vaccine_name: "Rabies",
-            date_administered: new Date("2024-02-01"),
+            date_administered: "01-02-2024",
             notes: "Valid until 2027"
         },
             {
                 vaccine_name: "DHPP",
-                date_administered: new Date("2024-02-01"),
+                date_administered: "01-02-2024",
                 notes: "Valid until 2025"
             }],
         extra_notes: "Friendly and energetic but can be wary of strangers. Responds well to positive reinforcement training."
@@ -300,7 +300,7 @@ const petHealths = [
             previous_surgeries: [
                 {
                     surgery_name: "Spay",
-                    surgery_date: new Date("2023-06-15"),
+                    surgery_date: "15-06-2023",
                     notes: "Uneventful surgery, recovered well"
                 }
             ]
@@ -310,12 +310,12 @@ const petHealths = [
         vaccinations: [
             {
                 vaccine_name: "Rabies",
-                date_administered: new Date("2024-01-10"),
+                date_administered: "10-01-2024",
                 notes: "Valid until 2027"
             },
             {
                 vaccine_name: "FVRCP",
-                date_administered: new Date("2024-01-10"),
+                date_administered: "10-01-2024",
                 notes: "Valid until 2025"
             }
         ],

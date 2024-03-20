@@ -26,7 +26,7 @@ const SosTab = ({ navigation }) => {
   const [currentLocation, setCurrentLocation] = useState("");
 
   useEffect(() => {
-    setCurrentLocation(
+    global.address && setCurrentLocation(
       global.address[0].streetNumber +
         " " +
         global.address[0].street +

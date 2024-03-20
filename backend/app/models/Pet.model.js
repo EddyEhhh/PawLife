@@ -47,7 +47,7 @@ const petSchema = mongoose.Schema({
             }],
             previous_surgeries: [{
                 surgery_name: String,
-                surgery_date: Date,
+                surgery_date: String,
                 notes: String
             }]
         },
@@ -63,7 +63,7 @@ const petSchema = mongoose.Schema({
         }],
         vaccinations: [{
             vaccine_name: String,
-            date_administered: Date,
+            date_administered: String,
             notes: String
         }],
         extra_notes: {
