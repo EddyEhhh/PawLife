@@ -382,7 +382,7 @@ const petsData = [
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a01'),
-        image_url: "https://i.ibb.co/7C07pCx/Screenshot-2024-03-19-162233.png",
+        image_url: "https://dogtime.com/wp-content/uploads/sites/12/2023/12/GettyImages-1487826002-e1702396830635.jpg",
         name: "Kiyo",
         species: "Dog",
         breed: "Shihpoo",

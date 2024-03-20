@@ -13,7 +13,7 @@ import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 
-const TeleTab = ({ navigation }) => {
+const BookingTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,10 +58,9 @@ const TeleTab = ({ navigation }) => {
                   source={require("../assets/sosPage-assets/back-icon.png")}
                 />
               </TouchableOpacity>
-              <Text style={styles.title}>Teleconsultation</Text>
+              <Text style={styles.title}>PawsBooking</Text>
               <Text style={styles.subtitle}>
-                Connect with trusted veterinarians through live video
-                consultations
+                Make advance booking with your trusted veterinarians
               </Text>
             </SafeAreaView>
 
@@ -119,7 +118,7 @@ const TeleTab = ({ navigation }) => {
                     <TouchableOpacity
                       style={styles.scheduleButtonContainer}
                       onPress={() => {
-                        navigation.navigate("TeleDetailsScreen", {
+                        navigation.navigate("BookingDetailsScreen", {
                           vetID: item._id,
                         });
                       }}
@@ -144,7 +143,7 @@ const TeleTab = ({ navigation }) => {
 const styles = StyleSheet.create({
   topContainer: {
     marginTop: 64,
-    height: 140,
+    height: 120,
     marginHorizontal: 25,
   },
   title: {
@@ -262,4 +261,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TeleTab;
+export default BookingTab;

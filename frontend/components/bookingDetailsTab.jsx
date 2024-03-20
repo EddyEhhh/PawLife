@@ -11,7 +11,7 @@ import {
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 
-const TeleDetails = ({ route, navigation }) => {
+const BookingDetails = ({ route, navigation }) => {
   const { vetID } = route.params;
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -332,4 +332,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TeleDetails;
+export default BookingDetails;
