@@ -24,9 +24,20 @@ export async function addPetToUser(userId, petData) {
 
 }
 
-export async function deletePet(userId, petData) {
+export async function updatePetDetail(userId, petId, petData) {
     try {
-//
+
+        return await Pet.findByIdAndUpdate (petId, petData);
+
+        // for (const [key, value] of Object.entries(petData)) {
+        //     console.log("test")
+        //     pet.set(key, value);
+        // }
+
+        console.log("Update Pet Detail: " + pet);
+
+        // return await Pet.updateOne(pet);
+
     } catch (error) {
         console.error("Error adding pet:", error);
     }
