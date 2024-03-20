@@ -12,27 +12,31 @@ import {
 import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
+import { useIsFocused } from "@react-navigation/native";
 
 const BookingTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    const fetchData = async () => {
-      await axiosInstance
-        .get("/api/v1/vets")
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setData(response.data);
-          setFilteredData(response.data.vets);
-          setLoading(false);
-        });
-    };
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
 
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    await axiosInstance
+      .get("/api/v1/vets")
+      .catch((err) => console.log(err))
+      .then((response) => {
+        setData(response.data);
+        setFilteredData(response.data.vets);
+        setLoading(false);
+      });
+  };
 
   const handleSearch = (query) => {
     setSearchQuery(query);

@@ -10,23 +10,28 @@ import {
 } from "react-native";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
+import { useIsFocused } from "@react-navigation/native";
 
 const PawTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    const fetchData = async () => {
-      await axiosInstance
-        .get("/api/v1/pets")
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        });
-    };
-    fetchData();
-  }, []);
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
+
+  const fetchData = async () => {
+    await axiosInstance
+      .get("/api/v1/pets")
+      .catch((err) => console.log(err))
+      .then((response) => {
+        setData(response.data);
+        setLoading(false);
+      });
+  };
 
   return (
     <View style={globalStyles.container}>

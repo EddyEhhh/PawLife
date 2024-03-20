@@ -13,6 +13,7 @@ import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 import * as Location from "expo-location";
+import { useIsFocused } from "@react-navigation/native";
 
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
@@ -24,17 +25,19 @@ const SosTab = ({ navigation }) => {
   const [clinicSelectionVisible, setClinicSelectionVisible] = useState(false);
   const [petSelectionVisible, setPetSelectionVisible] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    global.address && setCurrentLocation(
-      global.address[0].streetNumber +
-        " " +
-        global.address[0].street +
-        ", " +
-        global.address[0].country +
-        " " +
-        global.address[0].postalCode
-    );
+    global.address &&
+      setCurrentLocation(
+        global.address[0].streetNumber +
+          " " +
+          global.address[0].street +
+          ", " +
+          global.address[0].country +
+          " " +
+          global.address[0].postalCode
+      );
     // setSelectedPet(mockPetsData[0]);
     if (isFocused) {
       fetchData();
