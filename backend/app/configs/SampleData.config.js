@@ -372,6 +372,7 @@ const petHealths = [
 const petsData = [
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234f23'),
+        image_url: "https://i.ibb.co/72crVPx/Whats-App-Image-2024-03-18-at-16-55-10-e428948c.jpg",
         name: "Buddy",
         species: "Dog",
         breed: "Golden Retriever",
@@ -381,6 +382,7 @@ const petsData = [
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a01'),
+        image_url: "https://dogtime.com/wp-content/uploads/sites/12/2023/12/GettyImages-1487826002-e1702396830635.jpg",
         name: "Kiyo",
         species: "Dog",
         breed: "Shihpoo",
@@ -390,6 +392,7 @@ const petsData = [
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a02'),
+        image_url: "https://i.ibb.co/t2VSR4Y/Persian.jpg",
         name: "Whiskers",
         species: "Cat",
         breed: "Persian",
@@ -400,6 +403,7 @@ const petsData = [
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a03'),
         name: "Charlie",
+        image_url: "https://i.ibb.co/23JM3NC/holland-lop.jpg",
         species: "Rabbit",
         breed: "Holland Lop",
         age: 7,
@@ -408,6 +412,7 @@ const petsData = [
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a04'),
+        image_url: "https://i.ibb.co/6ty5NZQ/close-up-of-a-lutino-cockatiel-bird-Miss-Nachcha-Chayapan-Shutterstock.jpg",
         name: "Luna",
         species: "Bird",
         breed: "Cockatiel",
@@ -417,6 +422,7 @@ const petsData = [
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a05'),
+        image_url: "https://i.ibb.co/rkdw1WS/Screenshot-2024-03-19-162601.png",
         name: "Ellie",
         species: "Hamster",
         breed: "Syrian",

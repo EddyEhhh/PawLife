@@ -12,7 +12,7 @@ import {
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 
-const TelePayment = ({ navigation, route }) => {
+const BookingPayment = ({ navigation, route }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const { vetID, selectedDate, selectedTime } = route.params;
@@ -327,4 +327,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TelePayment;
+export default BookingPayment;

@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
+import { useIsFocused } from "@react-navigation/native";
 
 const HomeTab = ({ navigation }) => {
   const [data, setData] = useState({});
@@ -21,24 +22,28 @@ const HomeTab = ({ navigation }) => {
   const [urgentAppointmentVisibile, setUrgentAppointmentVisibile] =
     useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    const fetchData = async () => {
-      await axiosInstance
-        .get("/api/v1/appointments/emergency")
-        .catch((err) => console.log(err))
-        .then((response) => {
-          if (!Object.keys(response.data.appointments).length) {
-            setUrgentAppointmentVisibile(false);
-          } else {
-            setUrgentAppointmentVisibile(true);
-            setData(response.data);
-          }
-          setLoading(false);
-        });
-    };
-    fetchData();
-  }, []);
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
+
+  const fetchData = async () => {
+    await axiosInstance
+      .get("/api/v1/appointments/emergency")
+      .catch((err) => console.log(err))
+      .then((response) => {
+        if (!Object.keys(response.data.appointments).length) {
+          setUrgentAppointmentVisibile(false);
+        } else {
+          setUrgentAppointmentVisibile(true);
+          setData(response.data);
+        }
+        setLoading(false);
+      });
+  };
 
   const CovertTime = (datetime) => {
     var utcSeconds = datetime;
@@ -106,79 +111,83 @@ const HomeTab = ({ navigation }) => {
               )}
               {urgentAppointmentVisibile && (
                 <View>
-                  {data.appointments.map((item) => (
-                    <View key={item._id}>
-                      <View style={styles.item}>
-                        <View style={styles.topWrapper}>
-                          <View style={styles.leftWrapper}>
-                            <Image
-                              source={{
-                                uri: item.vet_id.image_url,
-                              }}
-                              style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                            />
-                          </View>
-                          <View style={styles.rightWrapper}>
-                            <View
-                              style={[
-                                styles.innerLeftWrapper,
-                                { marginRight: 15 },
-                              ]}
-                            >
-                              <Text style={styles.clinicsName}>
-                                {item.vet_id.name}
-                              </Text>
-                              <Text style={styles.clinicsAddress}>
-                                {item.vet_id.location.street} {"\n"}
-                                {item.vet_id.location.country}
-                                {item.vet_id.location.postal_code}
-                              </Text>
+                  {data.appointments &&
+                    data.appointments.map((item) => (
+                      <View key={item._id}>
+                        <View style={styles.item}>
+                          <View style={styles.topWrapper}>
+                            <View style={styles.leftWrapper}>
+                              <Image
+                                source={{
+                                  uri: item.vet_id.image_url,
+                                }}
+                                style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                              />
+                            </View>
+                            <View style={styles.rightWrapper}>
                               <View
-                                style={[styles.rightWrapper, { marginTop: 10 }]}
+                                style={[
+                                  styles.innerLeftWrapper,
+                                  { marginRight: 15 },
+                                ]}
                               >
-                                <View style={styles.innerLeftWrapper}>
-                                  <Text style={styles.time}>
-                                    {CovertTime(item.start_at)}
-                                  </Text>
-                                </View>
-                                <View>
-                                  <Text style={styles.dogDetails}>Gigi</Text>
-                                  <Text style={styles.dogDetails}>
-                                    {" "}
-                                    {item.pet_id.species}
-                                    {" • "}
-                                    {item.pet_id.breed}
-                                  </Text>
+                                <Text style={styles.clinicsName}>
+                                  {item.vet_id.name}
+                                </Text>
+                                <Text style={styles.clinicsAddress}>
+                                  {item.vet_id.location.street} {"\n"}
+                                  {item.vet_id.location.country}
+                                  {item.vet_id.location.postal_code}
+                                </Text>
+                                <View
+                                  style={[
+                                    styles.rightWrapper,
+                                    { marginTop: 10 },
+                                  ]}
+                                >
+                                  <View style={styles.innerLeftWrapper}>
+                                    <Text style={styles.time}>
+                                      {CovertTime(item.start_at)}
+                                    </Text>
+                                  </View>
+                                  <View>
+                                    <Text style={styles.dogDetails}>Gigi</Text>
+                                    <Text style={styles.dogDetails}>
+                                      {" "}
+                                      {item.pet_id.species}
+                                      {" • "}
+                                      {item.pet_id.breed}
+                                    </Text>
+                                  </View>
                                 </View>
                               </View>
-                            </View>
-                            <View>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  toggleModal();
-                                }}
-                              >
-                                <Image
-                                  style={{ resizeMode: "contain" }}
-                                  source={require("../assets/homePage-assets/calendar-cancel.png")}
-                                />
-                              </TouchableOpacity>
-                              <View style={styles.distanceWrapper}>
+                              <View>
                                 <TouchableOpacity
-                                  onPress={() => directToMap(item)}
+                                  onPress={() => {
+                                    toggleModal();
+                                  }}
                                 >
                                   <Image
                                     style={{ resizeMode: "contain" }}
-                                    source={require("../assets/homePage-assets/direction.png")}
+                                    source={require("../assets/homePage-assets/calendar-cancel.png")}
                                   />
                                 </TouchableOpacity>
+                                <View style={styles.distanceWrapper}>
+                                  <TouchableOpacity
+                                    onPress={() => directToMap(item)}
+                                  >
+                                    <Image
+                                      style={{ resizeMode: "contain" }}
+                                      source={require("../assets/homePage-assets/direction.png")}
+                                    />
+                                  </TouchableOpacity>
+                                </View>
                               </View>
                             </View>
                           </View>
                         </View>
                       </View>
-                    </View>
-                  ))}
+                    ))}
                 </View>
               )}
               <Text style={styles.h4}>Feature lists</Text>
@@ -213,6 +222,7 @@ const HomeTab = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.featureBox, { backgroundColor: "#E8D1CF" }]}
+                  onPress={() => navigation.navigate("BookingScreen")}
                 >
                   <Image
                     style={{ resizeMode: "contain" }}
@@ -433,14 +443,14 @@ const styles = StyleSheet.create({
   time: {
     fontFamily: "frank-regular",
     color: "#000",
-    fontSize: 14,
+    fontSize: 13,
     position: "absolute",
     bottom: 0,
   },
   dogDetails: {
     fontFamily: "frank-regular",
     color: "#164348",
-    fontSize: 14,
+    fontSize: 12,
     right: 0,
     alignSelf: "flex-end",
   },

@@ -31,6 +31,7 @@ export async function getVetsById(req, res){
         // console.log(pet_id)
         const vet = await Vet
             .find({_id: _id})
+            .populate('location')
             .then(vet => {
                 return res.status(200).json({
                     vet: vet

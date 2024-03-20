@@ -28,9 +28,6 @@ const PawTab = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const imgPlaceholder =
-    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
-
   return (
     <View style={globalStyles.container}>
       {loading && (
@@ -65,7 +62,7 @@ const PawTab = ({ navigation }) => {
                         <View style={styles.leftWrapper}>
                           <Image
                             source={{
-                              uri: imgPlaceholder,
+                              uri: item.image_url,
                             }}
                             style={styles.petsImage} // Apply styles to the Image component if necessary
                           />

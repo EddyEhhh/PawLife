@@ -46,25 +46,22 @@ const SosTab = ({ navigation }) => {
         params: getData,
       };
       await axiosInstance
-        .get("/api/v1/emergency", config)
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        });
-      await axiosInstance
         .get("/api/v1/pets")
         .catch((err) => console.log(err))
         .then((response) => {
           setPetData(response.data);
           setLoading(false);
         });
+      await axiosInstance
+        .get("/api/v1/emergency", config)
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setData(response.data);
+          setLoading(false);
+        });
     };
     fetchData();
   }, []);
-
-  const imgPlaceholder =
-    "https://www.crossdogs.org/images/dog-placeholder.png?mgiToken=tcgtxemc";
 
   const toggleModal = (item) => {
     setSelectedItem(item);
@@ -103,24 +100,6 @@ const SosTab = ({ navigation }) => {
     };
     return d.toLocaleString("en-US", options);
   };
-  const mockPetsData = [
-    {
-      _id: "5e234f234f234f234f234a01",
-      name: "Gigi",
-      species: "Dog",
-      breed: "Shih Tzu",
-      imageURL:
-        "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSVcpEF_CefMEBZr08-Y2Fj1fpedpf3PXQyiDphvQWcA6rJvdGh",
-    },
-    {
-      _id: 2,
-      name: "Abby",
-      species: "Dog",
-      breed: "Poodle",
-      imageURL:
-        "https://www.purina.com.sg/sites/default/files/styles/ttt_image_original/public/2021-02/BREED%20Hero%20Desktop_0050_poodle_toy.webp?itok=7Y1anr9w",
-    },
-  ];
 
   return (
     <View style={globalStyles.container}>
@@ -155,7 +134,7 @@ const SosTab = ({ navigation }) => {
                   </View>
                   <Image
                     source={{
-                      uri: imgPlaceholder,
+                      uri: selectedPet.image_url,
                     }}
                     style={styles.selectedPetsImage} // Apply styles to the Image component if necessary
                   />
@@ -206,109 +185,113 @@ const SosTab = ({ navigation }) => {
                   <Text style={styles.petSelectionTitle}>
                     Select your pet for emergency vet help.
                   </Text>
-                  {petData.pets.map((item) => (
-                    <View key={item._id}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedPet(item);
-                          setPetSelectionVisible(true);
-                          setClinicSelectionVisible(true);
-                        }}
-                      >
-                        <View style={styles.petItem}>
-                          <View style={styles.petTopWrapper}>
-                            <View style={styles.petLeftWrapper}>
-                              <Image
-                                source={{
-                                  uri: imgPlaceholder,
-                                }}
-                                style={styles.petsImage} // Apply styles to the Image component if necessary
-                              />
-                            </View>
-                            <View style={styles.petRightWrapper}>
-                              <View style={styles.petInnerLeftWrapper}>
-                                <Text style={styles.petsName}>{item.name}</Text>
-                                <Text style={styles.petsDetails}>
-                                  {item.species}
-                                  {" • "}
-                                  {item.breed}
-                                </Text>
+                  {petData.pets &&
+                    petData.pets.map((item) => (
+                      <View key={item._id}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedPet(item);
+                            setPetSelectionVisible(true);
+                            setClinicSelectionVisible(true);
+                          }}
+                        >
+                          <View style={styles.petItem}>
+                            <View style={styles.petTopWrapper}>
+                              <View style={styles.petLeftWrapper}>
+                                <Image
+                                  source={{
+                                    uri: item.image_url,
+                                  }}
+                                  style={styles.petsImage} // Apply styles to the Image component if necessary
+                                />
+                              </View>
+                              <View style={styles.petRightWrapper}>
+                                <View style={styles.petInnerLeftWrapper}>
+                                  <Text style={styles.petsName}>
+                                    {item.name}
+                                  </Text>
+                                  <Text style={styles.petsDetails}>
+                                    {item.species}
+                                    {" • "}
+                                    {item.breed}
+                                  </Text>
+                                </View>
                               </View>
                             </View>
                           </View>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
+                        </TouchableOpacity>
+                      </View>
+                    ))}
                 </View>
               )}
               {clinicSelectionVisible && (
                 <View>
-                  {data.vets.map((item) => (
-                    <View key={item.vet._id}>
-                      <View style={styles.item}>
-                        <View style={styles.topWrapper}>
-                          <View style={styles.leftWrapper}>
-                            <Image
-                              source={{
-                                uri: item.vet.image_url,
-                              }}
-                              style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                            />
-                          </View>
-                          <View style={styles.rightWrapper}>
-                            <View style={styles.innerLeftWrapper}>
-                              <Text style={styles.clinicsName}>
-                                {item.vet.name}
-                              </Text>
-                              <Text style={styles.clinicsAddress}>
-                                {item.vet.location.street} {"\n"}
-                                {item.vet.location.country}
-                                {item.vet.location.postal_code}
-                              </Text>
+                  {data.vets &&
+                    data.vets.map((item) => (
+                      <View key={item.vet._id}>
+                        <View style={styles.item}>
+                          <View style={styles.topWrapper}>
+                            <View style={styles.leftWrapper}>
+                              <Image
+                                source={{
+                                  uri: item.vet.image_url,
+                                }}
+                                style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                              />
                             </View>
-                            <View>
-                              <Text style={styles.time}>
-                                {CovertTime(item.next_available)}
-                              </Text>
-                              <View style={styles.distanceWrapper}>
-                                <View>
-                                  <Text style={styles.distance}>
-                                    {
-                                      item.distance_matrix.rows[0].elements[0]
-                                        .duration.text
-                                    }
-                                  </Text>
-                                  <Text style={styles.distance}>
-                                    {
-                                      item.distance_matrix.rows[0].elements[0]
-                                        .distance.text
-                                    }
-                                  </Text>
-                                </View>
-                                <View style={styles.distanceRightWrapper}>
-                                  <Image
-                                    source={require("../assets/sosPage-assets/car-logo.png")}
-                                    style={styles.carLogo}
-                                  />
+                            <View style={styles.rightWrapper}>
+                              <View style={styles.innerLeftWrapper}>
+                                <Text style={styles.clinicsName}>
+                                  {item.vet.name}
+                                </Text>
+                                <Text style={styles.clinicsAddress}>
+                                  {item.vet.location.street} {"\n"}
+                                  {item.vet.location.country}
+                                  {item.vet.location.postal_code}
+                                </Text>
+                              </View>
+                              <View>
+                                <Text style={styles.time}>
+                                  {CovertTime(item.next_available)}
+                                </Text>
+                                <View style={styles.distanceWrapper}>
+                                  <View>
+                                    <Text style={styles.distance}>
+                                      {
+                                        item.distance_matrix.rows[0].elements[0]
+                                          .duration.text
+                                      }
+                                    </Text>
+                                    <Text style={styles.distance}>
+                                      {
+                                        item.distance_matrix.rows[0].elements[0]
+                                          .distance.text
+                                      }
+                                    </Text>
+                                  </View>
+                                  <View style={styles.distanceRightWrapper}>
+                                    <Image
+                                      source={require("../assets/sosPage-assets/car-logo.png")}
+                                      style={styles.carLogo}
+                                    />
+                                  </View>
                                 </View>
                               </View>
                             </View>
                           </View>
+                          <TouchableOpacity
+                            style={styles.scheduleButtonContainer}
+                            onPress={() => {
+                              toggleModal(item);
+                            }}
+                          >
+                            <Text style={styles.scheduleButtonTitle}>
+                              Schedule Urgent Visit
+                            </Text>
+                          </TouchableOpacity>
                         </View>
-                        <TouchableOpacity
-                          style={styles.scheduleButtonContainer}
-                          onPress={() => {
-                            toggleModal(item);
-                          }}
-                        >
-                          <Text style={styles.scheduleButtonTitle}>
-                            Schedule Urgent Visit
-                          </Text>
-                        </TouchableOpacity>
                       </View>
-                    </View>
-                  ))}
+                    ))}
                 </View>
               )}
               <View style={{ height: 20 }} />
