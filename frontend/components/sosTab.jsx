@@ -13,6 +13,7 @@ import Modal from "react-native-modal";
 import globalStyles from "../style/global";
 import axiosInstance from "./util/axiosInstance";
 import * as Location from "expo-location";
+import { useIsFocused } from "@react-navigation/native";
 
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
@@ -24,44 +25,49 @@ const SosTab = ({ navigation }) => {
   const [clinicSelectionVisible, setClinicSelectionVisible] = useState(false);
   const [petSelectionVisible, setPetSelectionVisible] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    setCurrentLocation(
-      global.address[0].streetNumber +
-        " " +
-        global.address[0].street +
-        ", " +
-        global.address[0].country +
-        " " +
-        global.address[0].postalCode
-    );
+    global.address &&
+      setCurrentLocation(
+        global.address[0].streetNumber +
+          " " +
+          global.address[0].street +
+          ", " +
+          global.address[0].country +
+          " " +
+          global.address[0].postalCode
+      );
     // setSelectedPet(mockPetsData[0]);
-    const fetchData = async () => {
-      var getData = {
-        longitude: global.currentLocation.coords.longitude,
-        latitude: global.currentLocation.coords.latitude,
-      };
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        params: getData,
-      };
-      await axiosInstance
-        .get("/api/v1/pets")
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setPetData(response.data);
-          setLoading(false);
-        });
-      await axiosInstance
-        .get("/api/v1/emergency", config)
-        .catch((err) => console.log(err))
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        });
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
+
+  const fetchData = async () => {
+    var getData = {
+      longitude: global.currentLocation.coords.longitude,
+      latitude: global.currentLocation.coords.latitude,
     };
-    fetchData();
-  }, []);
+    const config = {
+      headers: { "Content-Type": "application/json" },
+      params: getData,
+    };
+    await axiosInstance
+      .get("/api/v1/pets")
+      .catch((err) => console.log(err))
+      .then((response) => {
+        setPetData(response.data);
+        setLoading(false);
+      });
+    await axiosInstance
+      .get("/api/v1/emergency", config)
+      .catch((err) => console.log(err))
+      .then((response) => {
+        setData(response.data);
+        setLoading(false);
+      });
+  };
 
   const toggleModal = (item) => {
     setSelectedItem(item);
@@ -81,6 +87,7 @@ const SosTab = ({ navigation }) => {
       })
       .then((response) => {
         console.log("Appointment Confirmed");
+        fetchData();
       })
       .catch((e) => {
         console.log(e);
