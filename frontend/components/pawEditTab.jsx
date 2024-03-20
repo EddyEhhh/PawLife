@@ -263,6 +263,7 @@ const PawEditTab = ({ route, navigation }) => {
       // contact: "+65-8123-0002",
     };
 
+    setModified(false);
     await axiosInstance
         .patch("/api/v1/pets/"+petID,
           updatedPetDetail,
@@ -832,13 +833,13 @@ const PawEditTab = ({ route, navigation }) => {
                 </Modal>
                 <Modal
                     isVisible={isSaved}
-                    onBackdropPress={() => setSaved(false)}
+                    onBackdropPress={() => {navigation.goBack();setSaved(false)}}
                 >
                   <View style={styles.modalContent}>
                     <Text>{savedResult}</Text>
                     <TouchableOpacity
                         style={[styles.buttonContainer, { marginTop: 20 }]}
-                        onPress={() => setSaved(false)}
+                        onPress={() => {navigation.goBack();setSaved(false)}}
                     >
                       <Text style={styles.buttonText}>Okay</Text>
                     </TouchableOpacity>
