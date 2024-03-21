@@ -87,7 +87,7 @@ export async function patchPetDetail(req, res){
 export async function deletePet(req, res){
     try {
         const userId = req.body.userId || "5e234f234f234f234f234a01";
-        const petId = req.body.pet_id;
+        const petId = req.params.pet_id;
 
         await Pet.findByIdAndDelete(petId).then(pet => {
             return res.status(200).json({

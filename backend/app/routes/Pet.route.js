@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', getPets);
 router.get('/pet', getPetsById);
 router.post('/', postPets);
-router.delete('/pet', deletePet)
+router.delete('/:pet_id', deletePet)
 router.patch('/:pet_id', patchPetDetail)
 export default router;
 

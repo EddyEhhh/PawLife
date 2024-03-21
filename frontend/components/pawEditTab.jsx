@@ -80,6 +80,8 @@ const PawEditTab = ({ route, navigation }) => {
   const [isModified, setModified] = useState(false);
   const [isModifiedVisible, setModifiedVisible] = useState(false);
 
+  const [isDeleteVisible, setDeleteVisible] = useState(false);
+
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -132,15 +134,12 @@ const PawEditTab = ({ route, navigation }) => {
     }
   };
 
-  const deletePet = () => {
-    axiosInstance
-      .delete("/api/v1/pets/pet", {
-        params: {
-          pet_id: petID,
-        },
-      })
+  const deletePet = async () => {
+    await axiosInstance
+      .delete("/api/v1/pets/"+petID)
       .catch((err) => console.log(err))
       .then((response) => {
+        navigation.goBack();
         console.log(response);
       });
   };
@@ -262,8 +261,7 @@ const PawEditTab = ({ route, navigation }) => {
       breed: petBreed,
       age: petAge,
       microchip_number: chipNumber,
-      // contact: "+65-8123-0002",
-    };
+};
 
     setModified(false);
     await axiosInstance
@@ -390,7 +388,7 @@ const PawEditTab = ({ route, navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.backIconContainer}
-                onPress={() => deletePet()}
+                onPress={() => setDeleteVisible(true)}
               >
                 <MaterialCommunityIcons
                   name="delete"
@@ -860,7 +858,9 @@ const PawEditTab = ({ route, navigation }) => {
                   onBackdropPress={() => setModifiedVisible(false)}
                 >
                   <View style={styles.BottomPressContainer}>
-                    <Text style={styles.sectionTitle}> Discard changes? </Text>
+                    <View style={{width: "100%", alignItems: "center"}}>
+                      <Text style={styles.sectionTitle}>Discard changes?</Text>
+                    </View>
                     <TouchableOpacity
                       style={[
                         styles.ModalDiscardButton,
@@ -885,14 +885,44 @@ const PawEditTab = ({ route, navigation }) => {
                       <Text style={styles.buttonText}>Discard</Text>
                     </TouchableOpacity>
                   </View>
+                </Modal>
 
-                  {/*<View style={styles.BottomPressContainer}>*/}
-                  {/*  <Text style={styles.Modalsubtitle}>*/}
-                  {/*    Are you sure you want to schedule an urgent visit for your*/}
-                  {/*    pet?*/}
-                  {/*  </Text>*/}
+                <Modal
+                    isVisible={isDeleteVisible}
+                    onBackdropPress={() => setDeleteVisible(false)}
+                >
+                  <View style={styles.BottomPressContainer}>
+                    <View style={{width: "100%", alignItems: "center"}}>
+                      <Text style={styles.sectionTitle2}>Are you sure you want to remove this pet?</Text>
+                      <Text style={styles.sectionTitle2}>{petName}</Text>
 
-                  {/*</View>*/}
+                    </View>
+                    <TouchableOpacity
+                        style={[
+                          styles.ModalDiscardButton,
+                          { backgroundColor: "#A5A5A5" },
+                        ]}
+                        // style={[styles.modalCancelButton, { marginTop: 20}]}
+                        onPress={() => setDeleteVisible(false)}
+                    >
+                      <Text style={styles.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[
+                          styles.ModalDiscardButton,
+                          { backgroundColor: "#e69797" },
+                        ]}
+                        // style={[styles.modalButton, { marginTop: 20 }]}
+                        onPress={() => {
+                          setDeleteVisible(false);
+                          deletePet();
+                        }}
+                    >
+                      <Text style={styles.buttonText}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+
+
                 </Modal>
 
                 <Modal
