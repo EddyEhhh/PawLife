@@ -551,7 +551,7 @@ const PawEditTab = ({ route, navigation }) => {
                     <Text style={styles.addButtonText}>+</Text>
                   </TouchableOpacity>
                   {prevConditions.map((item, index) => (
-                    <View key={item._id} style={styles.conditionContainer}>
+                    <View key={index} style={styles.conditionContainer}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.conditionText}>
                           {item.condition}
@@ -570,7 +570,7 @@ const PawEditTab = ({ route, navigation }) => {
                     <Text style={styles.addButtonText}>+</Text>
                   </TouchableOpacity>
                   {prevSurgery.map((item, index) => (
-                    <View key={item._id} style={styles.conditionContainer}>
+                    <View key={index} style={styles.conditionContainer}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.conditionText}>
                           {item.surgery_name}
@@ -592,7 +592,7 @@ const PawEditTab = ({ route, navigation }) => {
                     <Text style={styles.addButtonText}>+</Text>
                   </TouchableOpacity>
                   {existingConditions.map((item, index) => (
-                    <View key={item._id} style={styles.conditionContainer}>
+                    <View key={index} style={styles.conditionContainer}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.conditionText}>
                           {item.condition}
@@ -611,7 +611,7 @@ const PawEditTab = ({ route, navigation }) => {
                     <Text style={styles.addButtonText}>+</Text>
                   </TouchableOpacity>
                   {existingMedications.map((item, index) => (
-                    <View key={item._id} style={styles.conditionContainer}>
+                    <View key={index} style={styles.conditionContainer}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.conditionText}>
                           {item.medication_name}
@@ -632,7 +632,7 @@ const PawEditTab = ({ route, navigation }) => {
                     <Text style={styles.addButtonText}>+</Text>
                   </TouchableOpacity>
                   {vaccinations.map((item, index) => (
-                    <View key={item._id} style={styles.conditionContainer}>
+                    <View key={index} style={styles.conditionContainer}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.conditionText}>
                           {item.vaccine_name}
