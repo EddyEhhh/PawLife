@@ -1,11 +1,11 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
-import {Appointment} from "../models/Appointment.model.js";
+import {EmergencyAppointment} from "../models/EmergencyAppointment.model.js";
 
 export async function getAppointmentsByVet(req, res){
     try {
         const { vet_id , is_emergency, } = req.params;
-        return Appointment.find(
+        return EmergencyAppointment.find(
             {
                 vet_id: vet_id,
                 end_at: {$gt: Math.floor(new Date().getTime() / 1000)}

@@ -1,6 +1,6 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
-import {Appointment} from "../models/Appointment.model.js";
+import {EmergencyAppointment} from "../models/EmergencyAppointment.model.js";
 import {getEmergencyAppointment} from "../helpers/EmergencyAppointment.helper.js";
 
 // export async function getEmergencyAppointmentsByVet(req, res){
@@ -18,7 +18,7 @@ export async function getAppointmentsByVet(req, res){
     try {
         const { pet_id , vet_id } = req.body;
         console.log(req.params)
-        const appointments = await Appointment
+        const appointments = await EmergencyAppointment
             .find({
                 vet_id : vet_id
             })
@@ -40,7 +40,7 @@ export async function getAppointmentsByVet(req, res){
 export async function getEmergencyAppointmentsByVet(req, res){
     try {
         const { user_id } = '5e234f234f234f234f234a01';
-        await Appointment.find(
+        await EmergencyAppointment.find(
             {
                 user_id: user_id,
                 end_at: {$gt: Math.floor(new Date().getTime() / 1000)},

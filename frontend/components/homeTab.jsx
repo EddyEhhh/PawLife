@@ -45,6 +45,18 @@ const HomeTab = ({ navigation }) => {
       });
   };
 
+  const deleteEmergency = async () => {
+  // console.log("ITEM:"+selectedItem._id)
+    await axiosInstance
+        .delete("/api/v1/emergency/"+selectedItem._id)
+        .then((response) => {
+          // console.log(data.appointments)
+          setData({appointments: data.appointments.filter((appointment) => selectedItem._id != appointment._id)});
+          setModalVisible(false);
+        })
+      .catch((err) => console.log(err));
+  };
+
   const CovertTime = (datetime) => {
     var utcSeconds = datetime;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
@@ -101,7 +113,7 @@ const HomeTab = ({ navigation }) => {
               </TouchableOpacity>
             </SafeAreaView>
             <SafeAreaView style={styles.bottomContainer}>
-              <Text style={styles.h4}>Upcoming Emergency Appointment</Text>
+              <Text style={styles.h4}>Upcoming Emergency EmergencyAppointment</Text>
               {!urgentAppointmentVisibile && (
                 <TouchableOpacity style={styles.apptContainer} disabled={true}>
                   <Text style={styles.apptObject}>
@@ -151,7 +163,7 @@ const HomeTab = ({ navigation }) => {
                                     </Text>
                                   </View>
                                   <View>
-                                    <Text style={styles.dogDetails}>Gigi</Text>
+                                    <Text style={styles.dogDetails}>{item.pet_id.name}</Text>
                                     <Text style={styles.dogDetails}>
                                       {" "}
                                       {item.pet_id.species}
@@ -164,7 +176,7 @@ const HomeTab = ({ navigation }) => {
                               <View>
                                 <TouchableOpacity
                                   onPress={() => {
-                                    toggleModal();
+                                    toggleModal(item);
                                   }}
                                 >
                                   <Image
@@ -312,6 +324,11 @@ const HomeTab = ({ navigation }) => {
                         styles.ModalScheduleButton,
                         { backgroundColor: "#D45C57" },
                       ]}
+                      onPress={() => {
+                        deleteEmergency()
+                        setModalVisible(false);
+                      }
+                    }
                     >
                       <View>
                         <Text style={styles.scheduleButtonTitle}>Confirm</Text>
