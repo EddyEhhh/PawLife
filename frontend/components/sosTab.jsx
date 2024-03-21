@@ -18,7 +18,8 @@ import { useIsFocused } from "@react-navigation/native";
 const SosTab = ({ navigation }) => {
   const [data, setData] = useState({});
   const [petData, setPetData] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [petLoading, setPetLoading] = useState(true);
+  const [emergencyLoading, setEmergencyLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedPet, setSelectedPet] = useState(null);
@@ -58,14 +59,14 @@ const SosTab = ({ navigation }) => {
       .catch((err) => console.log(err))
       .then((response) => {
         setPetData(response.data);
-        setLoading(false);
+        setPetLoading(false);
       });
     await axiosInstance
       .get("/api/v1/emergency", config)
       .catch((err) => console.log(err))
       .then((response) => {
         setData(response.data);
-        setLoading(false);
+        setEmergencyLoading(false);
       });
   };
 
@@ -110,12 +111,12 @@ const SosTab = ({ navigation }) => {
 
   return (
     <View style={globalStyles.container}>
-      {loading && (
+      {(petLoading || emergencyLoading) && (
         <View>
           <Text>loading</Text>
         </View>
       )}
-      {!loading && (
+      {!petLoading && !emergencyLoading && (
         <View style={globalStyles.container}>
           <ScrollView>
             <SafeAreaView style={styles.topContainer}>
