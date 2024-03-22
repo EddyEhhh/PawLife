@@ -880,8 +880,18 @@ const PawEditTab = ({ route, navigation }) => {
                   onBackdropPress={() => setModifiedVisible(false)}
                 >
                   <View style={styles.BottomPressContainer}>
-                    <View style={{ width: "100%", alignItems: "center" }}>
-                      <Text style={styles.sectionTitle}>Discard changes?</Text>
+                    <View
+                      style={{
+                        width: "100%",
+                        alignItems: "center",
+                        marginTop: 5,
+                      }}
+                    >
+                      <Text
+                        style={[styles.sectionTitle2, { marginBottom: 10 }]}
+                      >
+                        Discard changes?
+                      </Text>
                     </View>
                     <TouchableOpacity
                       style={[
@@ -891,12 +901,14 @@ const PawEditTab = ({ route, navigation }) => {
                       // style={[styles.modalCancelButton, { marginTop: 20}]}
                       onPress={() => setModifiedVisible(false)}
                     >
-                      <Text style={styles.buttonText}>Cancel</Text>
+                      <Text style={[styles.buttonText, { color: "white" }]}>
+                        Cancel
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[
                         styles.ModalDiscardButton,
-                        { backgroundColor: "#e69797" },
+                        { backgroundColor: "#D45C57" },
                       ]}
                       // style={[styles.modalButton, { marginTop: 20 }]}
                       onPress={() => {
@@ -904,7 +916,9 @@ const PawEditTab = ({ route, navigation }) => {
                         navigation.goBack();
                       }}
                     >
-                      <Text style={styles.buttonText}>Discard</Text>
+                      <Text style={[styles.buttonText, { color: "white" }]}>
+                        Discard
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </Modal>
@@ -914,11 +928,19 @@ const PawEditTab = ({ route, navigation }) => {
                   onBackdropPress={() => setDeleteVisible(false)}
                 >
                   <View style={styles.BottomPressContainer}>
-                    <View style={{ width: "100%", alignItems: "center" }}>
-                      <Text style={styles.sectionTitle2}>
+                    <View
+                      style={{
+                        width: "100%",
+                        alignItems: "center",
+                        marginTop: 10,
+                      }}
+                    >
+                      <Text
+                        style={[styles.sectionTitle2, { marginBottom: 10 }]}
+                      >
                         Are you sure you want to remove this pet?
                       </Text>
-                      <Text style={styles.sectionTitle2}>{petName}</Text>
+                      {/* <Text style={styles.sectionTitle2}>{petName}</Text> */}
                     </View>
                     <TouchableOpacity
                       style={[
@@ -928,12 +950,14 @@ const PawEditTab = ({ route, navigation }) => {
                       // style={[styles.modalCancelButton, { marginTop: 20}]}
                       onPress={() => setDeleteVisible(false)}
                     >
-                      <Text style={styles.buttonText}>Cancel</Text>
+                      <Text style={[styles.buttonText, { color: "white" }]}>
+                        Cancel
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[
                         styles.ModalDiscardButton,
-                        { backgroundColor: "#e69797" },
+                        { backgroundColor: "#D45C57" },
                       ]}
                       // style={[styles.modalButton, { marginTop: 20 }]}
                       onPress={() => {
@@ -941,7 +965,9 @@ const PawEditTab = ({ route, navigation }) => {
                         deletePet();
                       }}
                     >
-                      <Text style={styles.buttonText}>Delete</Text>
+                      <Text style={[styles.buttonText, { color: "white" }]}>
+                        Confirm
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </Modal>
@@ -1259,7 +1285,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: 0,
     backgroundColor: "#FFFFFF",
-    flex: 0.23,
+    flex: 0.17,
     flexDirection: "row",
     flexWrap: "wrap",
     alignContent: "center",

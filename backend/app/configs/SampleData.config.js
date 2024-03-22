@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import {Vet, Location} from "../models/Vet.model.js";
 import {Pet} from "../models/Pet.model.js";
-import {EmergencyAppointment} from "../models/EmergencyEmergencyAppointment.model.js";
+import {EmergencyAppointment} from "../models/EmergencyAppointment.model.js";
 import {getEpochInSecondsNow} from "../utils/Time.util.js";
 import {User} from "../models/User.model.js";
 
