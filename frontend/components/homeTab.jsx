@@ -51,8 +51,15 @@ const HomeTab = ({ navigation }) => {
         .delete("/api/v1/emergency/"+selectedItem._id)
         .then((response) => {
           // console.log(data.appointments)
-          setData({appointments: data.appointments.filter((appointment) => selectedItem._id != appointment._id)});
-          setModalVisible(false);
+          const appointments = data.appointments.filter((appointment) => selectedItem._id != appointment._id)
+          setData({appointments : appointments});
+          if(!Object.keys(appointments).length){
+            setUrgentAppointmentVisibile(false);
+          }
+          else{
+            setUrgentAppointmentVisibile(true);
+            setModalVisible(false);
+          }
         })
       .catch((err) => console.log(err));
   };
