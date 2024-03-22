@@ -46,28 +46,34 @@ const SosTab = ({ navigation }) => {
   }, [isFocused]);
 
   const fetchData = async () => {
-    var getData = {
-      longitude: global.currentLocation.coords.longitude,
-      latitude: global.currentLocation.coords.latitude,
-    };
-    const config = {
-      headers: { "Content-Type": "application/json" },
-      params: getData,
-    };
-    await axiosInstance
-      .get("/api/v1/pets")
-      .catch((err) => console.log(err))
-      .then((response) => {
-        setPetData(response.data);
-        setPetLoading(false);
-      });
-    await axiosInstance
-      .get("/api/v1/emergency", config)
-      .catch((err) => console.log(err))
-      .then((response) => {
-        setData(response.data);
-        setEmergencyLoading(false);
-      });
+    try {
+      var getData = {
+        longitude: global.currentLocation.coords.longitude,
+        latitude: global.currentLocation.coords.latitude,
+      };
+      const config = {
+        headers: { "Content-Type": "application/json" },
+        params: getData,
+      };
+      await axiosInstance
+        .get("/api/v1/pets")
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setPetData(response.data);
+          setPetLoading(false);
+        });
+      await axiosInstance
+        .get("/api/v1/emergency", config)
+        .catch((err) => console.log(err))
+        .then((response) => {
+          setData(response.data);
+          setEmergencyLoading(false);
+        });
+    } catch (err) {
+      setPetLoading(true);
+      setEmergencyLoading(true);
+      fetchData();
+    }
   };
 
   const toggleModal = (item) => {
@@ -111,309 +117,334 @@ const SosTab = ({ navigation }) => {
 
   return (
     <View style={globalStyles.container}>
-      {(petLoading || emergencyLoading) && (
-        <View>
-          <Text>loading</Text>
-        </View>
-      )}
-      {!petLoading && !emergencyLoading && (
-        <View style={globalStyles.container}>
-          <ScrollView>
-            <SafeAreaView style={styles.topContainer}>
-              <Image
-                style={{ resizeMode: "contain" }}
-                source={require("../assets/logo.png")}
-              />
-              {petSelectionVisible && (
-                <TouchableOpacity
-                  style={styles.selectedPetContainer}
-                  onPress={() => {
-                    setClinicSelectionVisible(false);
+      <View style={globalStyles.container}>
+        <ScrollView>
+          <SafeAreaView style={styles.topContainer}>
+            <Image
+              style={{ resizeMode: "contain" }}
+              source={require("../assets/logo.png")}
+            />
+            {petSelectionVisible && (
+              <TouchableOpacity
+                style={styles.selectedPetContainer}
+                onPress={() => {
+                  setClinicSelectionVisible(false);
+                }}
+              >
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text style={styles.petsName}>{selectedPet.name}</Text>
+                  <Text style={styles.selectedPetsDetails}>
+                    {" "}
+                    {selectedPet.species}
+                    {" • "}
+                    {selectedPet.breed}
+                  </Text>
+                </View>
+                <Image
+                  source={{
+                    uri: selectedPet.image_url,
                   }}
-                >
-                  <View style={{ alignItems: "flex-end" }}>
-                    <Text style={styles.petsName}>{selectedPet.name}</Text>
-                    <Text style={styles.selectedPetsDetails}>
-                      {" "}
-                      {selectedPet.species}
-                      {" • "}
-                      {selectedPet.breed}
+                  style={styles.selectedPetsImage} // Apply styles to the Image component if necessary
+                />
+              </TouchableOpacity>
+            )}
+            <Text style={styles.title}>Emergency Pet Aid</Text>
+            <Text style={styles.subtitle}>
+              Instant Access to Nearest Vet Clinic Now!
+            </Text>
+            <Text style={styles.description}>
+              Before scheduling an urgent visit to the vet, would you like to
+              explore VetPal Assist?
+            </Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  navigation.navigate("VetPalScreen");
+                  global.navFromSos = true;
+                }}
+              >
+                <Image
+                  source={require("../assets/sosPage-assets/lightbulb-logo.png")}
+                  resizeMode="contain"
+                />
+                <Text style={styles.buttonText}>VetPal Assist</Text>
+                <Text style={styles.buttonDescription}>
+                  Offering tailored triage solutions and expert advice at your
+                  fingertips.
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+
+          <SafeAreaView style={{ backgroundColor: "white" }}>
+            {(petLoading || emergencyLoading) && (
+              <View style={styles.loadingContainer}>
+                <Image
+                  style={{ width: 70, height: 70, alignSelf: "center" }}
+                  source={require("../assets/loading.gif")}
+                />
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoHeader}>
+                    What to Do in a Pet Emergency
+                  </Text>
+                  <Text style={styles.infoContent}>STAY CALM</Text>
+                  <Text style={styles.infoContent}>ASSESS THE PROBLEM</Text>
+                  <Text style={styles.infoContent}>BOOK AN EMERGENCY SLOT</Text>
+                  <Text style={styles.infoContent}>
+                    CALM YOUR PET AS MUCH AS POSSIBLE
+                  </Text>
+                  <Text style={styles.infoContent}>
+                    LOAD YOUR PET INTO HER CRATE FOR SAFE TRANSPORT
+                  </Text>
+                  <Text style={styles.infoContent}>
+                    DRIVE SAFELY TO THE VET
+                  </Text>
+                </View>
+              </View>
+            )}
+            {!petLoading && !emergencyLoading && (
+              <View>
+                <View style={{ marginHorizontal: 25, marginTop: 25 }}>
+                  <View style={styles.locationContainer}>
+                    <Image
+                      style={styles.locationLogo}
+                      source={require("../assets/sosPage-assets/location.png")}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.currentLocation}>
+                      {currentLocation}
                     </Text>
                   </View>
-                  <Image
-                    source={{
-                      uri: selectedPet.image_url,
-                    }}
-                    style={styles.selectedPetsImage} // Apply styles to the Image component if necessary
-                  />
-                </TouchableOpacity>
-              )}
-              <Text style={styles.title}>Emergency Pet Aid</Text>
-              <Text style={styles.subtitle}>
-                Instant Access to Nearest Vet Clinic Now!
-              </Text>
-              <Text style={styles.description}>
-                Before scheduling an urgent visit to the vet, would you like to
-                explore VetPal Assist?
-              </Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    navigation.navigate("VetPalScreen");
-                    global.navFromSos = true;
-                  }}
-                >
-                  <Image
-                    source={require("../assets/sosPage-assets/lightbulb-logo.png")}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.buttonText}>VetPal Assist</Text>
-                  <Text style={styles.buttonDescription}>
-                    Offering tailored triage solutions and expert advice at your
-                    fingertips.
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </SafeAreaView>
-
-            <SafeAreaView style={{ backgroundColor: "white" }}>
-              <View style={{ marginHorizontal: 25, marginTop: 25 }}>
-                <View style={styles.locationContainer}>
-                  <Image
-                    style={styles.locationLogo}
-                    source={require("../assets/sosPage-assets/location.png")}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.currentLocation}>{currentLocation}</Text>
                 </View>
-              </View>
-              {!clinicSelectionVisible && (
-                <View>
-                  <Text style={styles.petSelectionTitle}>
-                    Select your pet for emergency vet help.
-                  </Text>
-                  {petData.pets &&
-                    petData.pets.map((item) => (
-                      <View key={item._id}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setSelectedPet(item);
-                            setPetSelectionVisible(true);
-                            setClinicSelectionVisible(true);
-                          }}
-                        >
-                          <View style={styles.petItem}>
-                            <View style={styles.petTopWrapper}>
-                              <View style={styles.petLeftWrapper}>
-                                <Image
-                                  source={{
-                                    uri: item.image_url,
-                                  }}
-                                  style={styles.petsImage} // Apply styles to the Image component if necessary
-                                />
-                              </View>
-                              <View style={styles.petRightWrapper}>
-                                <View style={styles.petInnerLeftWrapper}>
-                                  <Text style={styles.petsName}>
-                                    {item.name}
-                                  </Text>
-                                  <Text style={styles.petsDetails}>
-                                    {item.species}
-                                    {" • "}
-                                    {item.breed}
-                                  </Text>
-                                </View>
-                              </View>
-                            </View>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                    ))}
-                </View>
-              )}
-              {clinicSelectionVisible && (
-                <View>
-                  {data.vets &&
-                    data.vets.map((item) => (
-                      <View key={item.vet._id}>
-                        <View style={styles.item}>
-                          <View style={styles.topWrapper}>
-                            <View style={styles.leftWrapper}>
-                              <Image
-                                source={{
-                                  uri: item.vet.image_url,
-                                }}
-                                style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                              />
-                            </View>
-                            <View style={styles.rightWrapper}>
-                              <View style={styles.innerLeftWrapper}>
-                                <Text style={styles.clinicsName}>
-                                  {item.vet.name}
-                                </Text>
-                                <Text style={styles.clinicsAddress}>
-                                  {item.vet.location.street} {"\n"}
-                                  {item.vet.location.country}
-                                  {item.vet.location.postal_code}
-                                </Text>
-                              </View>
-                              <View>
-                                <Text style={styles.time}>
-                                  {CovertTime(item.next_available)}
-                                </Text>
-                                <View style={styles.distanceWrapper}>
-                                  <View>
-                                    <Text style={styles.distance}>
-                                      {
-                                        item.distance_matrix.rows[0].elements[0]
-                                          .duration.text
-                                      }
-                                    </Text>
-                                    <Text style={styles.distance}>
-                                      {
-                                        item.distance_matrix.rows[0].elements[0]
-                                          .distance.text
-                                      }
-                                    </Text>
-                                  </View>
-                                  <View style={styles.distanceRightWrapper}>
-                                    <Image
-                                      source={require("../assets/sosPage-assets/car-logo.png")}
-                                      style={styles.carLogo}
-                                    />
-                                  </View>
-                                </View>
-                              </View>
-                            </View>
-                          </View>
+                {!clinicSelectionVisible && (
+                  <View>
+                    <Text style={styles.petSelectionTitle}>
+                      Select your pet for emergency vet help.
+                    </Text>
+                    {petData.pets &&
+                      petData.pets.map((item) => (
+                        <View key={item._id}>
                           <TouchableOpacity
-                            style={styles.scheduleButtonContainer}
                             onPress={() => {
-                              toggleModal(item);
+                              setSelectedPet(item);
+                              setPetSelectionVisible(true);
+                              setClinicSelectionVisible(true);
                             }}
                           >
-                            <Text style={styles.scheduleButtonTitle}>
-                              Schedule Urgent Visit
-                            </Text>
+                            <View style={styles.petItem}>
+                              <View style={styles.petTopWrapper}>
+                                <View style={styles.petLeftWrapper}>
+                                  <Image
+                                    source={{
+                                      uri: item.image_url,
+                                    }}
+                                    style={styles.petsImage} // Apply styles to the Image component if necessary
+                                  />
+                                </View>
+                                <View style={styles.petRightWrapper}>
+                                  <View style={styles.petInnerLeftWrapper}>
+                                    <Text style={styles.petsName}>
+                                      {item.name}
+                                    </Text>
+                                    <Text style={styles.petsDetails}>
+                                      {item.species}
+                                      {" • "}
+                                      {item.breed}
+                                    </Text>
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
                           </TouchableOpacity>
                         </View>
-                      </View>
-                    ))}
-                </View>
-              )}
-              <View style={{ height: 20 }} />
-              <View
-                style={{
-                  flexGrow: 1,
-                  height: "100%",
-                  backgroundColor: "#fff",
-                }}
-              />
-            </SafeAreaView>
-          </ScrollView>
-          <Modal
-            transparent={true}
-            visible={isModalVisible}
-            onBackdropPress={() => setModalVisible(false)}
-          >
-            <View
-              style={styles.modalContainer}
-              backgroundColor="rgba(0, 0, 0, 0.2)"
-            >
-              {selectedItem && (
-                <View style={styles.modalBody}>
-                  <View style={styles.TopPressContainer}>
-                    <View style={styles.topWrapper}>
-                      <View style={styles.leftWrapper}>
-                        <Image
-                          source={{
-                            uri: selectedItem.vet.image_url,
-                          }}
-                          style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                        />
-                      </View>
-                      <View style={styles.rightWrapper}>
-                        <View style={styles.innerLeftWrapper}>
-                          <Text style={styles.clinicsName}>
-                            {selectedItem.vet.name}
-                          </Text>
-                          <Text style={styles.clinicsAddress}>
-                            {selectedItem.vet.location.street} {"\n"}
-                            {selectedItem.vet.location.country}
-                            {selectedItem.vet.location.postal_code}
-                          </Text>
+                      ))}
+                  </View>
+                )}
+                {clinicSelectionVisible && (
+                  <View>
+                    {data.vets &&
+                      data.vets.map((item) => (
+                        <View key={item.vet._id}>
+                          <View style={styles.item}>
+                            <View style={styles.topWrapper}>
+                              <View style={styles.leftWrapper}>
+                                <Image
+                                  source={{
+                                    uri: item.vet.image_url,
+                                  }}
+                                  style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                                />
+                              </View>
+                              <View style={styles.rightWrapper}>
+                                <View style={styles.innerLeftWrapper}>
+                                  <Text style={styles.clinicsName}>
+                                    {item.vet.name}
+                                  </Text>
+                                  <Text style={styles.clinicsAddress}>
+                                    {item.vet.location.street} {"\n"}
+                                    {item.vet.location.country}
+                                    {item.vet.location.postal_code}
+                                  </Text>
+                                </View>
+                                <View>
+                                  <Text style={styles.time}>
+                                    {CovertTime(item.next_available)}
+                                  </Text>
+                                  <View style={styles.distanceWrapper}>
+                                    <View>
+                                      <Text style={styles.distance}>
+                                        {
+                                          item.distance_matrix.rows[0]
+                                            .elements[0].duration.text
+                                        }
+                                      </Text>
+                                      <Text style={styles.distance}>
+                                        {
+                                          item.distance_matrix.rows[0]
+                                            .elements[0].distance.text
+                                        }
+                                      </Text>
+                                    </View>
+                                    <View style={styles.distanceRightWrapper}>
+                                      <Image
+                                        source={require("../assets/sosPage-assets/car-logo.png")}
+                                        style={styles.carLogo}
+                                      />
+                                    </View>
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                            <TouchableOpacity
+                              style={styles.scheduleButtonContainer}
+                              onPress={() => {
+                                toggleModal(item);
+                              }}
+                            >
+                              <Text style={styles.scheduleButtonTitle}>
+                                Schedule Urgent Visit
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
                         </View>
-                        <View>
-                          <Text style={styles.time}>
-                            {CovertTime(selectedItem.next_available)}
-                          </Text>
-                          <View style={styles.distanceWrapper}>
-                            <View>
-                              <Text style={styles.distance}>
-                                {
-                                  selectedItem.distance_matrix.rows[0]
-                                    .elements[0].duration.text
-                                }
-                              </Text>
-                              <Text style={styles.distance}>
-                                {
-                                  selectedItem.distance_matrix.rows[0]
-                                    .elements[0].distance.text
-                                }
-                              </Text>
-                            </View>
-                            <View style={styles.distanceRightWrapper}>
-                              <Image
-                                source={require("../assets/sosPage-assets/car-logo.png")}
-                                style={styles.carLogo}
-                              />
-                            </View>
+                      ))}
+                  </View>
+                )}
+              </View>
+            )}
+
+            <View style={{ height: 20 }} />
+            <View
+              style={{
+                flexGrow: 1,
+                height: "100%",
+                backgroundColor: "#fff",
+              }}
+            />
+          </SafeAreaView>
+        </ScrollView>
+        <Modal
+          transparent={true}
+          visible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+        >
+          <View
+            style={styles.modalContainer}
+            backgroundColor="rgba(0, 0, 0, 0.2)"
+          >
+            {selectedItem && (
+              <View style={styles.modalBody}>
+                <View style={styles.TopPressContainer}>
+                  <View style={styles.topWrapper}>
+                    <View style={styles.leftWrapper}>
+                      <Image
+                        source={{
+                          uri: selectedItem.vet.image_url,
+                        }}
+                        style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                      />
+                    </View>
+                    <View style={styles.rightWrapper}>
+                      <View style={styles.innerLeftWrapper}>
+                        <Text style={styles.clinicsName}>
+                          {selectedItem.vet.name}
+                        </Text>
+                        <Text style={styles.clinicsAddress}>
+                          {selectedItem.vet.location.street} {"\n"}
+                          {selectedItem.vet.location.country}
+                          {selectedItem.vet.location.postal_code}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text style={styles.time}>
+                          {CovertTime(selectedItem.next_available)}
+                        </Text>
+                        <View style={styles.distanceWrapper}>
+                          <View>
+                            <Text style={styles.distance}>
+                              {
+                                selectedItem.distance_matrix.rows[0].elements[0]
+                                  .duration.text
+                              }
+                            </Text>
+                            <Text style={styles.distance}>
+                              {
+                                selectedItem.distance_matrix.rows[0].elements[0]
+                                  .distance.text
+                              }
+                            </Text>
+                          </View>
+                          <View style={styles.distanceRightWrapper}>
+                            <Image
+                              source={require("../assets/sosPage-assets/car-logo.png")}
+                              style={styles.carLogo}
+                            />
                           </View>
                         </View>
                       </View>
                     </View>
                   </View>
-
-                  <View style={styles.BottomPressContainer}>
-                    <Text style={styles.Modalsubtitle}>
-                      Are you sure you want to schedule an urgent visit for your
-                      pet?
-                    </Text>
-                    <TouchableOpacity
-                      style={[
-                        styles.ModalCancelButton,
-                        { backgroundColor: "#A5A5A5" },
-                      ]}
-                      onPress={() => setModalVisible(false)}
-                    >
-                      <View>
-                        <Text style={styles.scheduleButtonTitle}>Cancel</Text>
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[
-                        styles.ModalScheduleButton,
-                        { backgroundColor: "#F05D5E" },
-                      ]}
-                      onPress={() =>
-                        confirmedModalClick(
-                          selectedItem.vet._id,
-                          selectedItem.next_available
-                        )
-                      }
-                    >
-                      <View>
-                        <Text style={styles.scheduleButtonTitle}>Schedule</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
                 </View>
-              )}
-            </View>
-          </Modal>
-        </View>
-      )}
+
+                <View style={styles.BottomPressContainer}>
+                  <Text style={styles.Modalsubtitle}>
+                    Are you sure you want to schedule an urgent visit for your
+                    pet?
+                  </Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalCancelButton,
+                      { backgroundColor: "#A5A5A5" },
+                    ]}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>Cancel</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalScheduleButton,
+                      { backgroundColor: "#F05D5E" },
+                    ]}
+                    onPress={() =>
+                      confirmedModalClick(
+                        selectedItem.vet._id,
+                        selectedItem.next_available
+                      )
+                    }
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>Schedule</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </Modal>
+      </View>
     </View>
   );
 };
@@ -501,6 +532,36 @@ const styles = StyleSheet.create({
     color: "#164348",
     fontSize: 10,
     textAlign: "center",
+  },
+  loadingContainer: {
+    borderRadius: 25,
+    alignItems: "center",
+    marginHorizontal: 25,
+    marginTop: 25,
+  },
+  infoContainer: {
+    alignItems: "center",
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 25,
+    backgroundColor: "#E0FCF9",
+  },
+  infoHeader: {
+    fontFamily: "frank-bold",
+    color: "#164348",
+    fontSize: 16,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  infoContent: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 14,
+    marginBottom: 3,
+    padding: 5,
+    textAlign: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#164348",
   },
   locationContainer: {
     flexDirection: "row",
