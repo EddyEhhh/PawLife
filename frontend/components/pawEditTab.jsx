@@ -97,7 +97,6 @@ const PawEditTab = ({ route, navigation }) => {
           _id: petID,
         },
       })
-      .catch((err) => console.log(err))
       .then((response) => {
         setData(response.data.pet[0]);
         setPetName(response.data.pet[0].name);
@@ -118,6 +117,12 @@ const PawEditTab = ({ route, navigation }) => {
         setPetImage(response.data.pet[0].image_url);
         setPetGender("Female");
         setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(true);
+        setTimeout(() => {
+          fetchData();
+        }, 1000);
       });
   };
 
@@ -136,11 +141,10 @@ const PawEditTab = ({ route, navigation }) => {
 
   const deletePet = async () => {
     await axiosInstance
-      .delete("/api/v1/pets/"+petID)
+      .delete("/api/v1/pets/" + petID)
       .catch((err) => console.log(err))
       .then((response) => {
         navigation.goBack();
-        console.log(response);
       });
   };
 
@@ -261,7 +265,7 @@ const PawEditTab = ({ route, navigation }) => {
       breed: petBreed,
       age: petAge,
       microchip_number: chipNumber,
-};
+    };
 
     setModified(false);
     await axiosInstance
@@ -351,25 +355,43 @@ const PawEditTab = ({ route, navigation }) => {
 
   return (
     <View style={globalStyles.container}>
-      {loading && (
-        <View>
-          <Text>loading</Text>
-        </View>
-      )}
-      {!loading && (
-        <ScrollView scrollIndicatorInsets={{ right: 1 }}>
-          <SafeAreaView style={styles.topContainer}>
-            <Image
-              style={{ resizeMode: "contain" }}
-              source={require("../assets/logo.png")}
-            />
-            <Text style={styles.title}>Pet Details</Text>
-            <Text style={styles.subtitle}>
-              Learn more about your furry friend.
-            </Text>
-          </SafeAreaView>
+      <ScrollView scrollIndicatorInsets={{ right: 1 }}>
+        <SafeAreaView style={styles.topContainer}>
+          <Image
+            style={{ resizeMode: "contain" }}
+            source={require("../assets/logo.png")}
+          />
+          <Text style={styles.title}>Pet Details</Text>
+          <Text style={styles.subtitle}>
+            Learn more about your furry friend.
+          </Text>
+        </SafeAreaView>
 
-          <SafeAreaView style={{ backgroundColor: "white" }}>
+        <SafeAreaView style={{ backgroundColor: "white" }}>
+          {loading && (
+            <View style={styles.loadingContainer}>
+              <Image
+                style={{ width: 70, height: 70, alignSelf: "center" }}
+                source={require("../assets/loading.gif")}
+              />
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoHeader}>
+                  What to Do in a Pet Emergency
+                </Text>
+                <Text style={styles.infoContent}>STAY CALM</Text>
+                <Text style={styles.infoContent}>ASSESS THE PROBLEM</Text>
+                <Text style={styles.infoContent}>BOOK AN EMERGENCY SLOT</Text>
+                <Text style={styles.infoContent}>
+                  CALM YOUR PET AS MUCH AS POSSIBLE
+                </Text>
+                <Text style={styles.infoContent}>
+                  LOAD YOUR PET INTO HER CRATE FOR SAFE TRANSPORT
+                </Text>
+                <Text style={styles.infoContent}>DRIVE SAFELY TO THE VET</Text>
+              </View>
+            </View>
+          )}
+          {!loading && (
             <View style={styles.bottomContainer}>
               <TouchableOpacity
                 style={styles.backIconContainer}
@@ -858,7 +880,7 @@ const PawEditTab = ({ route, navigation }) => {
                   onBackdropPress={() => setModifiedVisible(false)}
                 >
                   <View style={styles.BottomPressContainer}>
-                    <View style={{width: "100%", alignItems: "center"}}>
+                    <View style={{ width: "100%", alignItems: "center" }}>
                       <Text style={styles.sectionTitle}>Discard changes?</Text>
                     </View>
                     <TouchableOpacity
@@ -888,41 +910,40 @@ const PawEditTab = ({ route, navigation }) => {
                 </Modal>
 
                 <Modal
-                    isVisible={isDeleteVisible}
-                    onBackdropPress={() => setDeleteVisible(false)}
+                  isVisible={isDeleteVisible}
+                  onBackdropPress={() => setDeleteVisible(false)}
                 >
                   <View style={styles.BottomPressContainer}>
-                    <View style={{width: "100%", alignItems: "center"}}>
-                      <Text style={styles.sectionTitle2}>Are you sure you want to remove this pet?</Text>
+                    <View style={{ width: "100%", alignItems: "center" }}>
+                      <Text style={styles.sectionTitle2}>
+                        Are you sure you want to remove this pet?
+                      </Text>
                       <Text style={styles.sectionTitle2}>{petName}</Text>
-
                     </View>
                     <TouchableOpacity
-                        style={[
-                          styles.ModalDiscardButton,
-                          { backgroundColor: "#A5A5A5" },
-                        ]}
-                        // style={[styles.modalCancelButton, { marginTop: 20}]}
-                        onPress={() => setDeleteVisible(false)}
+                      style={[
+                        styles.ModalDiscardButton,
+                        { backgroundColor: "#A5A5A5" },
+                      ]}
+                      // style={[styles.modalCancelButton, { marginTop: 20}]}
+                      onPress={() => setDeleteVisible(false)}
                     >
                       <Text style={styles.buttonText}>Cancel</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[
-                          styles.ModalDiscardButton,
-                          { backgroundColor: "#e69797" },
-                        ]}
-                        // style={[styles.modalButton, { marginTop: 20 }]}
-                        onPress={() => {
-                          setDeleteVisible(false);
-                          deletePet();
-                        }}
+                      style={[
+                        styles.ModalDiscardButton,
+                        { backgroundColor: "#e69797" },
+                      ]}
+                      // style={[styles.modalButton, { marginTop: 20 }]}
+                      onPress={() => {
+                        setDeleteVisible(false);
+                        deletePet();
+                      }}
                     >
                       <Text style={styles.buttonText}>Delete</Text>
                     </TouchableOpacity>
                   </View>
-
-
                 </Modal>
 
                 <Modal
@@ -964,14 +985,13 @@ const PawEditTab = ({ route, navigation }) => {
                 </Modal>
               </View>
             </View>
-
-            <View style={{ height: 30 }} />
-            <View
-              style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
-            />
-          </SafeAreaView>
-        </ScrollView>
-      )}
+          )}
+          <View style={{ height: 30 }} />
+          <View
+            style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+          />
+        </SafeAreaView>
+      </ScrollView>
     </View>
   );
 };
@@ -1000,6 +1020,37 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "300",
     lineHeight: 18,
+  },
+
+  loadingContainer: {
+    borderRadius: 25,
+    alignItems: "center",
+    marginHorizontal: 25,
+    marginTop: 25,
+  },
+  infoContainer: {
+    alignItems: "center",
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 25,
+    backgroundColor: "#E0FCF9",
+  },
+  infoHeader: {
+    fontFamily: "frank-bold",
+    color: "#164348",
+    fontSize: 16,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  infoContent: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 14,
+    marginBottom: 3,
+    padding: 5,
+    textAlign: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#164348",
   },
   bottomContainer: {
     marginHorizontal: 25,

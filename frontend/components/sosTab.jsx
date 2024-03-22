@@ -29,17 +29,6 @@ const SosTab = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    global.address &&
-      setCurrentLocation(
-        global.address[0].streetNumber +
-          " " +
-          global.address[0].street +
-          ", " +
-          global.address[0].country +
-          " " +
-          global.address[0].postalCode
-      );
-    // setSelectedPet(mockPetsData[0]);
     if (isFocused) {
       fetchData();
     }
@@ -51,6 +40,17 @@ const SosTab = ({ navigation }) => {
         longitude: global.currentLocation.coords.longitude,
         latitude: global.currentLocation.coords.latitude,
       };
+      global.address &&
+        setCurrentLocation(
+          global.address[0].streetNumber +
+            " " +
+            global.address[0].street +
+            ", " +
+            global.address[0].country +
+            " " +
+            global.address[0].postalCode
+        );
+
       const config = {
         headers: { "Content-Type": "application/json" },
         params: getData,
@@ -72,7 +72,9 @@ const SosTab = ({ navigation }) => {
     } catch (err) {
       setPetLoading(true);
       setEmergencyLoading(true);
-      fetchData();
+      setTimeout(() => {
+        fetchData();
+      }, 1000);
     }
   };
 
