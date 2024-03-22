@@ -243,6 +243,35 @@ const PawAddTab = ({ navigation }) => {
     setSurgeryModalVisible(false);
   };
 
+  const handlePetDetail = async () => {
+    let PetDetail = {
+      health: {
+        medical_history: {
+          allergies: allergies,
+          previous_conditions: prevConditions,
+          previous_surgeries: prevSurgery,
+        },
+        existing_conditions: existingConditions,
+        medications: existingMedications,
+        vaccinations: vaccinations,
+        extra_notes: "",
+      },
+      name: petName,
+      image_url: petImage,
+      species: petSpecies,
+      breed: petBreed,
+      age: petAge,
+      microchip_number: chipNumber,
+  };
+  await axiosInstance.post("/api/v1/pets", {PetDetail}
+  ).then(()=>{
+    console.log("Successful")
+  }).catch((err) =>{
+    console.log(err)
+  })
+}
+
+
   return (
     <View style={globalStyles.container}>
       <ScrollView>
@@ -316,7 +345,7 @@ const PawAddTab = ({ navigation }) => {
               clearButtonMode="never"
               keyboardType="number-pad"
               defaultValue={petAge}
-              onChangeText={(text) => setPetBreed(text)}
+              onChangeText={(text) => setPetAge(text)}
             />
             <View style={styles.genderContainer}>
               <TouchableOpacity
@@ -474,7 +503,10 @@ const PawAddTab = ({ navigation }) => {
               </View>
               <TouchableOpacity
                 style={styles.buttonContainer}
-                onPress={() => {}}
+                onPress={() => {
+                  handlePetDetail()
+                  navigation.goBack();
+                }}
               >
                 <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
