@@ -26,95 +26,123 @@ const PawTab = ({ navigation }) => {
   const fetchData = async () => {
     await axiosInstance
       .get("/api/v1/pets")
-      .catch((err) => console.log(err))
       .then((response) => {
         setData(response.data);
         setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(true);
+        setTimeout(() => {
+          fetchData();
+        }, 1000);
       });
   };
 
   return (
     <View style={globalStyles.container}>
-      {loading && (
-        <View>
-          <Text>loading</Text>
-        </View>
-      )}
-      {!loading && (
-        <ScrollView>
-          <SafeAreaView style={styles.topContainer}>
-            <Image
-              style={{ resizeMode: "contain" }}
-              source={require("../assets/logo.png")}
-            />
-            <Text style={styles.title}>Pet Details</Text>
-            <Text style={styles.subtitle}>
-              Learn more about your furry friend.
-            </Text>
-          </SafeAreaView>
+      <ScrollView>
+        <SafeAreaView style={styles.topContainer}>
+          <Image
+            style={{ resizeMode: "contain" }}
+            source={require("../assets/logo.png")}
+          />
+          <Text style={styles.title}>Pet Details</Text>
+          <Text style={styles.subtitle}>
+            Learn more about your furry friend.
+          </Text>
+        </SafeAreaView>
 
-          <SafeAreaView style={{ backgroundColor: "white" }}>
+        <SafeAreaView style={{ backgroundColor: "white" }}>
+          {loading && (
+            <View style={styles.loadingContainer}>
+              <Image
+                style={{ width: 70, height: 70, alignSelf: "center" }}
+                source={require("../assets/loading.gif")}
+              />
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoHeader}>
+                  What to Do in a Pet Emergency
+                </Text>
+                <Text style={styles.infoContent}>STAY CALM</Text>
+                <Text style={styles.infoContent}>ASSESS THE PROBLEM</Text>
+                <Text style={styles.infoContent}>BOOK AN EMERGENCY SLOT</Text>
+                <Text style={styles.infoContent}>
+                  CALM YOUR PET AS MUCH AS POSSIBLE
+                </Text>
+                <Text style={styles.infoContent}>
+                  LOAD YOUR PET INTO HER CRATE FOR SAFE TRANSPORT
+                </Text>
+                <Text style={styles.infoContent}>DRIVE SAFELY TO THE VET</Text>
+              </View>
+            </View>
+          )}
+          {!loading && (
             <View>
-              {data.pets.map((item) => (
-                <View key={item._id}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("PawEditScreen", { petID: item._id })
-                    }
-                  >
-                    <View style={styles.item}>
-                      <View style={styles.topWrapper}>
-                        <View style={styles.leftWrapper}>
-                          <Image
-                            source={{
-                              uri: item.image_url,
-                            }}
-                            style={styles.petsImage} // Apply styles to the Image component if necessary
-                          />
-                        </View>
-                        <View style={styles.rightWrapper}>
-                          <View style={styles.innerLeftWrapper}>
-                            <Text style={styles.petsName}>{item.name}</Text>
-                            <Text style={styles.petsDetails}>
-                              {item.species}
-                              {" • "}
-                              {item.breed}
-                            </Text>
+              <View>
+                {data.pets.map((item) => (
+                  <View key={item._id}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("PawEditScreen", {
+                          petID: item._id,
+                        })
+                      }
+                    >
+                      <View style={styles.item}>
+                        <View style={styles.topWrapper}>
+                          <View style={styles.leftWrapper}>
+                            <Image
+                              source={{
+                                uri: item.image_url,
+                              }}
+                              style={styles.petsImage} // Apply styles to the Image component if necessary
+                            />
                           </View>
-                          <View>
-                            <TouchableOpacity
-                              onPress={() =>
-                                navigation.navigate("PawEditScreen", {
-                                  petID: item._id,
-                                })
-                              }
-                            >
-                              <Image source={require("../assets/edit.png")} />
-                            </TouchableOpacity>
+                          <View style={styles.rightWrapper}>
+                            <View style={styles.innerLeftWrapper}>
+                              <Text style={styles.petsName}>{item.name}</Text>
+                              <Text style={styles.petsDetails}>
+                                {item.species}
+                                {" • "}
+                                {item.breed}
+                              </Text>
+                            </View>
+                            <View>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  navigation.navigate("PawEditScreen", {
+                                    petID: item._id,
+                                  })
+                                }
+                              >
+                                <Image source={require("../assets/edit.png")} />
+                              </TouchableOpacity>
+                            </View>
                           </View>
                         </View>
                       </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))}
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+
+              <View style={{ marginHorizontal: 25 }}>
+                <TouchableOpacity
+                  style={styles.addPetContainer}
+                  onPress={() => navigation.navigate("PawAddScreen")}
+                >
+                  <Image source={require("../assets/add.png")} />
+                  <Text style={styles.addPetText}>Add Pet</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={{ marginHorizontal: 25 }}>
-              <TouchableOpacity
-                style={styles.addPetContainer}
-                onPress={() => navigation.navigate("PawAddScreen")}
-              >
-                <Image source={require("../assets/add.png")} />
-                <Text style={styles.addPetText}>Add Pet</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ height: 20 }} />
-            <View
-              style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
-            />
-          </SafeAreaView>
-        </ScrollView>
-      )}
+          )}
+          <View style={{ height: 20 }} />
+          <View
+            style={{ flexGrow: 1, height: "100%", backgroundColor: "#fff" }}
+          />
+        </SafeAreaView>
+      </ScrollView>
     </View>
   );
 };
@@ -143,6 +171,36 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "300",
     lineHeight: 18,
+  },
+  loadingContainer: {
+    borderRadius: 25,
+    alignItems: "center",
+    marginHorizontal: 25,
+    marginTop: 25,
+  },
+  infoContainer: {
+    alignItems: "center",
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 25,
+    backgroundColor: "#E0FCF9",
+  },
+  infoHeader: {
+    fontFamily: "frank-bold",
+    color: "#164348",
+    fontSize: 16,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  infoContent: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 14,
+    marginBottom: 3,
+    padding: 5,
+    textAlign: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#164348",
   },
   item: {
     display: "flex",
