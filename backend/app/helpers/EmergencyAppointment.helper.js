@@ -1,6 +1,6 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
-import {EmergencyAppointment} from "../models/EmergencyAppointment.model.js";
+import {Appointment} from "../models/Appointment.model.js";
 import {
     convertEpochToReadable,
     convertTimetoEpochSecond, epochToDate,
@@ -42,7 +42,7 @@ export async function createEmergencyAppointment(pet_id, vet_id, appointment_tim
                 is_emergency: true,
                 description: `Emergency appointment for ${pet.name} (${pet.species} - ${pet.breed})`
             }
-            EmergencyAppointment.insertMany([appointmentData]).then(result => {
+            Appointment.insertMany([appointmentData]).then(result => {
             }).catch(err => {
                 throw new Error("error.appointment.unableToInsert", err.message)
             });
@@ -55,7 +55,7 @@ export async function getEmergencyAppointment(gps, petId){
 
     try {
         let allAppointments = [];
-        console.log("===Emergency EmergencyAppointment===")
+        console.log("===Emergency Appointment===")
         // const currentTime = getEpochInSecondsNow();
         // console.log("Finding appointment during/after:", convertEpochToReadable(forceTime))
 
@@ -116,7 +116,7 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
             throw new Error('Invalid time');
         }
 
-        let appointments = await EmergencyAppointment.find({vet_id: vetId, end_at: {$gt: minTimeInEpochSecond}}).sort({ end_at: 1 });
+        let appointments = await Appointment.find({vet_id: vetId, end_at: {$gt: minTimeInEpochSecond}}).sort({ end_at: 1 });
 
         displayAppointment(appointments);
         // console.log(`=====${vet.name}, ${vet._id}`);
@@ -150,7 +150,7 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
             }
 
             appointmentTime = nextVetOpen(vet, appointmentTime);
-            appointments = await EmergencyAppointment.find({vet_id: vetId, end_at: {$gt: appointmentTime}}).sort({ end_at: 1 });
+            appointments = await Appointment.find({vet_id: vetId, end_at: {$gt: appointmentTime}}).sort({ end_at: 1 });
             displayAppointment(appointments);
         }
 
@@ -162,7 +162,7 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
 
 async function isAppointmentAvailable(vet, appointmentTime){
     // console.log("VET: ",vet)
-    return await EmergencyAppointment.find({vet_id: vet._id, end_at: {$gte: appointmentTime}}).sort({ end_at: 1 }).limit(1).then(appointment => {
+    return await Appointment.find({vet_id: vet._id, end_at: {$gte: appointmentTime}}).sort({ end_at: 1 }).limit(1).then(appointment => {
         // console.log("INPUT:",appointment[0].start_at, appointment[0].end_at, appointmentTime)
         //     console.log("App:",!isTimeWithin(appointment[0].start_at, appointment[0].end_at, appointmentTime));
         // console.log("App:2",isVetOpen(vet,  appointmentTime));

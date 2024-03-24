@@ -1,6 +1,6 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
-import {EmergencyAppointment} from "../models/EmergencyAppointment.model.js";
+import {Appointment} from "../models/Appointment.model.js";
 import {createEmergencyAppointment, getEmergencyAppointment} from "../helpers/EmergencyAppointment.helper.js";
 
 export async function getEmergency(req, res){
@@ -40,7 +40,7 @@ export async function deleteEmergency(req, res){
     try {
         const { emergency_id } = req.params;
         // const { appointment_time, appointment_duration } = req.body
-        const result = await EmergencyAppointment.findByIdAndDelete(emergency_id)
+        const result = await Appointment.findByIdAndDelete(emergency_id)
         .then((result) => {
             res.status(200).json(result);
         })

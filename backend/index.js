@@ -5,7 +5,7 @@ import { PORT } from './app/configs/app.config.js'
 import mongoose from "mongoose";
 import demoRouter from "./app/routes/App.route.js"
 import vetRouter from "./app/routes/Vet.route.js"
-import {EmergencyAppointment} from "./app/models/EmergencyAppointment.model.js";
+import {Appointment} from "./app/models/Appointment.model.js";
 import {getDemo} from "./app/controllers/App.controller.js";
 import {getEpochInSecondsNow} from "./app/utils/Time.util.js";
 import {createEmergencyAppointment, getEmergencyAppointment} from "./app/helpers/EmergencyAppointment.helper.js";

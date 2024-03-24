@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import {getEpochInSecondsNow} from "../utils/Time.util.js";
 
-const emergencyAppointmentSchema = mongoose.Schema({
+const appointmentSchema = mongoose.Schema({
                 created_at: {
                     type: Number,
                     default: Math.floor(getEpochInSecondsNow()), // Automatic timestamp upon creation
@@ -36,11 +36,11 @@ const emergencyAppointmentSchema = mongoose.Schema({
                 },
                 is_emergency: {
                     type: Boolean,
-                    default: false, // EmergencyAppointment active by default
+                    default: false, // Appointment active by default
                 },
                 description: {
                     type: String, // Optional description of the appointment
                 }
 });
 
-export const EmergencyAppointment = mongoose.model('EmergencyEmergencyAppointment',  emergencyAppointmentSchema)
+export const Appointment = mongoose.model('Appointment',  appointmentSchema)

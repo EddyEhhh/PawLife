@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import {Vet, Location} from "../models/Vet.model.js";
 import {Pet} from "../models/Pet.model.js";
-import {EmergencyAppointment} from "../models/EmergencyEmergencyAppointment.model.js";
+import {Appointment} from "../models/Appointment.model.js";
 import {getEpochInSecondsNow} from "../utils/Time.util.js";
 import {User} from "../models/User.model.js";
 
@@ -498,7 +498,7 @@ async function createEachAppointments(vet_id, interval_in_minutes) {
         let end_at = (getEpochInSecondsNow() + (interval_in_minutes + 30) * SECONDS_IN_MIN)
         end_at = end_at - end_at%60
         const appointmentObjects = appointmentsData
-            .map((appointmentData, index) => new EmergencyAppointment(
+            .map((appointmentData, index) => new Appointment(
                 {
                     ...appointmentData,
                     start_at: start_at,
@@ -507,7 +507,7 @@ async function createEachAppointments(vet_id, interval_in_minutes) {
                     vet_id: vet_id,
                     pet_id: "5e234f234f234f234f234f24"
                 }));
-        await EmergencyAppointment.insertMany(appointmentObjects);
+        await Appointment.insertMany(appointmentObjects);
         // console.log("Appointments created successfully!");
     } catch (err) {
         console.error("Error creating appointments:", err);
@@ -581,8 +581,8 @@ async function removeUsers(){
 
 async function removeAppointments(){
     try {
-        await EmergencyAppointment.deleteMany();
-        console.log('EmergencyAppointment collection removed')
+        await Appointment.deleteMany();
+        console.log('Appointment collection removed')
     } catch (err) {
         console.error("Error when removing appointment: ", err)
     }
