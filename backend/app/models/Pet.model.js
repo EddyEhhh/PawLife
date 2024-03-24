@@ -7,7 +7,7 @@ const petSchema = mongoose.Schema({
     },
     image_url: {
         type: String,
-        required: true
+        required: false
     },
     species: {
         type: String,
@@ -24,10 +24,6 @@ const petSchema = mongoose.Schema({
     microchip_number: {
         type: String,
         required: false
-    },
-    contact: {
-        type: String,
-        required: true
     },
     health: {
         medical_history: {

@@ -498,7 +498,7 @@ async function createEachAppointments(vet_id, interval_in_minutes) {
         let end_at = (getEpochInSecondsNow() + (interval_in_minutes + 30) * SECONDS_IN_MIN)
         end_at = end_at - end_at%60
         const appointmentObjects = appointmentsData
-            .map((appointmentData, index) => new Appointment(
+            .map((appointmentData, index) => new EmergencyAppointment(
                 {
                     ...appointmentData,
                     start_at: start_at,
@@ -507,7 +507,7 @@ async function createEachAppointments(vet_id, interval_in_minutes) {
                     vet_id: vet_id,
                     pet_id: "5e234f234f234f234f234f24"
                 }));
-        await Appointment.insertMany(appointmentObjects);
+        await EmergencyAppointment.insertMany(appointmentObjects);
         // console.log("Appointments created successfully!");
     } catch (err) {
         console.error("Error creating appointments:", err);

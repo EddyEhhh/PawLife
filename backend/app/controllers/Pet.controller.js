@@ -49,9 +49,9 @@ export async function getPetsById(req, res){
 
 export async function postPets(req, res){
     try {
-
         const userId = req.body.userId || "5e234f234f234f234f234a01";
-        const petData = req.body.pet;
+        const petData = req.body.PetDetail;
+        console.log(req.body.PetDetail)
 
         const pet = await addPetToUser(userId, petData).then(pet => {
             return res.status(200).json({
