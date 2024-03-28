@@ -51,15 +51,23 @@ export async function createEmergencyAppointment(pet_id, vet_id, appointment_tim
 
 }
 
-export async function getEmergencyAppointment(gps, petId){
+export async function getEmergencyAppointment(gps, pet_id){
 
     try {
         let allAppointments = [];
         console.log("===Emergency Appointment===")
         // const currentTime = getEpochInSecondsNow();
         // console.log("Finding appointment during/after:", convertEpochToReadable(forceTime))
+        let vets;
+        if(pet_id){
+            const pet = await Pet.find({_id: petId});
+            vets = await Vet.find({ specialties: { "$in" : [pet.species]} }).populate('location');
+        }else{
+            vets = await Vet.find().populate('location');
+        }
 
-        const vets = await Vet.find({}).populate('location');
+
+
 
 
         // Wait for all appointments to be found and push them to allAppointments
@@ -134,7 +142,9 @@ async function getNextAvailableAppointmentByVet(vet, minTimeInEpochSecond){
                     // console.log("C Out")
                     // isVetOpen(vet, appointmentTime);
                     // return appointmentTime;
-                    break; // found possible appointment Time
+                    if(!appointments[i+1] || !await (appointmentTime + (SECONDS_IN_MINUTE * 30)) <= appointments[i+1].end_at){
+                        break; // found possible appointment Time
+                    }
                 }
 
                 // else update appointmentTime to end of above appointment

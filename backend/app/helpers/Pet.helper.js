@@ -21,7 +21,6 @@ export async function addPetToUser(userId, petData) {
     } catch (error) {
         console.error("Error adding pet:", error);
     }
-
 }
 
 export async function updatePetDetail(userId, petId, petData) {

@@ -22,7 +22,7 @@ const SosTab = ({ navigation }) => {
   const [emergencyLoading, setEmergencyLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedPet, setSelectedPet] = useState(null);
+  const [selectedPet, setSelectedPet] = useState({});
   const [clinicSelectionVisible, setClinicSelectionVisible] = useState(false);
   const [petSelectionVisible, setPetSelectionVisible] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("");
@@ -63,7 +63,7 @@ const SosTab = ({ navigation }) => {
           setPetLoading(false);
         });
       await axiosInstance
-        .get("/api/v1/emergency", config)
+        .get("/api/v1/emergency", {...config, pet_id: selectedPet._id})
         .catch((err) => console.log(err))
         .then((response) => {
           setData(response.data);
@@ -266,7 +266,7 @@ const SosTab = ({ navigation }) => {
                 {clinicSelectionVisible && (
                   <View>
                     {data.vets &&
-                      data.vets.map((item) => (
+                      data.vets.map((item) => (item.vet.specialties.includes(selectedPet.species) &&
                         <View key={item.vet._id}>
                           <View style={styles.item}>
                             <View style={styles.topWrapper}>

@@ -2,6 +2,7 @@ import express from 'express';
 import {Vet} from "../models/Vet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
 import {getEmergencyAppointment} from "../helpers/EmergencyAppointment.helper.js";
+import {getEpochInSecondsNow} from "../utils/Time.util.js";
 
 // export async function getEmergencyAppointmentsByVet(req, res){
 //     try {
@@ -16,12 +17,12 @@ import {getEmergencyAppointment} from "../helpers/EmergencyAppointment.helper.js
 
 export async function getAppointmentsByVet(req, res){
     try {
-        const { pet_id , vet_id } = req.body;
-        console.log(req.params)
+        const { vet_id } = req.params;
+        // console.log(req.params)
         const appointments = await Appointment
             .find({
-                vet_id : vet_id
-            })
+                vet_id : vet_id,
+            }).populate({path: 'pet_id', select: 'name species breed age', populate: {path: 'owner', select: 'username email'}})
             .then(appointments => {
                 console.log(appointments)
                 return res.status(200).json({
@@ -37,7 +38,7 @@ export async function getAppointmentsByVet(req, res){
     }
 }
 
-export async function getEmergencyAppointmentsByVet(req, res){
+export async function getEmergencyAppointments(req, res){
     try {
         const { user_id } = '5e234f234f234f234f234a01';
         await Appointment.find(

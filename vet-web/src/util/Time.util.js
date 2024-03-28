@@ -28,25 +28,6 @@ export function convertTimetoEpochSecond(timeStr) {
     return today.getTime()/1000;
 }
 
-export function convertTimeDatetoEpochSecond(timeStr, date) {
-    // Check if time string is in valid format (HH:MM)
-    const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
-    if (!timeRegex.test(timeStr)) {
-        console.error("Invalid time format:", timeStr);
-        return null;
-    }
-
-    // Extract hours and minutes from the string
-    const [hours, minutes] = timeStr.split(':').map(Number);
-
-    // Create a Date object for today at the specified time
-    date.setHours(hours, minutes, 0, 0); // Set hours, minutes, and reset seconds and milliseconds
-
-    // Convert the Date object to epoch time (milliseconds since Jan 1, 1970)
-    return date.getTime()/1000;
-}
-
-
 export function convertEpochToReadable(epochTimeInSeconds) {
     const unixMilliSeconds = epochTimeInSeconds * 1000;
     const myDate = new Date(unixMilliSeconds);
@@ -61,9 +42,4 @@ export function epochToDate(epochTimeInSeconds) {
     date.setUTCSeconds(epochTimeInSeconds);
 
     return date;
-}
-
-export function getEpochDay(epochTimeInSeconds) {
-    const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
-    return weekday[epochToDate(epochTimeInSeconds).getDay()]
 }

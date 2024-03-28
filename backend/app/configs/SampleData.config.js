@@ -3,7 +3,14 @@ import dotenv from 'dotenv';
 import {Vet, Location} from "../models/Vet.model.js";
 import {Pet} from "../models/Pet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
-import {getEpochInSecondsNow} from "../utils/Time.util.js";
+import {
+    convertEpochToReadable,
+    convertTimeDatetoEpochSecond,
+    convertTimetoEpochSecond, epochToDate,
+    getEpochDay,
+    getEpochInSeconds,
+    getEpochInSecondsNow
+} from "../utils/Time.util.js";
 import {User} from "../models/User.model.js";
 
 dotenv.config({ path: './config/db.config.env' });
@@ -115,7 +122,7 @@ const vetsData = [
     {
         name: "Furiends Veterinary Clinic",
         image_url: "https://i.ibb.co/2ccNTNV/Untitled.jpg",
-        specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
+        specialties: ["Dog", "Cat"],
         opening_hours: {
             monday: {
                 open: [
@@ -147,7 +154,7 @@ const vetsData = [
     {
         name: "Mount Pleasant Veterinary Group (Bedok)",
         image_url: "https://i.ibb.co/HnZq4fq/Mount-Pleasant-Animal-Medical-Centre.jpg",
-        specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
+        specialties: ["Dog", "Cat", "Rabbit"],
         opening_hours: {
             monday: {
                 open: [
@@ -189,7 +196,7 @@ const vetsData = [
     {
         name: "Amber Vet | Vet Clinic",
         image_url: "https://i.ibb.co/QdV8C5n/Untitled.png",
-        specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
+        specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla", "Bird"],
         opening_hours: {
             monday: {
                 open: [
@@ -226,7 +233,7 @@ const vetsData = [
     {
         name: "Advanced VetCare Veterinary Centre (Bedok)",
         image_url: "https://i.ibb.co/N6jYyv2/Advanced-Vetcare.jpg",
-        specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla"],
+        specialties: ["Dog", "Cat", "Gerbil", "Mouse", "Hamster", "Guinea pig", "Rabbit", "Chinchilla", "Bird"],
         opening_hours: {
             is_24_7: true
         }
@@ -237,7 +244,7 @@ async function createVets(locationIds) {
         const vetObjects = vetsData.map((vetData, index) => new Vet({ ...vetData, location: locationIds[index] }));
         await Vet.insertMany(vetObjects);
         console.log("Vets created successfully!");
-        return vetObjects.map((vet) => vet._id);
+        return await Vet.find();
     } catch (err) {
         console.error("Error creating vets:", err);
     }
@@ -373,12 +380,13 @@ const petsData = [
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234f23'),
         image_url: "https://i.ibb.co/72crVPx/Whats-App-Image-2024-03-18-at-16-55-10-e428948c.jpg",
-        name: "Buddy",
+        name: "Buddy(Sample)",
         species: "Dog",
         breed: "Golden Retriever",
         age: 4,
         microchip_number: "9876543210",
-        contact: "+65-8123-0001"
+        contact: "+65-8123-0001",
+        owner: new mongoose.Types.ObjectId("5e234f234f234f234f234b02")
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a01'),
@@ -388,7 +396,8 @@ const petsData = [
         breed: "Shihpoo",
         age: 4,
         microchip_number: "9876543210",
-        contact: "+65-8123-0001"
+        contact: "+65-8123-0001",
+        owner: new mongoose.Types.ObjectId("5e234f234f234f234f234a01")
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a02'),
@@ -398,7 +407,8 @@ const petsData = [
         breed: "Persian",
         age: 2,
         microchip_number: "1234567890",
-        contact: "+65-8123-0002"
+        contact: "+65-8123-0002",
+        owner: new mongoose.Types.ObjectId("5e234f234f234f234f234a01")
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a03'),
@@ -408,7 +418,8 @@ const petsData = [
         breed: "Holland Lop",
         age: 7,
         microchip_number: "1928374650",
-        contact: "+65-8123-0003"
+        contact: "+65-8123-0003",
+        owner: new mongoose.Types.ObjectId("5e234f234f234f234f234a01")
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a04'),
@@ -418,7 +429,8 @@ const petsData = [
         breed: "Cockatiel",
         age: 5,
         microchip_number: "0987654321",
-        contact: "+65-8123-0004"
+        contact: "+65-8123-0004",
+        owner: new mongoose.Types.ObjectId("5e234f234f234f234f234a01")
     },
     {
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a05'),
@@ -428,7 +440,8 @@ const petsData = [
         breed: "Syrian",
         age: 1,
         microchip_number: "",
-        contact: "+65-8123-0005"
+        contact: "+65-8123-0005",
+        owner: new mongoose.Types.ObjectId("5e234f234f234f234f234a01")
     }
 
 ]
@@ -466,8 +479,13 @@ const usersData = [
         ]
     },
     {
-        username: "john",
-        email: "john@example.com"
+        _id: new mongoose.Types.ObjectId('5e234f234f234f234f234b02'),
+        username: "John",
+        email: "john@example.com",
+        pets:
+            [
+                new mongoose.Types.ObjectId('5e234f234f234f234f234f23')
+            ]
     }
 
 ]
@@ -491,37 +509,71 @@ const appointmentsData = [
         description: "General checkup"
     },
 ]
-async function createEachAppointments(vet_id, interval_in_minutes) {
+async function createEachAppointments(vet_id, interval_in_minutes, duration, vet) {
     try {
         let start_at = (getEpochInSecondsNow() + interval_in_minutes * SECONDS_IN_MIN);
         start_at = start_at - start_at%60
         let end_at = (getEpochInSecondsNow() + (interval_in_minutes + 30) * SECONDS_IN_MIN)
         end_at = end_at - end_at%60
         const appointmentObjects = appointmentsData
-            .map((appointmentData, index) => new EmergencyAppointment(
+            .map((appointmentData, index) => new Appointment(
                 {
                     ...appointmentData,
                     start_at: start_at,
-                    duration: 30,
+                    duration: duration,
                     end_at: end_at,
                     vet_id: vet_id,
-                    pet_id: "5e234f234f234f234f234f24"
+                    pet_id: "5e234f234f234f234f234f23"
                 }));
-        await EmergencyAppointment.insertMany(appointmentObjects);
+        // console.log("VET:" +)
+
+        if(!vet.opening_hours.get("is_24_7")) {
+            console.log("T"+vet.opening_hours.get(getEpochDay(appointmentObjects[0].start_at)).open[0][0])
+
+            if(!vet.opening_hours.get(getEpochDay(appointmentObjects[0].start_at)).open || !vet.opening_hours.get(getEpochDay(appointmentObjects[0].end_at)).open) {
+                return;
+            }
+
+            const vetStartAt = convertTimeDatetoEpochSecond(
+                vet.opening_hours.get(getEpochDay(appointmentObjects[0].start_at)).open[0][0],
+                epochToDate(appointmentObjects[0].start_at)
+            )
+
+            console.log("VETEND:"+vet.name+vet.opening_hours.get(getEpochDay(appointmentObjects[0].start_at)).open);
+            const vetEndAt = convertTimeDatetoEpochSecond(
+                vet.opening_hours.get(getEpochDay(appointmentObjects[0].end_at)).open.slice(-1)[0][1],
+                epochToDate(appointmentObjects[0].end_at)
+            )
+
+            if (!(appointmentObjects[0].start_at >= vetStartAt
+            && appointmentObjects[0].end_at <= vetEndAt)) {
+                // console.log("Out:", convertEpochToReadable(appointmentObjects[0].start_at) + "-" + convertEpochToReadable(appointmentObjects[0].end_at))
+                // console.log("Out:", convertEpochToReadable(vetStartAt) + "-" + convertEpochToReadable(vetEndAt))
+                return;
+            }
+            // console.log("In:", convertEpochToReadable(appointmentObjects[0].start_at) + "-" + convertEpochToReadable(appointmentObjects[0].end_at))
+            // console.log("In:", convertEpochToReadable(vetStartAt) + "-" + convertEpochToReadable(vetEndAt))
+
+        }
+        await Appointment.insertMany(appointmentObjects);
         // console.log("Appointments created successfully!");
     } catch (err) {
         console.error("Error creating appointments:", err);
+
     }
 }
 
-async function createAppointmentsFor2Day(vet_id, interval_in_minutes){
+async function createAppointmentsFor2Day(vet, interval_in_minutes){
     // const MINS_IN_2_WEEK = 20160;
     const MINS_IN_2_DAY= 20160;
+    console.log("DATA:" + vet);
     try {
         let current_minute = 0;
+        const vet_interval = [30, 60, 90, 120]
         while (current_minute < MINS_IN_2_DAY){
-            current_minute += interval_in_minutes;
-            await createEachAppointments(vet_id, current_minute)
+            // current_minute += interval_in_minutes;
+            current_minute += vet_interval[getRandomInt(vet_interval.length)];
+            await createEachAppointments(vet._id, current_minute, 30, vet)
         }
         // console.log("Appointments created successfully!");
     } catch (err) {
@@ -529,9 +581,13 @@ async function createAppointmentsFor2Day(vet_id, interval_in_minutes){
     }
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
 async function createManualAppointmentsForVet(vet_ids){
     try {
-        const vet_interval = [40, 45, 50, 60]
+        const vet_interval = [30, 60, 90, 120]
         vet_ids.map((vet_id, index) => createAppointmentsFor2Day(vet_id, vet_interval[index % 4]))
         console.error("Appointments successfully created")
     } catch (err) {
@@ -604,7 +660,10 @@ async function run() {
             .then(createPets())
             .then(createUsers())
             .then((locationIds) => createVets((locationIds)))
-            .then((vet_ids) => createManualAppointmentsForVet(vet_ids))
+            .then((vet_ids) => {
+                console.log("IDS:" + vet_ids)
+                createManualAppointmentsForVet(vet_ids)
+            })
             .catch((err) => ("Error", console.error))
 
         console.log("Collections successfully populated!");

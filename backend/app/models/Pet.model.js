@@ -25,6 +25,12 @@ const petSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Reference to the primary vet for the appointment
+        required: true,
+        index: true,
+    },
     health: {
         medical_history: {
             allergies: [{

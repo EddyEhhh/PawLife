@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   useColorScheme,
+  Switch
 } from "react-native";
 
 import globalStyles from "../style/global";
@@ -21,6 +22,7 @@ import axiosInstance from "./util/axiosInstance";
 import Modal from "react-native-modal";
 import SelectDropdown from "react-native-select-dropdown";
 import { useIsFocused } from "@react-navigation/native";
+import {Icon} from "react-native-vector-icons/index";
 
 const PawEditTab = ({ route, navigation }) => {
   const isFocused = useIsFocused();
@@ -82,6 +84,8 @@ const PawEditTab = ({ route, navigation }) => {
 
   const [isDeleteVisible, setDeleteVisible] = useState(false);
 
+  const [isEditToggle, setEditToggle] = useState(false);
+
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -138,6 +142,11 @@ const PawEditTab = ({ route, navigation }) => {
       setPetImage(result.assets[0].uri);
     }
   };
+
+  const editToggleSwitch = () => {
+    console.log(!isEditToggle);
+    setEditToggle(!isEditToggle);
+  }
 
   const deletePet = async () => {
     await axiosInstance
@@ -545,6 +554,25 @@ const PawEditTab = ({ route, navigation }) => {
               />
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Health</Text>
+                <MaterialCommunityIcons
+                    name="pencil"
+                    style={{
+                      position: "absolute",
+                      right: 60,
+                      top: 0,
+                      fontSize: 22,
+                      color: "#57d4d0",
+                    }}
+                />
+                {/*<Icon name="edit"/>*/}
+                  <Switch
+                      style={{position: 'absolute', right: 0}}
+                      trackColor={isEditToggle ? '#57d4d0' : '#767577'}
+                      thumbColor={isEditToggle ? '#ffffff' : '#f4f3f4'}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={editToggleSwitch}
+                      value={isEditToggle}
+                  />
                 <View>
                   <Text style={styles.sectionTitle2}>Allergies</Text>
                   <TouchableOpacity
@@ -600,6 +628,12 @@ const PawEditTab = ({ route, navigation }) => {
                         </Text>
                         <Text style={styles.notesText}>{item.notes}</Text>
                       </View>
+                      {/*<TouchableOpacity*/}
+                      {/*    style={styles.removeButton}*/}
+                      {/*    onPress={() => setCondModalVisible(true)}*/}
+                      {/*>*/}
+                      {/*  <Text style={styles.removeButtonText}>-</Text>*/}
+                      {/*</TouchableOpacity>*/}
                     </View>
                   ))}
                 </View>
@@ -1233,6 +1267,24 @@ const styles = StyleSheet.create({
     fontSize: 22,
     right: 0,
     top: -5,
+  },
+  removeButton: {
+    backgroundColor: "#ffb5b5",
+    borderRadius: 15,
+    padding: 0,
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    fontSize: 22,
+    right: 0,
+    top: 25,
+  },
+  removeButtonText: {
+    fontFamily: "frank-bold",
+    fontSize: 18,
+    color: "#164348",
   },
   addButtonText: {
     fontFamily: "frank-bold",

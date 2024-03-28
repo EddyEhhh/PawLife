@@ -8,7 +8,8 @@ export async function getEmergency(req, res){
         // const { longitude, latitude, petId } = req.params
         
         // axios cannot use body as input
-        await getEmergencyAppointment(req.query, "placeholderPet").then(vets => {
+        const {pet_id} = req.query;
+        await getEmergencyAppointment(req.query, pet_id).then(vets => {
             return res.status(200).json({
                 vets: vets
             });
