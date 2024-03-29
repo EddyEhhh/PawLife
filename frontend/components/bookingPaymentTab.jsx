@@ -59,32 +59,32 @@ const BookingPayment = ({ navigation, route }) => {
         <View style={globalStyles.container}>
           <ScrollView scrollIndicatorInsets={{ right: 1, flex: 1 }}>
             <SafeAreaView style={styles.topContainer}>
-              <View>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <Image
-                    source={require("../assets/sosPage-assets/back-icon.png")}
-                  />
-                </TouchableOpacity>
-                <Image
-                  source={{
-                    uri: data.vet[0].image_url,
-                  }}
-                  style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                />
-              </View>
+              {/*<View>*/}
+              {/*  <TouchableOpacity onPress={() => navigation.goBack()}>*/}
+              {/*    <Image*/}
+              {/*      source={require("../assets/sosPage-assets/back-icon.png")}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*  <Image*/}
+              {/*    source={{*/}
+              {/*      uri: data.vet[0].image_url,*/}
+              {/*    }}*/}
+              {/*    style={styles.clinicsLogo} // Apply styles to the Image component if necessary*/}
+              {/*  />*/}
+              {/*</View>*/}
 
               <Text style={styles.title}>{data.vet[0].name}</Text>
               <Text style={styles.subtitle}>
                 {data.vet[0].location.street}, {data.vet[0].location.country}{" "}
                 {data.vet[0].location.postal_code}
               </Text>
-              <Text style={styles.subtitle2}>
-                Pets Treated: Dog, Cat, Guinea Pig, Reptile, Hamster, Rat,
-                Tortoise, Rabbit
-              </Text>
-              <Text style={styles.subtitle2}>
-                Speciality(s): Ophthalmology, Canine Medicine, Cardiology
-              </Text>
+              {/*<Text style={styles.subtitle2}>*/}
+              {/*  Pets Treated: Dog, Cat, Guinea Pig, Reptile, Hamster, Rat,*/}
+              {/*  Tortoise, Rabbit*/}
+              {/*</Text>*/}
+              {/*<Text style={styles.subtitle2}>*/}
+              {/*  Speciality(s): Ophthalmology, Canine Medicine, Cardiology*/}
+              {/*</Text>*/}
               <View style={{ height: 25 }} />
             </SafeAreaView>
 
@@ -157,7 +157,7 @@ const BookingPayment = ({ navigation, route }) => {
                 <TouchableOpacity
                   style={styles.checkoutButtonContainer}
                   onPress={() => {
-                    navigation.navigate("TeleDetailsScreen");
+                    navigation.navigate("HomeScreen");
                   }}
                 >
                   <Text style={styles.checkoutButton}>Checkout</Text>

@@ -1,12 +1,18 @@
 import express from 'express';
 import { getDemo } from "../controllers/App.controller.js";
 import {
+    getAppointmentBookingRequestByUser,
+    getAppointmentBookingRequestByVet,
     getAppointmentsByVet,
-    getEmergencyAppointments} from "../controllers/Appointment.controller.js";
+    getEmergencyAppointments, postAppointmentBookingRequest
+} from "../controllers/Appointment.controller.js";
 
 const router = express.Router();
 
 router.get('/emergency', getEmergencyAppointments);
+router.get('/booking/vet', getAppointmentBookingRequestByVet)
+router.get('/booking', getAppointmentBookingRequestByUser)
 router.get('/:vet_id', getAppointmentsByVet);
+router.post('/:vet_id', postAppointmentBookingRequest)
 
 export default router;

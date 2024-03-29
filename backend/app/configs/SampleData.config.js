@@ -469,6 +469,7 @@ const usersData = [
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234a01'),
         username: "Clarin",
         email: "clarin@example.com",
+        mobile: "+65 8123 4456",
         pets:
             [
             new mongoose.Types.ObjectId('5e234f234f234f234f234a01')
@@ -482,6 +483,7 @@ const usersData = [
         _id: new mongoose.Types.ObjectId('5e234f234f234f234f234b02'),
         username: "John",
         email: "john@example.com",
+        mobile: "+65 9128 1231",
         pets:
             [
                 new mongoose.Types.ObjectId('5e234f234f234f234f234f23')

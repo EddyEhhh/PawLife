@@ -1,6 +1,7 @@
 import express from 'express';
 import {Vet} from "../models/Vet.model.js";
 import {Appointment} from "../models/Appointment.model.js";
+import {getEpochInSecondsNow} from "../utils/Time.util.js";
 
 export async function getAppointmentsByVet(req, res){
     try {
@@ -17,4 +18,14 @@ export async function getAppointmentsByVet(req, res){
         console.log(err);
         res.status(500).json({ error_message: "Unable to get vets"})
     }
+}
+
+export function bookingRangeValid(bookingRange){
+    let maxBookingVal = 0;
+    bookingRange.preferred_booking.map(booking => {
+        maxBookingVal = Math.max(maxBookingVal, booking.end)
+    })
+
+    return maxBookingVal > getEpochInSecondsNow();
+
 }

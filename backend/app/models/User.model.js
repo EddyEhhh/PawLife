@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    mobile: {
+        type: String,
+        required: true
+    },
     pets: {
         type: [
             { type: mongoose.Schema.Types.ObjectId

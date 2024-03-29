@@ -21,21 +21,46 @@ const BookingTab = ({ navigation }) => {
   const [filteredData, setFilteredData] = useState([]);
   const isFocused = useIsFocused();
 
+  const [clinicSelectionVisible, setClinicSelectionVisible] = useState(false);
+  const [petData, setPetData] = useState({});
+  const [petLoading, setPetLoading] = useState(true);
+  const [selectedPet, setSelectedPet] = useState({});
+  const [petSelectionVisible, setPetSelectionVisible] = useState(false);
+  // const [petLoading, setPetLoadin] = useState(true);
+
+
   useEffect(() => {
     if (isFocused) {
       fetchData();
     }
   }, [isFocused]);
 
+
   const fetchData = async () => {
-    await axiosInstance
-      .get("/api/v1/vets")
-      .catch((err) => console.log(err))
-      .then((response) => {
-        setData(response.data);
-        setFilteredData(response.data.vets);
-        setLoading(false);
-      });
+    try {
+      await axiosInstance
+          .get("/api/v1/vets", {pet_id: selectedPet._id})
+          .catch((err) => console.log(err))
+          .then((response) => {
+            setData(response.data);
+            setFilteredData(response.data.vets);
+            setLoading(false);
+          });
+
+      await axiosInstance
+          .get("/api/v1/pets")
+          .catch((err) => console.log(err))
+          .then((response) => {
+            setPetData(response.data);
+            setPetLoading(false);
+          });
+    } catch (err) {
+      setPetLoading(true);
+      setPetLoading(true);
+      setTimeout(() => {
+        fetchData();
+      }, 1000);
+    }
   };
 
   const handleSearch = (query) => {
@@ -45,6 +70,11 @@ const BookingTab = ({ navigation }) => {
     );
     setFilteredData(filteredClinics);
   };
+
+  const handleClinicByPet = (item)  => {
+    setData(
+        data.filter(eachVet => eachVet.specialties.includes(selectedPet.species)))
+  }
 
   return (
     <View style={globalStyles.container}>
@@ -83,7 +113,53 @@ const BookingTab = ({ navigation }) => {
                 />
               </View>
 
-              {filteredData.map((item) => (
+              {!clinicSelectionVisible && (
+                  <View>
+                    <Text style={styles.petSelectionTitle}>
+                      Select your pet for vet visit.
+                    </Text>
+                    {petData.pets &&
+                        petData.pets.map((item) => (
+                            <View key={item._id}>
+                              <TouchableOpacity
+                                  onPress={() => {
+                                    setSelectedPet(item);
+                                    setPetSelectionVisible(true);
+                                    // handleClinicByPet(item);
+                                    setClinicSelectionVisible(true);
+                                  }}
+                              >
+                                <View style={styles.petItem}>
+                                  <View style={styles.petTopWrapper}>
+                                    <View style={styles.petLeftWrapper}>
+                                      <Image
+                                          source={{
+                                            uri: item.image_url,
+                                          }}
+                                          style={styles.petsImage} // Apply styles to the Image component if necessary
+                                      />
+                                    </View>
+                                    <View style={styles.petRightWrapper}>
+                                      <View style={styles.petInnerLeftWrapper}>
+                                        <Text style={styles.petsName}>
+                                          {item.name}
+                                        </Text>
+                                        <Text style={styles.petsDetails}>
+                                          {item.species}
+                                          {" • "}
+                                          {item.breed}
+                                        </Text>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </View>
+                              </TouchableOpacity>
+                            </View>
+                        ))}
+                  </View>
+              )}
+
+              {clinicSelectionVisible && filteredData.map((item) => ( item.specialties.includes(selectedPet.species) &&
                 <View key={item._id}>
                   <View style={styles.item}>
                     <View style={styles.topWrapper}>
@@ -111,19 +187,19 @@ const BookingTab = ({ navigation }) => {
                     </View>
                     <View>
                       <Text style={styles.clincisDetails}>
-                        Pets Treated: Dog, Cat, Guinea Pig, Reptile, Hamster,
-                        Rat, Tortoise, Rabbit
+                        Pets Treated: {item.specialties.join(', ')}
                       </Text>
-                      <Text style={styles.clincisDetails}>
-                        Speciality(s): Ophthalmology, Canine Medicine,
-                        Cardiology
-                      </Text>
+                      {/*<Text style={styles.clincisDetails}>*/}
+                      {/*  Speciality(s): Ophthalmology, Canine Medicine,*/}
+                      {/*  Cardiology*/}
+                      {/*</Text>*/}
                     </View>
                     <TouchableOpacity
                       style={styles.scheduleButtonContainer}
                       onPress={() => {
                         navigation.navigate("BookingDetailsScreen", {
                           vetID: item._id,
+                          petID: selectedPet._id
                         });
                       }}
                     >
@@ -207,6 +283,59 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 1,
+  },
+  petSelectionTitle: {
+    marginHorizontal: 25,
+    fontFamily: "frank-medium",
+    color: "#164348",
+    fontSize: 16,
+    marginTop: 20,
+  },
+  petItem: {
+    display: "flex",
+    marginTop: 18,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    backgroundColor: "#F2F2F2",
+    marginHorizontal: 15,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  petTopWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  petLeftWrapper: {
+    marginRight: 20,
+  },
+  petsImage: {
+    height: 60,
+    width: 60,
+    borderRadius: 50,
+    resizeMode: "cover",
+  },
+  petsName: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 16,
+  },
+  petsDetails: {
+    fontFamily: "frank-regular",
+    color: "#164348",
+    fontSize: 12,
+  },
+  petRightWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  petInnerLeftWrapper: {
+    flex: 1,
   },
   topWrapper: {
     flexDirection: "row",

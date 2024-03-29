@@ -32,7 +32,7 @@ export async function getPetsById(req, res){
         const {_id} = req.query
         // console.log(pet_id)
         const pet = await Pet
-            .find({_id: _id})
+            .find({_id: _id}).populate('owner')
             .then(pet => {
                 return res.status(200).json({
                     pet: pet
