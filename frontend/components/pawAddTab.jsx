@@ -85,12 +85,23 @@ const PawAddTab = ({ navigation }) => {
     }
   };
 
+  const allergiesType = [
+    { label: "Food", value: "Food" },
+    { label: "Drugs", value: "Drugs" },
+    { label: "Environment", value: "Environment" },
+    { label: "Others", value: "Others" },
+  ];
+
   const speciesList = [
     { label: "Dog", value: "Dog" },
     { label: "Cat", value: "Cat" },
-    { label: "Rabbit", value: "Rabbit" },
+    { label: "Gerbil", value: "Gerbil" },
+    { label: "Mouse", value: "Mouse" },
     { label: "Hamster", value: "Hamster" },
-    { label: "Pig", value: "Pig" },
+    { label: "Guinea Pig", value: "Guinea Pig" },
+    { label: "Rabbit", value: "Rabbit" },
+    { label: "Chinchilla", value: "Chinchilla" },
+    { label: "Bird", value: "Bird" },
   ];
 
   const FormatDate = (data) => {
@@ -263,12 +274,14 @@ const PawAddTab = ({ navigation }) => {
       age: petAge,
       microchip_number: chipNumber,
   };
+
   await axiosInstance.post("/api/v1/pets", {PetDetail}
   ).then(()=>{
     console.log("Successful")
   }).catch((err) =>{
     console.log(err)
   })
+    console.log(PetDetail)
 }
 
 
@@ -311,6 +324,7 @@ const PawAddTab = ({ navigation }) => {
             <TextInput
               style={styles.searchInput}
               placeholder="Name"
+              placeholderTextColor="#c7c7cd"
               clearButtonMode="never"
               onChangeText={(text) => setPetName(text)}
             />
@@ -336,6 +350,7 @@ const PawAddTab = ({ navigation }) => {
             <TextInput
               style={styles.searchInput}
               placeholder="Breed"
+              placeholderTextColor="#c7c7cd"
               clearButtonMode="never"
               onChangeText={(text) => setPetBreed(text)}
             />
@@ -343,6 +358,7 @@ const PawAddTab = ({ navigation }) => {
               style={styles.searchInput}
               placeholder="Age"
               clearButtonMode="never"
+              placeholderTextColor="#c7c7cd"
               keyboardType="number-pad"
               defaultValue={petAge}
               onChangeText={(text) => setPetAge(text)}
@@ -382,6 +398,7 @@ const PawAddTab = ({ navigation }) => {
             <TextInput
               style={styles.searchInput}
               placeholder="Chip Number"
+              placeholderTextColor="#c7c7cd"
               clearButtonMode="never"
               onChangeText={(text) => setChipNumber(text)}
             />
@@ -516,14 +533,28 @@ const PawAddTab = ({ navigation }) => {
                 onBackdropPress={() => setAllergyModalVisible(false)}
               >
                 <View style={styles.modalContent}>
-                  <TextInput
-                    placeholder="Type"
-                    value={newAllergyType}
-                    onChangeText={setNewAllergyType}
-                    style={styles.input}
+                  <Dropdown
+                      style={styles.input}
+                      value={newAllergyType}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      itemTextStyle={styles.itemTextStyle}
+                      iconStyle={styles.iconStyle}
+                      data={allergiesType}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder="Type of allergy"
+                      searchPlaceholder="Search..."
+                      onChange={(item) => {
+                        setNewAllergyType(item);
+                        // console.log("G:" + newAllergyType.value);
+                      }}
                   />
                   <TextInput
                     placeholder="Description"
+                    placeholderTextColor="#c7c7cd"
                     value={newAllergyDesc}
                     onChangeText={setNewAllergyDesc}
                     style={[styles.input, { marginTop: 10 }]}
@@ -544,12 +575,14 @@ const PawAddTab = ({ navigation }) => {
                   <TextInput
                     placeholder="Condition"
                     value={newPrevCondition}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewPrevCondition}
                     style={styles.input}
                   />
                   <TextInput
                     placeholder="Notes"
                     value={newPrevNotes}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setPrevNewNotes}
                     style={[styles.input, { marginTop: 10 }]}
                   />
@@ -569,24 +602,28 @@ const PawAddTab = ({ navigation }) => {
                   <TextInput
                     placeholder="Surgery Name"
                     value={newSurgery}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewSurgery}
                     style={styles.input}
                   />
                   <TextInput
                     style={[styles.input, { marginTop: 10 }]}
                     placeholder="Surgery Date"
+                    placeholderTextColor="#c7c7cd"
                     onPressIn={showSurgeryDatePicker}
                     value={newSurgeryDate}
                   />
                   <DateTimePickerModal
                     isVisible={isSurgeryDatePickerVisible}
                     mode="date"
+                    placeholderTextColor="#c7c7cd"
                     onConfirm={handleSurgeryConfirm}
                     onCancel={hideSurgeryDatePicker}
                   />
                   <TextInput
                     placeholder="Notes"
                     value={newSurgeryNotes}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewSurgeryNotes}
                     style={[styles.input, { marginTop: 10 }]}
                   />
@@ -605,6 +642,7 @@ const PawAddTab = ({ navigation }) => {
                 <View style={styles.modalContent}>
                   <TextInput
                     placeholder="Condition"
+                    placeholderTextColor="#c7c7cd"
                     value={newCondition}
                     onChangeText={setNewCondition}
                     style={styles.input}
@@ -612,6 +650,7 @@ const PawAddTab = ({ navigation }) => {
                   <TextInput
                     placeholder="Notes"
                     value={newNotes}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewNotes}
                     style={[styles.input, { marginTop: 10 }]}
                   />
@@ -631,24 +670,28 @@ const PawAddTab = ({ navigation }) => {
                   <TextInput
                     placeholder="Medication Name"
                     value={newMedication}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewMedication}
                     style={styles.input}
                   />
                   <TextInput
                     placeholder="Dosage"
                     value={newDosage}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewDosage}
                     style={[styles.input, { marginTop: 10 }]}
                   />
                   <TextInput
                     placeholder="Frequency"
                     value={newFrequency}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewFrequency}
                     style={[styles.input, { marginTop: 10 }]}
                   />
                   <TextInput
                     placeholder="Notes"
                     value={newMedNotes}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewMedNotes}
                     style={[styles.input, { marginTop: 10 }]}
                   />
@@ -668,6 +711,7 @@ const PawAddTab = ({ navigation }) => {
                   <TextInput
                     placeholder="Vaccine Name"
                     value={newVaccination}
+                    placeholderTextColor="#c7c7cd"
                     onChangeText={setNewVaccination}
                     style={styles.input}
                   />
@@ -675,16 +719,19 @@ const PawAddTab = ({ navigation }) => {
                     style={[styles.input, { marginTop: 10 }]}
                     placeholder="Date administered"
                     onPressIn={showDatePicker}
+                    placeholderTextColor="#c7c7cd"
                     value={newVaccDate}
                   />
                   <DateTimePickerModal
                     isVisible={isDatePickerVisible}
                     mode="date"
+                    placeholderTextColor="#c7c7cd"
                     onConfirm={handleConfirm}
                     onCancel={hideDatePicker}
                   />
                   <TextInput
                     placeholder="Notes"
+                    placeholderTextColor="#c7c7cd"
                     value={newVaccNotes}
                     onChangeText={setNewVaccNotes}
                     style={[styles.input, { marginTop: 10 }]}

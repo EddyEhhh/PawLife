@@ -5,6 +5,7 @@ import {Pet} from "../models/Pet.model.js";
 export async function addPetToUser(userId, petData) {
     try {
         const user = await User.find({_id: userId});
+        petData.owner = userId;
 
         const pet = new Pet(petData);
 
@@ -24,8 +25,8 @@ export async function addPetToUser(userId, petData) {
 }
 
 export async function updatePetDetail(userId, petId, petData) {
-    try {
 
+    try {
         return await Pet.findByIdAndUpdate (petId, petData);
 
         // for (const [key, value] of Object.entries(petData)) {
