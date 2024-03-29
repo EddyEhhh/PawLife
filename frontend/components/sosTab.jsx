@@ -430,11 +430,14 @@ const SosTab = ({ navigation }) => {
                       styles.ModalScheduleButton,
                       { backgroundColor: "#F05D5E" },
                     ]}
-                    onPress={() =>
+                    onPress={() => {
                       confirmedModalClick(
-                        selectedItem.vet._id,
-                        selectedItem.next_available
+                          selectedItem.vet._id,
+                          selectedItem.next_available
                       )
+                      navigation.navigate("HomeScreen");
+
+                    }
                     }
                   >
                     <View>

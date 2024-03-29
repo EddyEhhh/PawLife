@@ -204,7 +204,7 @@ const PawAddTab = ({ navigation }) => {
   };
 
   const handleAddAllergy = () => {
-    if (!newAllergyType.trim() || !newAllergyDesc.trim()) {
+    if (!newAllergyType.value || !newAllergyDesc.trim()) {
       alert("Please fill in all fields.");
       return;
     }
@@ -212,7 +212,7 @@ const PawAddTab = ({ navigation }) => {
     setAllergies([
       ...allergies,
       {
-        type: newAllergyType,
+        type: newAllergyType.value,
         description: newAllergyDesc,
       },
     ]);
@@ -413,7 +413,7 @@ const PawAddTab = ({ navigation }) => {
                   <Text style={styles.addButtonText}>+</Text>
                 </TouchableOpacity>
                 {allergies.map((item, index) => (
-                  <View key={item._id} style={styles.conditionContainer}>
+                  <View key={index} style={styles.conditionContainer}>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.conditionText}>{item.type}</Text>
                       <Text style={styles.notesText}>{item.description}</Text>
