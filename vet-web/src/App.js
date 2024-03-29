@@ -17,7 +17,7 @@ function App() {
     const DAY_MAP = {
         monday: 1,
         tuesday: 2,
-        wedesday: 3,
+        wednesday: 3,
         thursday: 4,
         friday: 5,
         saturday: 6,
@@ -141,6 +141,7 @@ function App() {
                     startTime: val.open[0][0],
                     endTime: val.open[val.open.length - 1][1]
                 }
+                console.log("TIME:"+key+val.open[0][0]+ val.open[val.open.length - 1][1])
 
                 setBusinessHours(prevState =>
                     [...prevState, businessHour]
