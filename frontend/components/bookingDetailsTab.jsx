@@ -66,6 +66,10 @@ const BookingDetails = ({ route, navigation }) => {
       alert("Please select a starting time before the end");
       return;
     }
+    if(date < Date.now()) {
+      alert("Please select a valid time");
+      return;
+    }
     const options = {weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'};
     bookingDate[0][0] = (date.toLocaleString([], options));
     bookingDateData[0][0] = date;
@@ -135,6 +139,10 @@ const BookingDetails = ({ route, navigation }) => {
       alert("Please select a starting time before the end");
       return;
     }
+    if(date < Date.now()) {
+      alert("Please select a valid time");
+      return;
+    }
     const options = {weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'};
     bookingDate[1][0] = (date.toLocaleString([], options));
     bookingDateData[1][0] = date;
@@ -179,7 +187,10 @@ const BookingDetails = ({ route, navigation }) => {
       alert("Please select a starting time before the end");
       return;
     }
-
+    if(date < Date.now()) {
+      alert("Please select a valid time");
+      return;
+    }
     const options = {weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'};
     bookingDate[2][0] = (date.toLocaleString([], options));
     bookingDateData[2][0] = date;

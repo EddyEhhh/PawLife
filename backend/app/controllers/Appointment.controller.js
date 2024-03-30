@@ -113,7 +113,7 @@ export async function getAppointmentBookingRequestByUser(req, res){
         // const vet = await Vet.find({_id: vet_id});
         // const user = await User.find({_id: user_id});
 
-        const result = await BookingRange.find({user_id: user_id})
+        const result = await BookingRange.find({user_id: user_id}).populate("pet_id user_id vet_id")
             .then(bookings =>
         bookings.filter(booking =>  bookingRangeValid(booking)))
 
@@ -139,6 +139,29 @@ export async function getAppointmentBookingRequestByVet(req, res){
         return res.status(200).json({
             bookings: result
         })
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({message: err.message});
+    }
+
+}
+
+export async function deleteAppointmentBookingRequestByVet(req, res){
+
+    try {
+
+
+        const { booking_id } = req.params;
+
+        // const result = await BookingRange.find({vet_id: vet_id}).populate("pet_id user_id")
+
+        await BookingRange.findByIdAndDelete(booking_id).then(booking => {
+            return res.status(200).json({
+                deleted_booking: booking
+            })
+        });
+
 
     } catch (err) {
         console.error(err);

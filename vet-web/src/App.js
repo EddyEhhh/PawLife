@@ -128,9 +128,10 @@ function App() {
         await axiosInstance
             .get("/api/v1/appointments/booking/vet?vet_id="+vetId)
             .then((response) => {
-                response.data.bookings.map((booking) => {
+                response.data.bookings.reverse().map((booking) => {
 
                     // console.log("TEST:"+booking.pet_id.name)
+                    // console.log(booking.preferred_booking)
                     booking.preferred_booking.map((eachPreferBooking, index) => {
                         // console.log("START:" + epochToDate(appointment.start_at).toISOString())
                         // let event =
@@ -145,9 +146,11 @@ function App() {
                                     end: epochToDate(eachPreferBooking.end).toISOString().substring(0, 19) + "+08:00",
                                     backgroundColor: FRAMEWORK_COLOR.green.color_code,
                                     borderColor: FRAMEWORK_COLOR.green.accent_color_code,
-                                    textColor: "#000000",
+                                    textColor: "black",
                                     extendedProps: [booking, eachPreferBooking],
-                                    display: "background"
+                                    display: "background",
+                                    overlap: true
+
                                 }
                             ])
                         );
