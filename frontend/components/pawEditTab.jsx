@@ -641,7 +641,7 @@ const PawEditTab = ({ route, navigation }) => {
                     <Text style={styles.addButtonText}>+</Text>
                   </TouchableOpacity>
                   {allergies.map((item, index) => (
-                    <View key={item._id} style={styles.conditionContainer}>
+                    <View key={index} style={styles.conditionContainer}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.conditionText}>{item.type}</Text>
                         <Text style={styles.notesText}>{item.description}</Text>
@@ -906,6 +906,7 @@ const PawEditTab = ({ route, navigation }) => {
                       style={[styles.input, { marginTop: 10 }]}
                       placeholderTextColor="#c7c7cd"
                       placeholder="Surgery Date"
+                      showSoftInputOnFocus={false}
                       onPressIn={showSurgeryDatePicker}
                       value={newSurgeryDate}
                     />
@@ -1124,6 +1125,7 @@ const PawEditTab = ({ route, navigation }) => {
                       placeholder="Date administered"
                       placeholderTextColor="#c7c7cd"
                       onPressIn={showDatePicker}
+                      showSoftInputOnFocus={false}
                       value={newVaccDate}
                     />
                     <DateTimePickerModal

@@ -207,7 +207,7 @@ const HomeTab = ({ navigation }) => {
                                     <View>
                                       {!urgentAppointmentVisibile && (
                                           <TouchableOpacity
-                                              style={styles.apptContainer}
+                                              style={[styles.apptContainer]}
                                               disabled={true}
                                           >
                                             <Text style={styles.apptObject}>
@@ -220,7 +220,8 @@ const HomeTab = ({ navigation }) => {
                                             {data.appointments &&
                                                 data.appointments.map((item) => (
                                                     <View key={item._id}>
-                                                      <View style={styles.item}>
+                                                      <View style={[styles.item, {borderColor: "red",
+                                                        borderWidth: 1}]}>
                                                         <View style={styles.topWrapper}>
                                                           <View style={styles.leftWrapper}>
                                                             <Image

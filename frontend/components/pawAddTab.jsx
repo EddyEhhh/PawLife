@@ -618,6 +618,7 @@ const PawAddTab = ({ navigation }) => {
                     placeholder="Surgery Date"
                     placeholderTextColor="#c7c7cd"
                     onPressIn={showSurgeryDatePicker}
+                    showSoftInputOnFocus={false}
                     value={newSurgeryDate}
                   />
                   <DateTimePickerModal
@@ -727,6 +728,7 @@ const PawAddTab = ({ navigation }) => {
                     placeholder="Date administered"
                     onPressIn={showDatePicker}
                     placeholderTextColor="#c7c7cd"
+                    showSoftInputOnFocus={false}
                     value={newVaccDate}
                   />
                   <DateTimePickerModal

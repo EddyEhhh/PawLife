@@ -63,10 +63,12 @@ const BookingDetails = ({ route, navigation }) => {
   };
   const handleBookingConfirmStart1 = (date) => {
     if(bookingDateData[0][1] !== undefined && bookingDateData[0][1] <= date) {
+      hideBookingDatePickerStart1()
       alert("Please select a starting time before the end");
       return;
     }
     if(date < Date.now()) {
+      hideBookingDatePickerStart1()
       alert("Please select a valid time");
       return;
     }
@@ -85,10 +87,12 @@ const BookingDetails = ({ route, navigation }) => {
   };
   const handleBookingConfirmEnd1 = (date) => {
     if(bookingDateData[0][0] === undefined) {
+      hideBookingDatePickerEnd1()
       alert("Please select a starting date");
       return;
     }
     if(bookingDateData[0][0] >= date){
+      hideBookingDatePickerEnd1()
       alert("Please select a date after the starting date");
       return;
     }
@@ -136,10 +140,12 @@ const BookingDetails = ({ route, navigation }) => {
   };
   const handleBookingConfirmStart2 = (date) => {
     if(bookingDateData[1][1] !== undefined && bookingDateData[1][1] <= date) {
+      hideBookingDatePickerStart2()
       alert("Please select a starting time before the end");
       return;
     }
     if(date < Date.now()) {
+      hideBookingDatePickerStart2()
       alert("Please select a valid time");
       return;
     }
@@ -158,10 +164,12 @@ const BookingDetails = ({ route, navigation }) => {
   };
   const handleBookingConfirmEnd2 = (date) => {
     if(bookingDateData[1][0] === undefined) {
+      hideBookingDatePickerEnd2()
       alert("Please select a starting date");
       return;
     }
     if(bookingDateData[1][0] >= date){
+      hideBookingDatePickerEnd2()
       alert("Please select a date after the starting date");
       return;
     }
@@ -184,10 +192,12 @@ const BookingDetails = ({ route, navigation }) => {
   };
   const handleBookingConfirmStart3 = (date) => {
     if(bookingDateData[2][1] !== undefined && bookingDateData[2][1] <= date) {
+      hideBookingDatePickerStart3()
       alert("Please select a starting time before the end");
       return;
     }
     if(date < Date.now()) {
+      hideBookingDatePickerStart3()
       alert("Please select a valid time");
       return;
     }
@@ -206,11 +216,13 @@ const BookingDetails = ({ route, navigation }) => {
     setBookingDatePickerEnd3(false);
   };
   const handleBookingConfirmEnd3 = (date) => {
+    hideBookingDatePickerEnd3()
     if(bookingDateData[2][0] === undefined) {
       alert("Please select a starting date");
       return;
     }
     if(bookingDateData[2][0] >= date){
+      hideBookingDatePickerEnd3()
       alert("Please select a date after the starting date");
       return;
     }
