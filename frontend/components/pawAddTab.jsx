@@ -255,6 +255,13 @@ const PawAddTab = ({ navigation }) => {
   };
 
   const handlePetDetail = async () => {
+    console.log("DASDS"+petName);
+
+    if(petName === null || petSpecies === null || petBreed === null || petAge === null){
+      alert("Please fill in all fields.");
+      return;
+    }
+
     let PetDetail = {
       health: {
         medical_history: {
@@ -278,6 +285,7 @@ const PawAddTab = ({ navigation }) => {
   await axiosInstance.post("/api/v1/pets", {PetDetail}
   ).then(()=>{
     console.log("Successful")
+    navigation.goBack();
   }).catch((err) =>{
     console.log(err)
   })
@@ -522,7 +530,6 @@ const PawAddTab = ({ navigation }) => {
                 style={styles.buttonContainer}
                 onPress={() => {
                   handlePetDetail()
-                  navigation.goBack();
                 }}
               >
                 <Text style={styles.buttonText}>Save</Text>

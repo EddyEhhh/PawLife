@@ -96,6 +96,7 @@ const SosTab = ({ navigation }) => {
       })
       .then((response) => {
         console.log("Appointment Confirmed");
+        navigation.navigate("HomeScreen");
         fetchData();
       })
       .catch((e) => {
@@ -435,7 +436,7 @@ const SosTab = ({ navigation }) => {
                           selectedItem.vet._id,
                           selectedItem.next_available
                       )
-                      navigation.navigate("HomeScreen");
+
 
                     }
                     }

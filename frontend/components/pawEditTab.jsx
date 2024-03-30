@@ -155,7 +155,7 @@ const PawEditTab = ({ route, navigation }) => {
   const deletePet = async () => {
     await axiosInstance
       .delete("/api/v1/pets/" + petID)
-      .catch((err) => console.log(err))
+      .catch((err) => alert(err.response.data.error_message))
       .then((response) => {
         navigation.goBack();
       });
