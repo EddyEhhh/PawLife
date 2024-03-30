@@ -3,6 +3,8 @@ import {Vet} from "../models/Vet.model.js";
 import {User} from "../models/User.model.js";
 import {Pet} from "../models/Pet.model.js";
 import {addPetToUser, updatePetDetail} from "../helpers/Pet.helper.js";
+import {Appointment} from "../models/Appointment.model.js";
+import {BookingRange} from "../models/BookingRange.js";
 
 export async function getPets(req, res){
     try {
@@ -89,11 +91,36 @@ export async function deletePet(req, res){
         const userId = req.body.userId || "5e234f234f234f234f234a01";
         const petId = req.params.pet_id;
 
+        await Appointment.find({pet_id: petId}).then(result => {
+            console.log("length"+ result.length)
+            if (result.length > 0) {
+                console.log("Cannot delete pet. Please cancel all appointments before deleting.")
+                if (res.headersSent) return;
+                return res.status(400).json({ error_message: "Cannot delete pet. Please cancel all appointments before deleting."})
+
+            }
+        })
+
+        if (res.headersSent) return;
+        await BookingRange.find({pet_id: petId}).then(result => {
+            if (result.length > 0) {
+                console.log("Cannot delete pet. Please cancel all bookings before deleting.")
+                if (res.headersSent) return;
+                return res.status(400).json({ error_message: "Cannot delete pet. Please cancel all bookings before deleting."})
+
+            }
+        })
+
+        if (res.headersSent) return;
         await Pet.findByIdAndDelete(petId).then(pet => {
             return res.status(200).json({
                 deleted_pet: pet
             })
-        });
+        })
+
+
+
+
         // console.log(`Pet with ID ${petId} deleted successfully`);
 
     } catch (err) {
