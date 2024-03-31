@@ -60,23 +60,23 @@ const HomeTab = ({ navigation }) => {
 
   const fetchAppointmentData = async () => {
     await axiosInstance
-        .get("/api/v1/appointments/booking")
-        .then((response) => {
-          if (!Object.keys(response.data.bookings).length) {
-            setAppointmentVisible(false);
-          } else {
-            setAppointmentVisible(true);
-            setBookingData(response.data);
-          }
-          setLoadingBooking(false);
-        })
-        .catch((err) => {
-          setLoadingBooking(true);
-          setTimeout(() => {
-            fetchAppointmentData();
-          }, 1000);
-        });
-  }
+      .get("/api/v1/appointments/booking")
+      .then((response) => {
+        if (!Object.keys(response.data.bookings).length) {
+          setAppointmentVisible(false);
+        } else {
+          setAppointmentVisible(true);
+          setBookingData(response.data);
+        }
+        setLoadingBooking(false);
+      })
+      .catch((err) => {
+        setLoadingBooking(true);
+        setTimeout(() => {
+          fetchAppointmentData();
+        }, 1000);
+      });
+  };
 
   const deleteEmergency = async () => {
     // console.log("ITEM:"+selectedItem._id)
@@ -100,23 +100,22 @@ const HomeTab = ({ navigation }) => {
 
   const deleteBookingRequest = async () => {
     await axiosInstance
-        .delete("/api/v1/appointments/booking/" + selectedBookingItem._id)
-        .then((response) => {
-          // console.log(data.appointments)
-          const bookings = bookingData.bookings.filter(
-              (booking) => selectedBookingItem._id != booking._id
-          );
-          setBookingData({ bookings: bookings });
-          if (!Object.keys(bookings).length) {
-            setAppointmentVisible(false);
-          } else {
-            setAppointmentVisible(true);
-            setBookingModalVisible(false);
-          }
-        })
-        .catch((err) => console.log(err));
-
-  }
+      .delete("/api/v1/appointments/booking/" + selectedBookingItem._id)
+      .then((response) => {
+        // console.log(data.appointments)
+        const bookings = bookingData.bookings.filter(
+          (booking) => selectedBookingItem._id != booking._id
+        );
+        setBookingData({ bookings: bookings });
+        if (!Object.keys(bookings).length) {
+          setAppointmentVisible(false);
+        } else {
+          setAppointmentVisible(true);
+          setBookingModalVisible(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const CovertTime = (datetime) => {
     var utcSeconds = datetime;
@@ -139,8 +138,8 @@ const HomeTab = ({ navigation }) => {
     var options = {
       timeZone: "GMT",
       // weekday: "short",
-      month: '2-digit',
-      day: '2-digit',
+      month: "2-digit",
+      day: "2-digit",
       hour: "numeric",
       minute: "numeric",
       hour12: true,
@@ -168,9 +167,6 @@ const HomeTab = ({ navigation }) => {
     setSelectedBookingItem(item);
   };
 
-
-
-
   return (
     <View style={globalStyles.container}>
       <View style={globalStyles.container}>
@@ -195,92 +191,99 @@ const HomeTab = ({ navigation }) => {
           </SafeAreaView>
           <SafeAreaView style={styles.bottomContainer}>
             <Text style={styles.h4}>Upcoming Emergency Appointment</Text>
-                                {loading && (
-                                    <View style={styles.loadingContainer}>
-                                      <Image
-                                          style={{ width: 70, height: 70, alignSelf: "center" }}
-                                          source={require("../assets/loading.gif")}
-                                      />
+            {loading && (
+              <View style={styles.loadingContainer}>
+                <Image
+                  style={{ width: 70, height: 70, alignSelf: "center" }}
+                  source={require("../assets/loading.gif")}
+                />
+              </View>
+            )}
+            {!loading && (
+              <View>
+                {!urgentAppointmentVisibile && (
+                  <TouchableOpacity
+                    style={[styles.apptContainer]}
+                    disabled={true}
+                  >
+                    <Text style={styles.apptObject}>
+                      You have no upcoming appointment currently...
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {urgentAppointmentVisibile && (
+                  <View>
+                    {data.appointments &&
+                      data.appointments.map((item) => (
+                        <View key={item._id}>
+                          <View
+                            style={[
+                              styles.item,
+                              {
+                                backgroundColor: "#ffe1e1",
+                                shadowColor: "#D45C57",
+                              },
+                            ]}
+                          >
+                            <View style={styles.topWrapper}>
+                              <View style={styles.leftWrapper}>
+                                <Image
+                                  source={{
+                                    uri: item.vet_id.image_url,
+                                  }}
+                                  style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                                />
+                              </View>
+                              <View style={styles.rightWrapper}>
+                                <View
+                                  style={[
+                                    styles.innerLeftWrapper,
+                                    { marginRight: 15 },
+                                  ]}
+                                >
+                                  <Text style={styles.clinicsName}>
+                                    {item.vet_id.name}
+                                  </Text>
+                                  <Text style={styles.clinicsAddress}>
+                                    {item.vet_id.location.street} {"\n"}
+                                    {item.vet_id.location.country}
+                                    {item.vet_id.location.postal_code}
+                                  </Text>
+                                  <View
+                                    style={[
+                                      styles.rightWrapper,
+                                      { marginTop: 10 },
+                                    ]}
+                                  >
+                                    <View style={styles.innerLeftWrapper}>
+                                      <Text style={styles.time}>
+                                        {CovertTime(item.start_at)}
+                                      </Text>
                                     </View>
-                                )}
-                                {!loading && (
                                     <View>
-                                      {!urgentAppointmentVisibile && (
-                                          <TouchableOpacity
-                                              style={[styles.apptContainer]}
-                                              disabled={true}
-                                          >
-                                            <Text style={styles.apptObject}>
-                                              You have no upcoming appointment currently...
-                                            </Text>
-                                          </TouchableOpacity>
-                                      )}
-                                      {urgentAppointmentVisibile && (
-                                          <View>
-                                            {data.appointments &&
-                                                data.appointments.map((item) => (
-                                                    <View key={item._id}>
-                                                      <View style={[styles.item, {borderColor: "red",
-                                                        borderWidth: 1}]}>
-                                                        <View style={styles.topWrapper}>
-                                                          <View style={styles.leftWrapper}>
-                                                            <Image
-                                                                source={{
-                                                                  uri: item.vet_id.image_url,
-                                                                }}
-                                                                style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                                                            />
-                                                          </View>
-                                                          <View style={styles.rightWrapper}>
-                                                            <View
-                                                                style={[
-                                                                  styles.innerLeftWrapper,
-                                                                  { marginRight: 15 },
-                                                                ]}
-                                                            >
-                                                              <Text style={styles.clinicsName}>
-                                                                {item.vet_id.name}
-                                                              </Text>
-                                                              <Text style={styles.clinicsAddress}>
-                                                                {item.vet_id.location.street} {"\n"}
-                                                                {item.vet_id.location.country}
-                                                                {item.vet_id.location.postal_code}
-                                                              </Text>
-                                                              <View
-                                                                  style={[
-                                                                    styles.rightWrapper,
-                                                                    { marginTop: 10 },
-                                                                  ]}
-                                                              >
-                                                                <View style={styles.innerLeftWrapper}>
-                                                                  <Text style={styles.time}>
-                                                                    {CovertTime(item.start_at)}
-                                                                  </Text>
-                                                                </View>
-                                                                <View>
-                                                                  <Text style={styles.dogDetails}>
-                                                                    {item.pet_id.name}
-                                                                  </Text>
-                                                                  <Text style={styles.dogDetails}>
-                                                                    {" "}
-                                                                    {item.pet_id.species}
-                                                                    {" • "}
-                                                                    {item.pet_id.breed}
-                                                                  </Text>
-                                                                </View>
-                                                              </View>
-                                                            </View>
-                                                            <View>
-                                                              <TouchableOpacity
-                                                                  onPress={() => {
-                                                                    toggleModal(item);
-                                                                  }}
-                                                              >
-                                                                <Image
-                                                                    style={{ resizeMode: "contain" }}
-                                                                    source={require("../assets/homePage-assets/calendar-cancel.png")}
-                                                                />
-                                                              </TouchableOpacity>
+                                      <Text style={styles.dogDetails}>
+                                        {item.pet_id.name}
+                                      </Text>
+                                      <Text style={styles.dogDetails}>
+                                        {" "}
+                                        {item.pet_id.species}
+                                        {" • "}
+                                        {item.pet_id.breed}
+                                      </Text>
+                                    </View>
+                                  </View>
+                                </View>
+                                <View>
+                                  <TouchableOpacity
+                                    onPress={() => {
+                                      toggleModal(item);
+                                    }}
+                                  >
+                                    <Image
+                                      style={{ resizeMode: "contain" }}
+                                      source={require("../assets/homePage-assets/calendar-cancel.png")}
+                                    />
+                                  </TouchableOpacity>
                                   <View style={styles.distanceWrapper}>
                                     <TouchableOpacity
                                       onPress={() => directToMap(item)}
@@ -303,116 +306,146 @@ const HomeTab = ({ navigation }) => {
             )}
             <Text style={styles.h4}>Upcoming Bookings</Text>
             {loadingBooking && (
-                <View style={styles.loadingContainer}>
-                  <Image
-                      style={{ width: 70, height: 70, alignSelf: "center" }}
-                      source={require("../assets/loading.gif")}
-                  />
-                </View>
+              <View style={styles.loadingContainer}>
+                <Image
+                  style={{ width: 70, height: 70, alignSelf: "center" }}
+                  source={require("../assets/loading.gif")}
+                />
+              </View>
             )}
             {!loadingBooking && (
-                <View>
-                  {!appointmentVisibile && (
-                      <TouchableOpacity
-                          style={styles.apptContainer}
-                          disabled={true}
-                      >
-                        <Text style={styles.apptObject}>
-                          You have no booked appointment...
-                        </Text>
-                      </TouchableOpacity>
-                  )}
-                  {appointmentVisibile && (
-                      <View>
-                        {bookingData.bookings &&
-                            bookingData.bookings.map((item) => (
-                                <View key={item._id}>
-                                  <View style={styles.item}>
-                                    <View style={styles.topWrapper}>
-                                      <View style={styles.leftWrapper}>
-                                        <Image
-                                            source={{
-                                              uri: item.vet_id.image_url,
-                                            }}
-                                            style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                                        />
-                                      </View>
-                                      <View style={styles.rightWrapper}>
-                                        <View
-                                            style={[
-                                              styles.innerLeftWrapper,
-                                              { marginRight: 15 },
-                                            ]}
-                                        >
-                                          <Text style={styles.clinicsName}>
-                                            {item.vet_id.name}
-                                          </Text>
-                                          <Text style={[styles.clinicsAddress, {marginTop: 5}]}>
-                                            {/*{item.preferred_booking.map(eachBooking => {*/}
-                                            {/*  ConvertTime(eachBooking.start)*/}
+              <View>
+                {!appointmentVisibile && (
+                  <TouchableOpacity
+                    style={styles.apptContainer}
+                    disabled={true}
+                  >
+                    <Text style={styles.apptObject}>
+                      You have no booked appointment...
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {appointmentVisibile && (
+                  <View>
+                    {bookingData.bookings &&
+                      bookingData.bookings.map((item) => (
+                        <View key={item._id}>
+                          <View style={styles.item}>
+                            <View style={styles.topWrapper}>
+                              <View style={styles.leftWrapper}>
+                                <Image
+                                  source={{
+                                    uri: item.vet_id.image_url,
+                                  }}
+                                  style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                                />
+                              </View>
+                              <View style={styles.rightWrapper}>
+                                <View
+                                  style={[
+                                    styles.innerLeftWrapper,
+                                    { marginRight: 15 },
+                                  ]}
+                                >
+                                  <Text style={styles.clinicsName}>
+                                    {item.vet_id.name}
+                                  </Text>
+                                  <Text
+                                    style={[
+                                      styles.clinicsAddress,
+                                      { marginTop: 5 },
+                                    ]}
+                                  >
+                                    {/*{item.preferred_booking.map(eachBooking => {*/}
+                                    {/*  ConvertTime(eachBooking.start)*/}
 
-                                            {/*})}*/}
-                                            {item.preferred_booking[0] && CovertLongTime(item.preferred_booking[0].start) + " to " + CovertLongTime(item.preferred_booking[0].end)}{"\n"}
-                                            {item.preferred_booking[1] && CovertLongTime(item.preferred_booking[1].start) + " to " + CovertLongTime(item.preferred_booking[1].end)}{"\n"}
-                                            {item.preferred_booking[2] && CovertLongTime(item.preferred_booking[2].start) + " to " + CovertLongTime(item.preferred_booking[2].end)}
-                                            {/*{item.vet_id.location.street} {"\n"}*/}
-                                            {/*{item.vet_id.location.country}*/}
-                                            {/*{item.vet_id.location.postal_code}*/}
-                                          </Text>
-                                          <View
-                                              style={[
-                                                styles.rightWrapper,
-                                                { marginTop: 10 },
-                                              ]}
-                                          >
-                                            <View style={styles.innerLeftWrapper}>
-                                              <Text style={styles.time}>
-                                                {!item.is_booked ? "Request Sent\nWe will contact you shortly" : "Booking confirmed"}
-                                              </Text>
-                                            </View>
-                                            <View>
-                                              <Text style={styles.dogDetails}>
-                                                {item.pet_id.name}
-                                              </Text>
-                                              <Text style={styles.dogDetails}>
-                                                {" "}
-                                                {item.pet_id.species}
-                                                {/*{" • "}*/}
-                                                {/*{item.pet_id.breed}*/}
-                                              </Text>
-                                            </View>
-                                          </View>
-                                        </View>
-                                        <View>
-                                          <TouchableOpacity
-                                              onPress={() => {
-                                                toggleBookingCancelModal(item);
-                                              }}
-                                          >
-                                            <Image
-                                                style={{ resizeMode: "contain" }}
-                                                source={require("../assets/homePage-assets/calendar-cancel.png")}
-                                            />
-                                          </TouchableOpacity>
-                                          <View style={styles.distanceWrapper}>
-                                            <TouchableOpacity
-                                                onPress={() => directToMap(item)}
-                                            >
-                                              <Image
-                                                  style={{ resizeMode: "contain" }}
-                                                  source={require("../assets/homePage-assets/direction.png")}
-                                              />
-                                            </TouchableOpacity>
-                                          </View>
-                                        </View>
-                                      </View>
+                                    {/*})}*/}
+                                    {item.preferred_booking[0] &&
+                                      CovertLongTime(
+                                        item.preferred_booking[0].start
+                                      ) +
+                                        " to " +
+                                        CovertLongTime(
+                                          item.preferred_booking[0].end
+                                        )}
+                                    {"\n"}
+                                    {item.preferred_booking[1] &&
+                                      CovertLongTime(
+                                        item.preferred_booking[1].start
+                                      ) +
+                                        " to " +
+                                        CovertLongTime(
+                                          item.preferred_booking[1].end
+                                        )}
+                                    {"\n"}
+                                    {item.preferred_booking[2] &&
+                                      CovertLongTime(
+                                        item.preferred_booking[2].start
+                                      ) +
+                                        " to " +
+                                        CovertLongTime(
+                                          item.preferred_booking[2].end
+                                        )}
+                                    {/*{item.vet_id.location.street} {"\n"}*/}
+                                    {/*{item.vet_id.location.country}*/}
+                                    {/*{item.vet_id.location.postal_code}*/}
+                                  </Text>
+                                  <View
+                                    style={[
+                                      styles.rightWrapper,
+                                      { marginTop: 10 },
+                                    ]}
+                                  >
+                                    <View style={styles.innerLeftWrapper}>
+                                      <Text style={styles.time}>
+                                        {!item.is_booked
+                                          ? "Request Sent\nWe will contact you shortly"
+                                          : "Booking confirmed"}
+                                      </Text>
+                                    </View>
+                                    <View>
+                                      <Text style={styles.dogDetails}>
+                                        {item.pet_id.name}
+                                      </Text>
+                                      <Text style={styles.dogDetails}>
+                                        {" "}
+                                        {item.pet_id.species}
+                                        {/*{" • "}*/}
+                                        {/*{item.pet_id.breed}*/}
+                                      </Text>
                                     </View>
                                   </View>
                                 </View>
-                            ))}
-                      </View>
-                  )}
-                </View>
+                                <View>
+                                  <TouchableOpacity
+                                    onPress={() => {
+                                      toggleBookingCancelModal(item);
+                                    }}
+                                  >
+                                    <Image
+                                      style={{ resizeMode: "contain" }}
+                                      source={require("../assets/homePage-assets/calendar-cancel.png")}
+                                    />
+                                  </TouchableOpacity>
+                                  <View style={styles.distanceWrapper}>
+                                    <TouchableOpacity
+                                      onPress={() => directToMap(item)}
+                                    >
+                                      <Image
+                                        style={{ resizeMode: "contain" }}
+                                        source={require("../assets/homePage-assets/direction.png")}
+                                      />
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      ))}
+                  </View>
+                )}
+              </View>
             )}
             <Text style={styles.h4}>Feature lists</Text>
             <View style={styles.featureContainer}>
@@ -551,77 +584,106 @@ const HomeTab = ({ navigation }) => {
           </Modal>
         )}
         {selectedBookingItem && (
-            <Modal
-                transparent={true}
-                visible={isBookingModalVisible}
-                onBackdropPress={() => setBookingModalVisible(false)}
+          <Modal
+            transparent={true}
+            visible={isBookingModalVisible}
+            onBackdropPress={() => setBookingModalVisible(false)}
+          >
+            <View
+              style={styles.modalContainer}
+              backgroundColor="rgba(0, 0, 0, 0.2)"
             >
-              <View
-                  style={styles.modalContainer}
-                  backgroundColor="rgba(0, 0, 0, 0.2)"
-              >
-                <View style={styles.modalBody}>
-                  <View style={styles.TopPressContainer}>
-                    <View style={styles.topWrapper}>
-                      <View style={styles.leftWrapper}>
-                        <Image
-                            source={{
-                              uri: selectedBookingItem.vet_id.image_url,
-                            }}
-                            style={styles.clinicsLogo} // Apply styles to the Image component if necessary
-                        />
-                      </View>
-                      <View style={styles.rightWrapper}>
-                        <View style={styles.innerLeftWrapper}>
-                          <Text style={styles.clinicsName}>
-                            {selectedBookingItem.vet_id.name}
-                          </Text>
-                          <Text style={{fontSize: 12, marginBottom: 0, marginTop: 10}}>
-                            Preferred timeslots:
-                          </Text>
-                          <Text style={[styles.clinicsAddress, {marginTop: 0}]}>
-                            {selectedBookingItem.preferred_booking[0] && CovertLongTime(selectedBookingItem.preferred_booking[0].start) + " to " + CovertLongTime(selectedBookingItem.preferred_booking[0].end)}{"\n"}
-                            {selectedBookingItem.preferred_booking[1] && CovertLongTime(selectedBookingItem.preferred_booking[1].start) + " to " + CovertLongTime(selectedBookingItem.preferred_booking[1].end)}{"\n"}
-                            {selectedBookingItem.preferred_booking[2] && CovertLongTime(selectedBookingItem.preferred_booking[2].start) + " to " + CovertLongTime(selectedBookingItem.preferred_booking[2].end)}
-                          </Text>
-                        </View>
+              <View style={styles.modalBody}>
+                <View style={styles.TopPressContainer}>
+                  <View style={styles.topWrapper}>
+                    <View style={styles.leftWrapper}>
+                      <Image
+                        source={{
+                          uri: selectedBookingItem.vet_id.image_url,
+                        }}
+                        style={styles.clinicsLogo} // Apply styles to the Image component if necessary
+                      />
+                    </View>
+                    <View style={styles.rightWrapper}>
+                      <View style={styles.innerLeftWrapper}>
+                        <Text style={styles.clinicsName}>
+                          {selectedBookingItem.vet_id.name}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            marginBottom: 0,
+                            marginTop: 10,
+                          }}
+                        >
+                          Preferred timeslots:
+                        </Text>
+                        <Text style={[styles.clinicsAddress, { marginTop: 0 }]}>
+                          {selectedBookingItem.preferred_booking[0] &&
+                            CovertLongTime(
+                              selectedBookingItem.preferred_booking[0].start
+                            ) +
+                              " to " +
+                              CovertLongTime(
+                                selectedBookingItem.preferred_booking[0].end
+                              )}
+                          {"\n"}
+                          {selectedBookingItem.preferred_booking[1] &&
+                            CovertLongTime(
+                              selectedBookingItem.preferred_booking[1].start
+                            ) +
+                              " to " +
+                              CovertLongTime(
+                                selectedBookingItem.preferred_booking[1].end
+                              )}
+                          {"\n"}
+                          {selectedBookingItem.preferred_booking[2] &&
+                            CovertLongTime(
+                              selectedBookingItem.preferred_booking[2].start
+                            ) +
+                              " to " +
+                              CovertLongTime(
+                                selectedBookingItem.preferred_booking[2].end
+                              )}
+                        </Text>
                       </View>
                     </View>
                   </View>
+                </View>
 
-                  <View style={styles.BottomPressContainer}>
-                    <Text style={styles.Modalsubtitle}>
-                      Are you sure you want to cancel this booking request?
-                    </Text>
-                    <TouchableOpacity
-                        style={[
-                          styles.ModalCancelButton,
-                          { backgroundColor: "#A5A5A5" },
-                        ]}
-                        onPress={() => setBookingModalVisible(false)}
-                    >
-                      <View>
-                        <Text style={styles.scheduleButtonTitle}>Cancel</Text>
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                          styles.ModalScheduleButton,
-                          { backgroundColor: "#D45C57" },
-                        ]}
-                        onPress={() => {
-                          deleteBookingRequest();
-                          setBookingModalVisible(false);
-                        }}
-                    >
-                      <View>
-                        <Text style={styles.scheduleButtonTitle}>Confirm</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                <View style={styles.BottomPressContainer}>
+                  <Text style={styles.Modalsubtitle}>
+                    Are you sure you want to cancel this booking request?
+                  </Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalCancelButton,
+                      { backgroundColor: "#A5A5A5" },
+                    ]}
+                    onPress={() => setBookingModalVisible(false)}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>Cancel</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.ModalScheduleButton,
+                      { backgroundColor: "#D45C57" },
+                    ]}
+                    onPress={() => {
+                      deleteBookingRequest();
+                      setBookingModalVisible(false);
+                    }}
+                  >
+                    <View>
+                      <Text style={styles.scheduleButtonTitle}>Confirm</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </Modal>
+            </View>
+          </Modal>
         )}
       </View>
     </View>
@@ -732,7 +794,7 @@ const styles = StyleSheet.create({
     fontFamily: "frank-regular",
     color: "#000",
     fontSize: 15,
-    fontWeight: 900
+    fontWeight: 900,
   },
   clinicsAddress: {
     marginTop: 10,

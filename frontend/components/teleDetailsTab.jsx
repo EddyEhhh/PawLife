@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontStyle: "normal",
     fontWeight: "900",
-    lineHeight: 50,
     marginTop: 30,
     maxWidth: 270,
   },
